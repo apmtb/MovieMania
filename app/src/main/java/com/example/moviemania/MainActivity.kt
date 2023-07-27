@@ -5,22 +5,22 @@ import android.os.Bundle
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
-import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
+//import android.content.SharedPreferences
+//import androidx.preference.PreferenceManager
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
-    private lateinit var sharedPreferences: SharedPreferences
+//    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val firstTime = sharedPreferences.getBoolean("firstTime", true)
+//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+//        val firstTime = sharedPreferences.getBoolean("firstTime", true)
 
-        if(firstTime) {
-            sharedPreferences.edit().putBoolean("firstTime", false).apply()
+//        if(firstTime) {
+//            sharedPreferences.edit().putBoolean("firstTime", false).apply()
             setContentView(R.layout.activity_main)
 
             videoView = findViewById(R.id.videoView)
@@ -39,13 +39,13 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
-        } else {
-            setContentView(R.layout.login)
-        }
+//        } else {
+//            setContentView(R.layout.login)
+//        }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        sharedPreferences.edit().putBoolean("firstTime", true).apply()
-    }
+//    override fun onRestart() {
+//        super.onRestart()
+//        sharedPreferences.edit().putBoolean("firstTime", true).apply()
+//    }
 }
