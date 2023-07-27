@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "835490974290",
+    "project_id": "movie-mania-11b83",
+    "storage_bucket": "movie-mania-11b83.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835490974290:android:5f75c062e1b5d811316d8b",
+        "android_client_info": {
+          "package_name": "com.example.moviemania"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "835490974290-rjh3odguubhrgrnoh88mss16mf9bm925.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.moviemania",
+            "certificate_hash": "f27fb2949f41876048e6bec03a811d13617d7530"
+          }
+        },
+        {
+          "client_id": "835490974290-k3uejm80f048ml40mq0coken4l6ack84.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYk1M9LvMELoxztE3RrTIR_HfnAHeMZyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "835490974290-k3uejm80f048ml40mq0coken4l6ack84.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
