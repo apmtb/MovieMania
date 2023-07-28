@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MovieMania"
         tools:targetApi="31">
         <activity
+            android:name=".ShowProfile"
+            android:exported="false" />
+        <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
         <activity
