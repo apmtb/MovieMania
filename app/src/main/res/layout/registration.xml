@@ -168,5 +168,5 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-40dp"
         android:elevation="10dp"
-        android:src="@drawable/movie_mania_logo" />
+        android:src="@drawable/movie_mania_logo_rounded" />
 </RelativeLayout>
