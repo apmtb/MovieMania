@@ -14,19 +14,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.FacebookSdk
-import com.facebook.GraphRequest
-import com.facebook.GraphResponse
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
-import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
 
@@ -51,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
                     val intent = Intent(this, ShowProfile::class.java)
                     intent.putExtra("displayName", account?.displayName)
                     intent.putExtra("email", account?.email)
-                    intent.putExtra("photoUrl", account?.photoUrl.toString())
+                    intent.putExtra("profileImageUrl", account?.photoUrl.toString())
                     startActivity(intent)
                 } catch (e: ApiException) {
                     // Handle sign-in failure (e.g., show an error message)
@@ -91,19 +85,16 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
-                Log.d(TAG, "facebook:onSuccess:$loginResult")
-                handleFacebookAccessToken(loginResult.accessToken)
+            override fun onSuccess(result: LoginResult) {
+                handleFacebookAccessToken(result.accessToken)
             }
 
             override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
-                // ...
+                Toast.makeText(this@LoginActivity, "Sign-in Canceled!", Toast.LENGTH_SHORT).show()
             }
 
             override fun onError(error: FacebookException) {
-                Log.d(TAG, "facebook:onError", error)
-                // ...
+                Toast.makeText(this@LoginActivity, "Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -202,8 +193,6 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                     } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.exception)
                         Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
                     }
                 }

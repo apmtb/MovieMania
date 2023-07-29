@@ -52,6 +52,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.facebook.android:facebook-login:12.1.0")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
 }
