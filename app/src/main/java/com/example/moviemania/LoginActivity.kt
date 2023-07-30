@@ -22,6 +22,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.OAuthProvider
 
 class LoginActivity : AppCompatActivity() {
 
@@ -29,8 +30,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
-    var TAG=""
     // Set up the ActivityResultLauncher
     private val googleSignInResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -50,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(intent)
                 } catch (e: ApiException) {
                     // Handle sign-in failure (e.g., show an error message)
-                    Toast.makeText(this, "Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Google Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -97,13 +96,18 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onCancel() {
-                Toast.makeText(this@LoginActivity, "Sign-in Canceled!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Facebook Sign-in Canceled!", Toast.LENGTH_SHORT).show()
             }
 
             override fun onError(error: FacebookException) {
-                Toast.makeText(this@LoginActivity, "Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Facebook Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
             }
         })
+
+        val twitterLoginButton = findViewById<ImageView>(R.id.twitterImg)
+        twitterLoginButton.setOnClickListener {
+            signInWithTwitter()
+        }
     }
 
     private fun signInWithGoogle() {
@@ -126,11 +130,11 @@ class LoginActivity : AppCompatActivity() {
                 .set(userData)
                 .addOnSuccessListener {
                     // User data stored in Firestore successfully, login is successful
-                    Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
                     // Error occurred while storing user data
-                    Toast.makeText(this, "Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Google Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -155,14 +159,11 @@ class LoginActivity : AppCompatActivity() {
 
 
         private fun handleFacebookAccessToken(token: AccessToken) {
-            Log.d(TAG, "handleFacebookAccessToken:$token")
 
             val credential = FacebookAuthProvider.getCredential(token.token)
             auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success")
                         val user = auth.currentUser
 
                         // Store user data in Firestore if the user is not null
@@ -195,7 +196,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 .addOnFailureListener {
                                     // Error occurred while storing user data
-                                    Toast.makeText(this, "Failed to store user data. Please try again.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Facebook Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
                                 }
                         }
 
@@ -211,5 +212,90 @@ class LoginActivity : AppCompatActivity() {
 
         // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private val twitterSignInResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val resultCode = result.resultCode
+        val data = result.data
+        if (data != null) {
+            handleTwitterSignInResult(resultCode, data)
+        }
+    }
+
+    private fun signInWithTwitter() {
+        // Create a Twitter OAuth provider
+        val provider = OAuthProvider.newBuilder("twitter.com")
+
+        // Start the sign-in flow using a Custom Chrome Tab
+        auth.startActivityForSignInWithProvider(this, provider.build())
+            .addOnSuccessListener { authResult ->
+                // Handle successful sign-in
+                val user = authResult.user
+                val userId = user?.uid ?: ""
+                val displayName = user?.displayName ?: ""
+                val email = user?.email ?: ""
+                val profileImageUrl = user?.photoUrl?.toString()?.replace("_normal","") ?: ""
+
+                val userData = hashMapOf(
+                    "displayName" to displayName,
+                    "email" to email,
+                    "profileImageUrl" to profileImageUrl
+                    // Add other user information as needed
+                )
+
+                firestore.collection("users").document(userId)
+                    .set(userData)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
+                        // User data stored in Firestore successfully, login is successful
+                        // Proceed to the next activity (e.g., ShowProfile activity)
+                        val intent = Intent(this, ShowProfile::class.java)
+                        intent.putExtra("displayName", displayName)
+                        intent.putExtra("email", email)
+                        intent.putExtra("profileImageUrl", profileImageUrl)
+                        startActivity(intent)
+                        finish() // Optional: Finish the LoginActivity to prevent going back
+                    }
+                    .addOnFailureListener { e ->
+                        // Handle sign-in failure
+                        Toast.makeText(
+                            this,
+                            "Twitter sign-in failed. Please try again.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+    }
+
+    private fun handleTwitterSignInResult(resultCode: Int, data: Intent) {
+        // Handle the result of the Twitter sign-in
+        // This method is called from the twitterSignInResultLauncher
+        auth.getPendingAuthResult()?.let { pendingResultTask ->
+            pendingResultTask
+                .addOnSuccessListener { authResult ->
+                    // Handle successful sign-in
+                    val user = authResult.user
+                    val userId = user?.uid ?: ""
+                    val displayName = user?.displayName ?: ""
+                    val email = user?.email ?: ""
+                    val profileImageUrl = user?.photoUrl?.toString()?.replace("_normal","") ?: ""
+
+                    // Store user data in Firestore or perform other actions as needed
+                    // ...
+
+                    // Proceed to the next activity (e.g., ShowProfile activity)
+                    val intent = Intent(this, ShowProfile::class.java)
+                    intent.putExtra("displayName", displayName)
+                    intent.putExtra("email", email)
+                    intent.putExtra("profileImageUrl", profileImageUrl)
+                    startActivity(intent)
+                }
+                .addOnFailureListener { e ->
+                    // Handle sign-in failure
+                    Toast.makeText(this, "Twitter sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }
