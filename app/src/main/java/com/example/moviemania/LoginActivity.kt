@@ -276,21 +276,7 @@ class LoginActivity : AppCompatActivity() {
             pendingResultTask
                 .addOnSuccessListener { authResult ->
                     // Handle successful sign-in
-                    val user = authResult.user
-                    val userId = user?.uid ?: ""
-                    val displayName = user?.displayName ?: ""
-                    val email = user?.email ?: ""
-                    val profileImageUrl = user?.photoUrl?.toString()?.replace("_normal","") ?: ""
-
-                    // Store user data in Firestore or perform other actions as needed
-                    // ...
-
-                    // Proceed to the next activity (e.g., ShowProfile activity)
-                    val intent = Intent(this, ShowProfile::class.java)
-                    intent.putExtra("displayName", displayName)
-                    intent.putExtra("email", email)
-                    intent.putExtra("profileImageUrl", profileImageUrl)
-                    startActivity(intent)
+                    Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener { e ->
                     // Handle sign-in failure
