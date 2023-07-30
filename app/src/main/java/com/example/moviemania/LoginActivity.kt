@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -73,6 +74,12 @@ class LoginActivity : AppCompatActivity() {
         val btnGoogleSignIn = findViewById<ImageView>(R.id.googleImg)
         btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
+        }
+
+        val signUpButton = findViewById<TextView>(R.id.SignUp)
+        signUpButton.setOnClickListener{
+            val intent = Intent(this, RegistrationActivity::class.java)
+            startActivity(intent)
         }
 
         callbackManager = CallbackManager.Factory.create()
