@@ -66,6 +66,9 @@ class LoginActivity : AppCompatActivity() {
         preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
         isLoggedIn = preferences.getBoolean("isLoggedIn", false)
 
+        // Initialize Firebase Authentication and Firestore
+        auth = FirebaseAuth.getInstance()
+
         if (isLoggedIn) {
             // User is already logged in, proceed to the profile screen
             val profileImageUrl = auth.currentUser?.photoUrl?.toString()?.replace("_normal","")
@@ -77,9 +80,6 @@ class LoginActivity : AppCompatActivity() {
             finish()
         } else {
             setContentView(R.layout.login)
-
-            // Initialize Firebase Authentication and Firestore
-            auth = FirebaseAuth.getInstance()
             firestore = FirebaseFirestore.getInstance()
 
 
