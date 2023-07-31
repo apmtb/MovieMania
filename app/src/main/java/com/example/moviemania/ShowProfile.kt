@@ -58,6 +58,8 @@ class ShowProfile : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity() {
+        val preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
+        preferences.edit().putBoolean("isLoggedIn",false).apply()
         val intent = Intent(this, LoginActivity::class.java)
         // Clear the back stack so that the user cannot go back to the ProfileActivity after logout
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
