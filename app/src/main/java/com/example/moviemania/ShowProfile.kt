@@ -20,6 +20,7 @@ class ShowProfile : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var preferences: SharedPreferences
     private var isLoggedin = false
+    private var userId = ""
     private lateinit var displayName: String
     private lateinit var email: String
     private lateinit var photoUrl: String
@@ -32,6 +33,7 @@ class ShowProfile : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
         isLoggedin = preferences.getBoolean("isLoggedIn",false)
+        userId = preferences.getString("userUid", null) ?: ""
         val imageView = findViewById<ImageView>(R.id.profileImageView)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
         if (isLoggedin) {
@@ -60,8 +62,7 @@ class ShowProfile : AppCompatActivity() {
             }
 
             // User is already logged in, proceed to the profile screen
-            val userId = auth.currentUser?.uid
-            if (userId!=null) {
+            if (userId!=null && userId!="") {
                 val userData = firestore.collection("Users").document(userId ?: "")
                 userData.get()
                     .addOnSuccessListener { document ->
@@ -122,6 +123,7 @@ class ShowProfile : AppCompatActivity() {
     private fun navigateToMainActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         preferences.edit().putBoolean("isLoggedIn",false).apply()
+        preferences.edit().putString("userUid", "").apply()
         // Clear the back stack so that the user cannot go back to the ProfileActivity after logout
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

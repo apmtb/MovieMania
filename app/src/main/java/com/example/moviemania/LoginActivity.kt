@@ -136,6 +136,7 @@ class LoginActivity : AppCompatActivity() {
                 .set(userData)
                 .addOnSuccessListener {
                     // User data stored in Firestore successfully, login is successful
+                    preferences.edit().putString("userUid", userId).apply()
                     Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
@@ -187,6 +188,7 @@ class LoginActivity : AppCompatActivity() {
                                     Toast.makeText(this, "Facebook login successful!", Toast.LENGTH_SHORT).show()
                                     // Proceed to the next activity (e.g., ShowProfile activity)
                                     preferences.edit().putBoolean("isLoggedIn", true).apply()
+                                    preferences.edit().putString("userUid", userId).apply()
                                     val intent = Intent(this, ShowProfile::class.java)
                                     startActivity(intent)
                                     finish()
@@ -248,6 +250,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
                         // User data stored in Firestore successfully, login is successful
                         // Proceed to the next activity (e.g., ShowProfile activity)
+                        preferences.edit().putString("userUid", userId).apply()
                         preferences.edit().putBoolean("isLoggedIn", true).apply()
                         val intent = Intent(this, ShowProfile::class.java)
                         startActivity(intent)
