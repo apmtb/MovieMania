@@ -43,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 try {
                     val account = task.getResult(ApiException::class.java)
                     preferences.edit().putBoolean("isLoggedIn", true).apply()
+                    preferences.edit().putString("userUid", account.id).apply()
                     // Sign-in successful, store user data in Firestore
                     storeUserDataInFirestore(account)
                     val intent = Intent(this, ShowProfile::class.java)
@@ -136,7 +137,6 @@ class LoginActivity : AppCompatActivity() {
                 .set(userData)
                 .addOnSuccessListener {
                     // User data stored in Firestore successfully, login is successful
-                    preferences.edit().putString("userUid", userId).apply()
                     Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
