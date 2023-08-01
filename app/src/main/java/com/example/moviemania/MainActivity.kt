@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
-import com.google.firebase.auth.FirebaseAuth
 
 //import android.content.SharedPreferences
 //import androidx.preference.PreferenceManager
@@ -13,21 +12,15 @@ import com.google.firebase.auth.FirebaseAuth
 class MainActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
-    private lateinit var auth: FirebaseAuth
 //    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onStart() {
         super.onStart()
-        auth = FirebaseAuth.getInstance()
         val preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
         val isLoggedIn = preferences.getBoolean("isLoggedIn", false)
 
         if (isLoggedIn) {
-            val profileImageUrl = auth.currentUser?.photoUrl?.toString()?.replace("_normal", "")
             val intent = Intent(this, ShowProfile::class.java)
-            intent.putExtra("displayName", auth.currentUser?.displayName)
-            intent.putExtra("email", auth.currentUser?.email)
-            intent.putExtra("profileImageUrl", profileImageUrl)
             startActivity(intent)
             finish()
         }

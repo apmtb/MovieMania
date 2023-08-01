@@ -32,7 +32,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var preferences: SharedPreferences
-    private var isLoggedIn = false;
     // Set up the ActivityResultLauncher
     private val googleSignInResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -43,12 +42,10 @@ class LoginActivity : AppCompatActivity() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it)
                 try {
                     val account = task.getResult(ApiException::class.java)
+                    preferences.edit().putBoolean("isLoggedIn", true).apply()
                     // Sign-in successful, store user data in Firestore
                     storeUserDataInFirestore(account)
                     val intent = Intent(this, ShowProfile::class.java)
-                    intent.putExtra("displayName", account?.displayName)
-                    intent.putExtra("email", account?.email)
-                    intent.putExtra("profileImageUrl", account?.photoUrl.toString())
                     startActivity(intent)
                     finish()
                 } catch (e: ApiException) {
@@ -64,79 +61,58 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
-        isLoggedIn = preferences.getBoolean("isLoggedIn", false)
-
+        firestore = FirebaseFirestore.getInstance()
         // Initialize Firebase Authentication and Firestore
         auth = FirebaseAuth.getInstance()
+        setContentView(R.layout.login)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        if (isLoggedIn) {
-            // User is already logged in, proceed to the profile screen
-            val profileImageUrl = auth.currentUser?.photoUrl?.toString()?.replace("_normal","")
-            val intent = Intent(this, ShowProfile::class.java)
-            intent.putExtra("displayName", auth.currentUser?.displayName)
-            intent.putExtra("email", auth.currentUser?.email)
-            intent.putExtra("profileImageUrl", profileImageUrl)
+        // Set onClickListener for the Google Sign-In button
+        val btnGoogleSignIn = findViewById<ImageView>(R.id.googleImg)
+        btnGoogleSignIn.setOnClickListener {
+            signInWithGoogle()
+        }
+
+        val signUpButton = findViewById<TextView>(R.id.SignUp)
+        signUpButton.setOnClickListener {
+            val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
-            finish()
-        } else {
-            setContentView(R.layout.login)
-            firestore = FirebaseFirestore.getInstance()
+        }
 
-
-            // Initialize the GoogleSignInClient
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
-            googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-            // Set onClickListener for the Google Sign-In button
-            val btnGoogleSignIn = findViewById<ImageView>(R.id.googleImg)
-            btnGoogleSignIn.setOnClickListener {
-                signInWithGoogle()
-            }
-
-            val signUpButton = findViewById<TextView>(R.id.SignUp)
-            signUpButton.setOnClickListener {
-                val intent = Intent(this, RegistrationActivity::class.java)
-                startActivity(intent)
-            }
-
-            callbackManager = CallbackManager.Factory.create()
-            val buttonFacebookLogin = findViewById<ImageView>(R.id.facebookImg)
-            buttonFacebookLogin.setOnClickListener {
-                if (LoggedIn()) {
-                    auth.signOut()
-                } else {
-                    signInWithFacebook()
+        callbackManager = CallbackManager.Factory.create()
+        val buttonFacebookLogin = findViewById<ImageView>(R.id.facebookImg)
+        buttonFacebookLogin.setOnClickListener {
+            signInWithFacebook()
+        }
+        LoginManager.getInstance()
+            .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+                override fun onSuccess(result: LoginResult) {
+                    handleFacebookAccessToken(result.accessToken)
                 }
-            }
-            LoginManager.getInstance()
-                .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-                    override fun onSuccess(result: LoginResult) {
-                        handleFacebookAccessToken(result.accessToken)
-                    }
 
-                    override fun onCancel() {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Facebook Sign-in Canceled!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                override fun onCancel() {
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Facebook Sign-in Canceled!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-                    override fun onError(error: FacebookException) {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Facebook Sign-in failed. Please try again.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
+                override fun onError(error: FacebookException) {
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Facebook Sign-in failed. Please try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
 
-            val twitterLoginButton = findViewById<ImageView>(R.id.twitterImg)
-            twitterLoginButton.setOnClickListener {
-                signInWithTwitter()
-            }
+        val twitterLoginButton = findViewById<ImageView>(R.id.twitterImg)
+        twitterLoginButton.setOnClickListener {
+            signInWithTwitter()
         }
     }
 
@@ -151,30 +127,22 @@ class LoginActivity : AppCompatActivity() {
             val userData = hashMapOf(
                 "displayName" to it.displayName,
                 "email" to it.email,
-                "photoUrl" to it.photoUrl.toString() // Store the user's photo URL as a string
+                "profileImageUrl" to it.photoUrl.toString() // Store the user's photo URL as a string
                 // Add other user information as needed
             )
 
             // Store user data in Firestore
-            firestore.collection("GoogleUsers").document(userId)
+            firestore.collection("Users").document(userId)
                 .set(userData)
                 .addOnSuccessListener {
                     // User data stored in Firestore successfully, login is successful
                     Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
-                    preferences.edit().putBoolean("isLoggedIn", true).apply()
                 }
                 .addOnFailureListener {
                     // Error occurred while storing user data
                     Toast.makeText(this, "Google Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
                 }
         }
-    }
-
-    private fun LoggedIn(): Boolean {
-        if (auth.currentUser!=null && AccessToken.getCurrentAccessToken()!!.isExpired) {
-            return true
-        }
-        return false
     }
 
     private fun signInWithFacebook() {
@@ -202,7 +170,7 @@ class LoginActivity : AppCompatActivity() {
                             val userId = it.uid
                             val displayName = it.displayName ?: ""
                             val email = it.email ?: ""
-                            val profileImageUrl = it.photoUrl?.toString() ?: ""
+                            val profileImageUrl = it.photoUrl?.toString()+"?access_token="+token.token+"&type=large"
 
                             val userData = hashMapOf(
                                 "displayName" to displayName,
@@ -212,17 +180,14 @@ class LoginActivity : AppCompatActivity() {
                             )
 
                             // Store user data in Firestore
-                            firestore.collection("FacebookUsers").document(userId)
+                            firestore.collection("Users").document(userId)
                                 .set(userData)
                                 .addOnSuccessListener {
                                     // User data stored in Firestore successfully, login is successful
                                     Toast.makeText(this, "Facebook login successful!", Toast.LENGTH_SHORT).show()
-                                    preferences.edit().putBoolean("isLoggedIn", true).apply()
                                     // Proceed to the next activity (e.g., ShowProfile activity)
+                                    preferences.edit().putBoolean("isLoggedIn", true).apply()
                                     val intent = Intent(this, ShowProfile::class.java)
-                                    intent.putExtra("displayName", displayName)
-                                    intent.putExtra("email", email)
-                                    intent.putExtra("profileImageUrl", profileImageUrl)
                                     startActivity(intent)
                                     finish()
                                 }
@@ -277,17 +242,14 @@ class LoginActivity : AppCompatActivity() {
                     // Add other user information as needed
                 )
 
-                firestore.collection("TwitterUsers").document(userId)
+                firestore.collection("Users").document(userId)
                     .set(userData)
                     .addOnSuccessListener {
                         Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
-                        preferences.edit().putBoolean("isLoggedIn", true).apply()
                         // User data stored in Firestore successfully, login is successful
                         // Proceed to the next activity (e.g., ShowProfile activity)
+                        preferences.edit().putBoolean("isLoggedIn", true).apply()
                         val intent = Intent(this, ShowProfile::class.java)
-                        intent.putExtra("displayName", displayName)
-                        intent.putExtra("email", email)
-                        intent.putExtra("profileImageUrl", profileImageUrl)
                         startActivity(intent)
                         finish() // Optional: Finish the LoginActivity to prevent going back
                     }

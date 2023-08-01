@@ -7,35 +7,66 @@
     tools:context=".ShowProfile">
     <!-- activity_profile.xml -->
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/profileImageView"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/usericon" />
+            android:src="@drawable/usericon"
+            android:visibility="invisible" />
+
         <TextView
             android:id="@+id/usernameShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp" />
+
         <TextView
             android:id="@+id/emailShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp" />
+
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Logout"
-            android:layout_gravity="center" />
-        <!-- Add other profile information here -->
+            android:visibility="invisible" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/videobg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <VideoView
+                android:id="@+id/videoViewLoading1"
+                android:layout_marginTop="200dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="" />
+
+            <VideoView
+                android:id="@+id/videoViewLoading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </LinearLayout>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
