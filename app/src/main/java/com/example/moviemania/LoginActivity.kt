@@ -4,11 +4,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.facebook.CallbackManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,6 +36,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var preferences: SharedPreferences
+    private lateinit var emailEditText: EditText
+    private lateinit var passwordEditText: EditText
+
     // Set up the ActivityResultLauncher
     private val googleSignInResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -51,12 +58,15 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 } catch (e: ApiException) {
                     // Handle sign-in failure (e.g., show an error message)
-                    Toast.makeText(this, "Google Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Google Sign-in failed. Please try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +76,11 @@ class LoginActivity : AppCompatActivity() {
         // Initialize Firebase Authentication and Firestore
         auth = FirebaseAuth.getInstance()
         setContentView(R.layout.login)
+
+
+        emailEditText = findViewById<EditText>(R.id.emailEditText)
+        passwordEditText = findViewById<EditText>(R.id.passwordEditText)
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build()
@@ -80,6 +95,35 @@ class LoginActivity : AppCompatActivity() {
         val signUpButton = findViewById<TextView>(R.id.SignUp)
         signUpButton.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        val signInButton = findViewById<Button>(R.id.loginbtn)
+        signInButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim()
+            val password = passwordEditText.text.toString().trim()
+            if (validateForm(email, password)) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            preferences.edit().putBoolean("isLoggedIn", true).apply()
+                            preferences.edit().putString("userUid", auth.currentUser?.uid).apply()
+                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this, ShowProfile::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            val errorCode = task.exception?.message
+                            Toast.makeText(this, "Error : $errorCode", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+        }
+
+        var forgetPassText = findViewById<TextView>(R.id.ForgotPassTextView)
+        forgetPassText.setOnClickListener{
+            val intent = Intent(this, ForgotPassword::class.java)
             startActivity(intent)
             finish()
         }
@@ -118,6 +162,34 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun validateForm(
+        email: String,
+        password: String
+    ): Boolean {
+        val icon = ContextCompat.getDrawable(this, R.drawable.ic_custom_error)
+        icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+
+        if (email.isEmpty()) {
+            emailEditText.setError("Email is required.", icon)
+            return false
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailEditText.setError("Invalid email address.", icon)
+            return false
+        }
+
+        if (password.isEmpty()) {
+            passwordEditText.setError("Password is required.", icon)
+            return false
+        }
+
+        if (password.length < 8) {
+            passwordEditText.setError("Password must be at least 8 characters long.", icon)
+            return false
+        }
+
+        return true
+    }
+
     private fun signInWithGoogle() {
         val signInIntent = googleSignInClient.signInIntent
         googleSignInResultLauncher.launch(signInIntent)
@@ -142,7 +214,11 @@ class LoginActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener {
                     // Error occurred while storing user data
-                    Toast.makeText(this, "Google Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Google Sign-in failed. Please try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }
@@ -157,54 +233,61 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
+    private fun handleFacebookAccessToken(token: AccessToken) {
 
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
 
-        private fun handleFacebookAccessToken(token: AccessToken) {
+                    // Store user data in Firestore if the user is not null
+                    user?.let {
+                        val userId = it.uid
+                        val displayName = it.displayName ?: ""
+                        val email = it.email ?: ""
+                        val profileImageUrl =
+                            it.photoUrl?.toString() + "?access_token=" + token.token + "&type=large"
 
-            val credential = FacebookAuthProvider.getCredential(token.token)
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        val user = auth.currentUser
+                        val userData = hashMapOf(
+                            "displayName" to displayName,
+                            "email" to email,
+                            "profileImageUrl" to profileImageUrl
+                            // Add other user information as needed
+                        )
 
-                        // Store user data in Firestore if the user is not null
-                        user?.let {
-                            val userId = it.uid
-                            val displayName = it.displayName ?: ""
-                            val email = it.email ?: ""
-                            val profileImageUrl = it.photoUrl?.toString()+"?access_token="+token.token+"&type=large"
-
-                            val userData = hashMapOf(
-                                "displayName" to displayName,
-                                "email" to email,
-                                "profileImageUrl" to profileImageUrl
-                                // Add other user information as needed
-                            )
-
-                            // Store user data in Firestore
-                            firestore.collection("Users").document(userId)
-                                .set(userData)
-                                .addOnSuccessListener {
-                                    // User data stored in Firestore successfully, login is successful
-                                    Toast.makeText(this, "Facebook login successful!", Toast.LENGTH_SHORT).show()
-                                    // Proceed to the next activity (e.g., ShowProfile activity)
-                                    preferences.edit().putBoolean("isLoggedIn", true).apply()
-                                    preferences.edit().putString("userUid", userId).apply()
-                                    val intent = Intent(this, ShowProfile::class.java)
-                                    startActivity(intent)
-                                    finish()
-                                }
-                                .addOnFailureListener {
-                                    // Error occurred while storing user data
-                                    Toast.makeText(this, "Facebook Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
-                                }
-                        }
-
-                    } else {
-                        Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                        // Store user data in Firestore
+                        firestore.collection("Users").document(userId)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                // User data stored in Firestore successfully, login is successful
+                                Toast.makeText(
+                                    this,
+                                    "Facebook login successful!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                // Proceed to the next activity (e.g., ShowProfile activity)
+                                preferences.edit().putBoolean("isLoggedIn", true).apply()
+                                preferences.edit().putString("userUid", userId).apply()
+                                val intent = Intent(this, ShowProfile::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                // Error occurred while storing user data
+                                Toast.makeText(
+                                    this,
+                                    "Facebook Sign-in failed. Please try again.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                     }
+
+                } else {
+                    Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
                 }
-        }
+            }
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -236,7 +319,7 @@ class LoginActivity : AppCompatActivity() {
                 val userId = user?.uid ?: ""
                 val displayName = user?.displayName ?: ""
                 val email = user?.email ?: ""
-                val profileImageUrl = user?.photoUrl?.toString()?.replace("_normal","") ?: ""
+                val profileImageUrl = user?.photoUrl?.toString()?.replace("_normal", "") ?: ""
 
                 val userData = hashMapOf(
                     "displayName" to displayName,
@@ -279,38 +362,12 @@ class LoginActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener { e ->
                     // Handle sign-in failure
-                    Toast.makeText(this, "Twitter sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Twitter sign-in failed. Please try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }
 }
-
-//sign in
-//import com.google.firebase.auth.FirebaseAuth
-//
-//class SignInActivity : AppCompatActivity() {
-//    private lateinit var auth: FirebaseAuth
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_sign_in)
-//
-//        // Initialize Firebase Authentication instance
-//        auth = FirebaseAuth.getInstance()
-//
-//        signInButton.setOnClickListener {
-//            val email = emailEditText.text.toString()
-//            val password = passwordEditText.text.toString()
-//
-//            auth.signInWithEmailAndPassword(email, password)
-//                .addOnCompleteListener(this) { task ->
-//                    if (task.isSuccessful) {
-//                        // User signed in successfully, do something here.
-//                    } else {
-//                        val errorCode = task.exception?.message
-//                        // Handle error if sign-in fails.
-//                    }
-//                }
-//        }
-//    }
-//}

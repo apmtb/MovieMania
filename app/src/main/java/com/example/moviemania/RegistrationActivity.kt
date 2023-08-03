@@ -51,7 +51,7 @@ class RegistrationActivity : AppCompatActivity() {
             if (validateForm(username, email, password, confirmPassword)) {
                 // If form is valid, create user account
                 frameLayout.visibility = View.VISIBLE
-                videoView.setOnPreparedListener{
+                videoView.setOnPreparedListener {
                     it.isLooping = true
                 }
                 // Set the video path from the raw folder
@@ -74,7 +74,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun navigateToMainActivity() {
         val intent = Intent(this, LoginActivity::class.java)
-        preferences.edit().putBoolean("isLoggedIn",false).apply()
+        preferences.edit().putBoolean("isLoggedIn", false).apply()
         preferences.edit().putString("userUid", "").apply()
         // Clear the back stack so that the user cannot go back to the ProfileActivity after logout
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -177,7 +177,11 @@ class RegistrationActivity : AppCompatActivity() {
                             .set(userData)
                             .addOnSuccessListener {
                                 // User data stored in Firestore successfully, login is successful
-                                Toast.makeText(this, "Sign up and login successful!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Sign up and login successful!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 preferences.edit().putString("userUid", user.uid).apply()
                                 preferences.edit().putBoolean("isLoggedIn", true).apply()
                                 val intent = Intent(this, ShowProfile::class.java)
@@ -185,7 +189,11 @@ class RegistrationActivity : AppCompatActivity() {
                                 finish()
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this, "Sign up successful, but user data storage failed.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Sign up successful, but user data storage failed.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                     }
                 } else {

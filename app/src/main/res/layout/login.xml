@@ -21,7 +21,7 @@
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/signin"
@@ -29,9 +29,9 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        android:drawableLeft="@drawable/usericon"
+        android:drawableLeft="@drawable/ic_baseline_email_24"
         android:drawablePadding="20dp"
-        android:hint="Username"
+        android:hint="Email"
         android:padding="20dp"
         android:background="@drawable/textboxborder"
         android:textColor="#052BFA"
@@ -40,10 +40,10 @@
         android:textStyle="bold"/>
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/username"
+        android:layout_below="@+id/emailEditText"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
@@ -63,7 +63,7 @@
         android:id="@+id/loginbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/password"
+        android:layout_below="@id/passwordEditText"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
@@ -74,12 +74,24 @@
         android:textColor="@color/white"
         android:textSize="20dp" />
 
+    <TextView
+        android:id="@+id/ForgotPassTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_below="@+id/loginbtn"
+        android:layout_centerHorizontal="true"
+        android:text="Forgot Password?"
+        android:textColor="#1E83D1"
+        android:textSize="20dp" />
+
     <LinearLayout
         android:id="@+id/signuptext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/loginbtn"
+        android:layout_below="@+id/ForgotPassTextView"
         android:layout_centerHorizontal="true">
 
         <TextView
