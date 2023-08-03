@@ -81,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
         signUpButton.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         callbackManager = CallbackManager.Factory.create()
@@ -283,3 +284,33 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+
+//sign in
+//import com.google.firebase.auth.FirebaseAuth
+//
+//class SignInActivity : AppCompatActivity() {
+//    private lateinit var auth: FirebaseAuth
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_sign_in)
+//
+//        // Initialize Firebase Authentication instance
+//        auth = FirebaseAuth.getInstance()
+//
+//        signInButton.setOnClickListener {
+//            val email = emailEditText.text.toString()
+//            val password = passwordEditText.text.toString()
+//
+//            auth.signInWithEmailAndPassword(email, password)
+//                .addOnCompleteListener(this) { task ->
+//                    if (task.isSuccessful) {
+//                        // User signed in successfully, do something here.
+//                    } else {
+//                        val errorCode = task.exception?.message
+//                        // Handle error if sign-in fails.
+//                    }
+//                }
+//        }
+//    }
+//}

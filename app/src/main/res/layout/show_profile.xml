@@ -58,8 +58,7 @@
                 android:id="@+id/videoViewLoading1"
                 android:layout_marginTop="200dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="" />
+                android:layout_height="wrap_content" />
 
             <VideoView
                 android:id="@+id/videoViewLoading"

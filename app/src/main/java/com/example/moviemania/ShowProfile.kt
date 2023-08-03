@@ -64,6 +64,7 @@ class ShowProfile : AppCompatActivity() {
             // User is already logged in, proceed to the profile screen
             if (userId!=null && userId!="") {
                 val userData = firestore.collection("Users").document(userId ?: "")
+
                 userData.get()
                     .addOnSuccessListener { document ->
                         if (document != null) {
@@ -78,7 +79,8 @@ class ShowProfile : AppCompatActivity() {
                                     .into(imageView)
                             } else {
                                 Picasso.get()
-                                    .load(R.drawable.usericon) // Set an error image if loading fails
+                                    .load(R.drawable.usericon)
+                                    .error(R.drawable.usericon)// Set an error image if loading fails
                                     .into(imageView)
                             }
                             val textUsername = findViewById<TextView>(R.id.usernameShow)
