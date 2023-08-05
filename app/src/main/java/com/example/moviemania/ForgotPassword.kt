@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -47,7 +46,7 @@ class ForgotPassword : AppCompatActivity() {
                     .addOnCompleteListener { task ->
                         frameLayout.visibility = View.GONE
                         videoView.stopPlayback()
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful) {
                             // Password reset email sent successfully
                             Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT).show()
                         } else {

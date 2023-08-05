@@ -61,8 +61,8 @@ class ShowProfile : AppCompatActivity() {
                 parent.removeView(findViewById(R.id.videobg))
             }
             // User is already logged in, proceed to the profile screen
-            if (userId!=null && userId!="") {
-                val userData = firestore.collection("Users").document(userId ?: "")
+            if (userId!="") {
+                val userData = firestore.collection("Users").document(userId)
 
                 userData.get()
                     .addOnSuccessListener { document ->
@@ -71,7 +71,7 @@ class ShowProfile : AppCompatActivity() {
                             email = document.getString("email") ?: ""
                             photoUrl = document.getString("profileImageUrl") ?: ""
                             // Load the user's profile image in the ImageView
-                            if (!photoUrl.isNullOrEmpty()) {
+                            if (photoUrl.isNotEmpty()) {
                                 Picasso.get()
                                     .load(photoUrl)
                                     .error(R.drawable.usericon) // Set an error image if loading fails
