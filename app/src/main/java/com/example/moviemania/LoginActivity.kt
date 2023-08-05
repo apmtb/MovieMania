@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
@@ -137,7 +136,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        var forgetPassText = findViewById<TextView>(R.id.ForgotPassTextView)
+        val forgetPassText = findViewById<TextView>(R.id.ForgotPassTextView)
         forgetPassText.setOnClickListener{
             val intent = Intent(this, ForgotPassword::class.java)
             startActivity(intent)
@@ -358,7 +357,7 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish() // Optional: Finish the LoginActivity to prevent going back
                     }
-                    .addOnFailureListener { e ->
+                    .addOnFailureListener {
                         // Handle sign-in failure
                         stopCircleLoading()
                         Toast.makeText(
@@ -386,13 +385,13 @@ class LoginActivity : AppCompatActivity() {
     private fun handleTwitterSignInResult(resultCode: Int, data: Intent) {
         // Handle the result of the Twitter sign-in
         // This method is called from the twitterSignInResultLauncher
-        auth.getPendingAuthResult()?.let { pendingResultTask ->
+        auth.pendingAuthResult?.let { pendingResultTask ->
             pendingResultTask
-                .addOnSuccessListener { authResult ->
+                .addOnSuccessListener {
                     // Handle successful sign-in
                     Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
                 }
-                .addOnFailureListener { e ->
+                .addOnFailureListener {
                     // Handle sign-in failure
                     Toast.makeText(
                         this,
