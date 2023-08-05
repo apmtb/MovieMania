@@ -34,6 +34,8 @@ import com.google.firebase.auth.OAuthProvider
 @Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var userTypeChecker: UserTypeChecker
+
     private lateinit var callbackManager: CallbackManager
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
@@ -56,9 +58,8 @@ class LoginActivity : AppCompatActivity() {
                     preferences.edit().putBoolean("isLoggedIn", true).apply()
                     preferences.edit().putString("userUid", account.id).apply()
                     storeUserDataInFireStore(account)
-                    val intent = Intent(this, ShowProfile::class.java)
                     stopCircleLoading()
-                    startActivity(intent)
+                    userTypeChecker.checkUserTypeAndNavigate(account.email.toString())
                     finish()
                 } catch (e: ApiException) {
                     stopCircleLoading()
@@ -88,6 +89,7 @@ class LoginActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.passwordEditText)
         videoView = findViewById(R.id.videoViewLoadingCircleLP)
         frameLayout = findViewById(R.id.frameLayoutLP)
+        userTypeChecker = UserTypeChecker(this)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -119,9 +121,8 @@ class LoginActivity : AppCompatActivity() {
                             preferences.edit().putBoolean("isLoggedIn", true).apply()
                             preferences.edit().putString("userUid", auth.currentUser?.uid).apply()
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this, ShowProfile::class.java)
                             stopCircleLoading()
-                            startActivity(intent)
+                            userTypeChecker.checkUserTypeAndNavigate(email)
                             finish()
                         } else {
                             val errorCode = task.exception?.message
@@ -270,8 +271,7 @@ class LoginActivity : AppCompatActivity() {
                                 ).show()
                                 preferences.edit().putBoolean("isLoggedIn", true).apply()
                                 preferences.edit().putString("userUid", userId).apply()
-                                val intent = Intent(this, ShowProfile::class.java)
-                                startActivity(intent)
+                                userTypeChecker.checkUserTypeAndNavigate(email)
                                 finish()
                             }
                             .addOnFailureListener {
@@ -322,9 +322,8 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
                         preferences.edit().putString("userUid", userId).apply()
                         preferences.edit().putBoolean("isLoggedIn", true).apply()
-                        val intent = Intent(this, ShowProfile::class.java)
                         stopCircleLoading()
-                        startActivity(intent)
+                        userTypeChecker.checkUserTypeAndNavigate(email)
                         finish()
                     }
                     .addOnFailureListener {
