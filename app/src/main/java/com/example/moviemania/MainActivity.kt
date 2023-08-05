@@ -12,7 +12,6 @@ import android.content.Intent
 class MainActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
-//    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onStart() {
         super.onStart()
@@ -29,11 +28,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-//        val firstTime = sharedPreferences.getBoolean("firstTime", true)
-
-//        if(firstTime) {
-//            sharedPreferences.edit().putBoolean("firstTime", false).apply()
             setContentView(R.layout.activity_main)
 
             videoView = findViewById(R.id.videoView)
@@ -46,19 +40,10 @@ class MainActivity : AppCompatActivity() {
             videoView.setZOrderOnTop(true)
             videoView.start()
 
-            // Set a listener to navigate to the next screen after video playback
             videoView.setOnCompletionListener {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
             }
-//        } else {
-//            setContentView(R.layout.login)
-//        }
     }
-
-//    override fun onRestart() {
-//        super.onRestart()
-//        sharedPreferences.edit().putBoolean("firstTime", true).apply()
-//    }
 }

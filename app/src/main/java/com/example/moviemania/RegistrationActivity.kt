@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
+    private lateinit var fireStore: FirebaseFirestore
     private lateinit var usernameEditText: EditText
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
@@ -30,13 +30,12 @@ class RegistrationActivity : AppCompatActivity() {
         preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
         setContentView(R.layout.registration)
 
-        // Initialize Firebase Authentication instance
         auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-        usernameEditText = findViewById<EditText>(R.id.username)
-        emailEditText = findViewById<EditText>(R.id.email)
-        passwordEditText = findViewById<EditText>(R.id.password1)
-        confirmPasswordEditText = findViewById<EditText>(R.id.password2)
+        fireStore = FirebaseFirestore.getInstance()
+        usernameEditText = findViewById(R.id.username)
+        emailEditText = findViewById(R.id.email)
+        passwordEditText = findViewById(R.id.password1)
+        confirmPasswordEditText = findViewById(R.id.password2)
         videoView = findViewById(R.id.videoViewLoadingCircleRP)
         frameLayout = findViewById(R.id.frameLayoutRP)
 
@@ -49,16 +48,13 @@ class RegistrationActivity : AppCompatActivity() {
             val confirmPassword = confirmPasswordEditText.text.toString().trim()
 
             if (validateForm(username, email, password, confirmPassword)) {
-                // If form is valid, create user account
                 frameLayout.visibility = View.VISIBLE
                 videoView.setOnPreparedListener {
                     it.isLooping = true
                 }
-                // Set the video path from the raw folder
                 val videoPath = "android.resource://" + packageName + "/" + R.raw.circle_loading
 
                 videoView.setVideoURI(Uri.parse(videoPath))
-                // Start playing the video
                 videoView.setZOrderOnTop(true)
 
                 videoView.start()
@@ -76,7 +72,6 @@ class RegistrationActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         preferences.edit().putBoolean("isLoggedIn", false).apply()
         preferences.edit().putString("userUid", "").apply()
-        // Clear the back stack so that the user cannot go back to the ProfileActivity after logout
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
@@ -130,7 +125,7 @@ class RegistrationActivity : AppCompatActivity() {
             return false
         }
 
-        val specialCharPattern = "[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]"
+        val specialCharPattern = "[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]"
         if (!password.any { it.toString().matches(specialCharPattern.toRegex()) }) {
             passwordEditText.setError(
                 "Password must contain at least one special character (e.g., @, #, $).",
@@ -163,19 +158,15 @@ class RegistrationActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     val displayName = usernameEditText.text?.toString() ?: ""
                     user?.let {
-                        // Create a map of user data to be stored in Firestore
                         val userData = hashMapOf(
                             "displayName" to displayName,
                             "email" to user.email,
                             "profileImageUrl" to user.photoUrl?.toString()
-                            // Add other user information as needed
                         )
 
-                        // Store user data in Firestore
-                        firestore.collection("Users").document(user.uid)
+                        fireStore.collection("Users").document(user.uid)
                             .set(userData)
                             .addOnSuccessListener {
-                                // User data stored in Firestore successfully, login is successful
                                 Toast.makeText(
                                     this,
                                     "Sign up and login successful!",

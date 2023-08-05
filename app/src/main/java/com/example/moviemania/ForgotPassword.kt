@@ -34,11 +34,9 @@ class ForgotPassword : AppCompatActivity() {
                 videoView.setOnPreparedListener {
                     it.isLooping = true
                 }
-                // Set the video path from the raw folder
                 val videoPath = "android.resource://" + packageName + "/" + R.raw.circle_loading
 
                 videoView.setVideoURI(Uri.parse(videoPath))
-                // Start playing the video
                 videoView.setZOrderOnTop(true)
 
                 videoView.start()
@@ -47,10 +45,8 @@ class ForgotPassword : AppCompatActivity() {
                         frameLayout.visibility = View.GONE
                         videoView.stopPlayback()
                         if (task.isSuccessful) {
-                            // Password reset email sent successfully
                             Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT).show()
                         } else {
-                            // Error occurred, display a message to the user
                             Toast.makeText(this,"Email not Found, Sign up if you are new!", Toast.LENGTH_SHORT).show()
                         }
                     }

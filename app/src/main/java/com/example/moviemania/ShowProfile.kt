@@ -17,9 +17,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 class ShowProfile : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
+    private lateinit var fireStore: FirebaseFirestore
     private lateinit var preferences: SharedPreferences
-    private var isLoggedin = false
+    private var isLoggedIn: Boolean = false
     private var userId = ""
     private lateinit var displayName: String
     private lateinit var email: String
@@ -30,13 +30,13 @@ class ShowProfile : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.show_profile)
         auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+        fireStore = FirebaseFirestore.getInstance()
         preferences = getSharedPreferences("MovieMania", MODE_PRIVATE)
-        isLoggedin = preferences.getBoolean("isLoggedIn",false)
+        isLoggedIn = preferences.getBoolean("isLoggedIn",false)
         userId = preferences.getString("userUid", null) ?: ""
         val imageView = findViewById<ImageView>(R.id.profileImageView)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
-        if (isLoggedin) {
+        if (isLoggedIn) {
             videoView = findViewById(R.id.videoViewLoading)
             videoView1 = findViewById(R.id.videoViewLoading1)
 
@@ -62,7 +62,7 @@ class ShowProfile : AppCompatActivity() {
             }
             // User is already logged in, proceed to the profile screen
             if (userId!="") {
-                val userData = firestore.collection("Users").document(userId)
+                val userData = fireStore.collection("Users").document(userId)
 
                 userData.get()
                     .addOnSuccessListener { document ->
