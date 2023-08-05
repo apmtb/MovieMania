@@ -37,8 +37,8 @@ class RegistrationActivity : AppCompatActivity() {
         emailEditText = findViewById<EditText>(R.id.email)
         passwordEditText = findViewById<EditText>(R.id.password1)
         confirmPasswordEditText = findViewById<EditText>(R.id.password2)
-        videoView = findViewById(R.id.videoViewLoadingCircle)
-        frameLayout = findViewById<View>(R.id.frameLayout)
+        videoView = findViewById(R.id.videoViewLoadingCircleRP)
+        frameLayout = findViewById(R.id.frameLayoutRP)
 
         val signUpButton = findViewById<Button>(R.id.signupbtn)
         signUpButton.setOnClickListener {
@@ -153,7 +153,6 @@ class RegistrationActivity : AppCompatActivity() {
             confirmPasswordEditText.setError("Passwords do not match.", icon)
             return false
         }
-
         return true
     }
 
@@ -184,21 +183,22 @@ class RegistrationActivity : AppCompatActivity() {
                                 ).show()
                                 preferences.edit().putString("userUid", user.uid).apply()
                                 preferences.edit().putBoolean("isLoggedIn", true).apply()
+                                frameLayout.visibility = View.GONE
+                                videoView.stopPlayback()
                                 val intent = Intent(this, ShowProfile::class.java)
                                 startActivity(intent)
                                 finish()
                             }
                             .addOnFailureListener {
-                                Toast.makeText(
-                                    this,
-                                    "Sign up successful, but user data storage failed.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                frameLayout.visibility = View.GONE
+                                videoView.stopPlayback()
+                                Toast.makeText(this, "Sign up successful, but user data storage failed.", Toast.LENGTH_SHORT).show()
                             }
                     }
                 } else {
                     val errorCode = task.exception?.message
                     frameLayout.visibility = View.GONE
+                    videoView.stopPlayback()
                     Toast.makeText(this, "Error : $errorCode", Toast.LENGTH_SHORT).show()
                 }
             }

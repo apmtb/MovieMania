@@ -147,4 +147,18 @@
             android:src="@drawable/twitter"
             android:id="@+id/twitterImg"/>
     </LinearLayout>
+    <FrameLayout
+        android:id="@+id/frameLayoutLP"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <VideoView
+            android:id="@+id/videoViewLoadingCircleLP"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
 </RelativeLayout>

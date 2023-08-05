@@ -2,14 +2,17 @@ package com.example.moviemania
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -38,6 +41,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
+    private lateinit var videoView: VideoView
+    private lateinit var frameLayout: View
 
     // Set up the ActivityResultLauncher
     private val googleSignInResultLauncher = registerForActivityResult(
@@ -54,10 +59,12 @@ class LoginActivity : AppCompatActivity() {
                     // Sign-in successful, store user data in Firestore
                     storeUserDataInFirestore(account)
                     val intent = Intent(this, ShowProfile::class.java)
+                    stopCircleLoading()
                     startActivity(intent)
                     finish()
                 } catch (e: ApiException) {
                     // Handle sign-in failure (e.g., show an error message)
+                    stopCircleLoading()
                     Toast.makeText(
                         this,
                         "Google Sign-in failed. Please try again.",
@@ -65,6 +72,9 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+        } else {
+            Toast.makeText(this, "Google Sign-in Canceled!", Toast.LENGTH_SHORT).show()
+            stopCircleLoading()
         }
     }
 
@@ -78,8 +88,10 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.login)
 
 
-        emailEditText = findViewById<EditText>(R.id.emailEditText)
-        passwordEditText = findViewById<EditText>(R.id.passwordEditText)
+        emailEditText = findViewById(R.id.emailEditText)
+        passwordEditText = findViewById(R.id.passwordEditText)
+        videoView = findViewById(R.id.videoViewLoadingCircleLP)
+        frameLayout = findViewById(R.id.frameLayoutLP)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -89,6 +101,7 @@ class LoginActivity : AppCompatActivity() {
         // Set onClickListener for the Google Sign-In button
         val btnGoogleSignIn = findViewById<ImageView>(R.id.googleImg)
         btnGoogleSignIn.setOnClickListener {
+            showCircleLoading()
             signInWithGoogle()
         }
 
@@ -104,6 +117,7 @@ class LoginActivity : AppCompatActivity() {
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
             if (validateForm(email, password)) {
+                showCircleLoading()
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
@@ -111,10 +125,12 @@ class LoginActivity : AppCompatActivity() {
                             preferences.edit().putString("userUid", auth.currentUser?.uid).apply()
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, ShowProfile::class.java)
+                            stopCircleLoading()
                             startActivity(intent)
                             finish()
                         } else {
                             val errorCode = task.exception?.message
+                            stopCircleLoading()
                             Toast.makeText(this, "Error : $errorCode", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -131,23 +147,23 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
         val buttonFacebookLogin = findViewById<ImageView>(R.id.facebookImg)
         buttonFacebookLogin.setOnClickListener {
+            showCircleLoading()
             signInWithFacebook()
         }
         LoginManager.getInstance()
             .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
                     handleFacebookAccessToken(result.accessToken)
+                    stopCircleLoading()
                 }
 
                 override fun onCancel() {
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Facebook Sign-in Canceled!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    stopCircleLoading()
+                    Toast.makeText(this@LoginActivity, "Facebook Sign-in Canceled!", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onError(error: FacebookException) {
+                    stopCircleLoading()
                     Toast.makeText(
                         this@LoginActivity,
                         "Facebook Sign-in failed. Please try again.",
@@ -158,6 +174,7 @@ class LoginActivity : AppCompatActivity() {
 
         val twitterLoginButton = findViewById<ImageView>(R.id.twitterImg)
         twitterLoginButton.setOnClickListener {
+            showCircleLoading()
             signInWithTwitter()
         }
     }
@@ -337,11 +354,13 @@ class LoginActivity : AppCompatActivity() {
                         preferences.edit().putString("userUid", userId).apply()
                         preferences.edit().putBoolean("isLoggedIn", true).apply()
                         val intent = Intent(this, ShowProfile::class.java)
+                        stopCircleLoading()
                         startActivity(intent)
                         finish() // Optional: Finish the LoginActivity to prevent going back
                     }
                     .addOnFailureListener { e ->
                         // Handle sign-in failure
+                        stopCircleLoading()
                         Toast.makeText(
                             this,
                             "Twitter sign-in failed. Please try again.",
@@ -349,6 +368,19 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                     }
             }
+            .addOnFailureListener{
+                Toast.makeText(
+                    this,
+                    "Twitter sign-in failed. Please try again.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                stopCircleLoading()
+            }
+            .addOnCanceledListener {
+                Toast.makeText(this, "Twitter Sign-in Canceled!", Toast.LENGTH_SHORT).show()
+                stopCircleLoading()
+            }
+        stopCircleLoading()
     }
 
     private fun handleTwitterSignInResult(resultCode: Int, data: Intent) {
@@ -369,5 +401,23 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
                 }
         }
+    }
+    private fun showCircleLoading(){
+        frameLayout.visibility = View.VISIBLE
+        videoView.setOnPreparedListener {
+            it.isLooping = true
+        }
+        // Set the video path from the raw folder
+        val videoPath = "android.resource://" + packageName + "/" + R.raw.circle_loading
+
+        videoView.setVideoURI(Uri.parse(videoPath))
+        // Start playing the video
+        videoView.setZOrderOnTop(true)
+
+        videoView.start()
+    }
+    private fun stopCircleLoading(){
+        frameLayout.visibility = View.GONE
+        videoView.stopPlayback()
     }
 }

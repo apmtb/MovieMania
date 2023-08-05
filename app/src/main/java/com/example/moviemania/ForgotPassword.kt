@@ -1,12 +1,16 @@
 package com.example.moviemania
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
@@ -15,20 +19,37 @@ import com.google.firebase.auth.FirebaseAuth
 class ForgotPassword : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var videoView: VideoView
+    private lateinit var frameLayout: View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.forgot_password)
         auth = FirebaseAuth.getInstance()
+        videoView = findViewById(R.id.videoViewLoadingCircleFP)
+        frameLayout = findViewById(R.id.frameLayoutFP)
         val submitEmailButton = findViewById<Button>(R.id.submitemailforgetpass)
         submitEmailButton.setOnClickListener {
             val email = findViewById<EditText>(R.id.emailforgetpass).text.toString().trim()
             if (validateForm(email)) {
+                frameLayout.visibility = View.VISIBLE
+                videoView.setOnPreparedListener {
+                    it.isLooping = true
+                }
+                // Set the video path from the raw folder
+                val videoPath = "android.resource://" + packageName + "/" + R.raw.circle_loading
+
+                videoView.setVideoURI(Uri.parse(videoPath))
+                // Start playing the video
+                videoView.setZOrderOnTop(true)
+
+                videoView.start()
                 auth.sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
+                        frameLayout.visibility = View.GONE
+                        videoView.stopPlayback()
                         if (task.isSuccessful()) {
                             // Password reset email sent successfully
-                            Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT).show()
                         } else {
                             // Error occurred, display a message to the user
                             Toast.makeText(this,"Email not Found, Sign up if you are new!", Toast.LENGTH_SHORT).show()
