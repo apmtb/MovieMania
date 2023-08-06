@@ -1,11 +1,11 @@
 package com.example.moviemania
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 
-class UserTypeChecker(private val context: Context) {
+class UserTypeChecker(private val activity: Activity) {
     private val db = FirebaseFirestore.getInstance()
     private val adminUsersRef = db.collection("AdminUsers")
 
@@ -20,15 +20,17 @@ class UserTypeChecker(private val context: Context) {
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(context,"Error : ${exception.message}" ,Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity,"Error : ${exception.message}" ,Toast.LENGTH_SHORT).show()
             }
     }
     private fun startAdminActivity() {
-        val intent = Intent(context, ShowProfile::class.java)
-        context.startActivity(intent)
+        val intent = Intent(activity, ShowProfile::class.java)
+        activity.startActivity(intent)
+        activity.finish()
     }
     private fun startUserActivity() {
-        val intent = Intent(context, UserActivity::class.java)
-        context.startActivity(intent)
+        val intent = Intent(activity, UserActivity::class.java)
+        activity.startActivity(intent)
+        activity.finish()
     }
 }

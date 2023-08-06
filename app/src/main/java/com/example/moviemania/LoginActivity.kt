@@ -58,9 +58,7 @@ class LoginActivity : AppCompatActivity() {
                     preferences.edit().putBoolean("isLoggedIn", true).apply()
                     preferences.edit().putString("userUid", account.id).apply()
                     storeUserDataInFireStore(account)
-                    stopCircleLoading()
                     userTypeChecker.checkUserTypeAndNavigate(account.email.toString())
-                    finish()
                 } catch (e: ApiException) {
                     stopCircleLoading()
                     Toast.makeText(
@@ -121,9 +119,7 @@ class LoginActivity : AppCompatActivity() {
                             preferences.edit().putBoolean("isLoggedIn", true).apply()
                             preferences.edit().putString("userUid", auth.currentUser?.uid).apply()
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            stopCircleLoading()
                             userTypeChecker.checkUserTypeAndNavigate(email)
-                            finish()
                         } else {
                             val errorCode = task.exception?.message
                             stopCircleLoading()
@@ -150,7 +146,6 @@ class LoginActivity : AppCompatActivity() {
             .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
                     handleFacebookAccessToken(result.accessToken)
-                    stopCircleLoading()
                 }
 
                 override fun onCancel() {
@@ -272,7 +267,6 @@ class LoginActivity : AppCompatActivity() {
                                 preferences.edit().putBoolean("isLoggedIn", true).apply()
                                 preferences.edit().putString("userUid", userId).apply()
                                 userTypeChecker.checkUserTypeAndNavigate(email)
-                                finish()
                             }
                             .addOnFailureListener {
                                 Toast.makeText(
@@ -322,9 +316,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
                         preferences.edit().putString("userUid", userId).apply()
                         preferences.edit().putBoolean("isLoggedIn", true).apply()
-                        stopCircleLoading()
                         userTypeChecker.checkUserTypeAndNavigate(email)
-                        finish()
                     }
                     .addOnFailureListener {
                         stopCircleLoading()
