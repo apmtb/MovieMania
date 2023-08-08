@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.moviemania.R
 import com.example.moviemania.admin.bottom_fragment.CartFragment
-import com.example.moviemania.admin.bottom_fragment.CategoryFragment
-import com.example.moviemania.admin.bottom_fragment.HistoryFragment
+import com.example.moviemania.admin.bottom_fragment.MoviesFragment
+import com.example.moviemania.admin.bottom_fragment.TheatorsFragment
 import com.example.moviemania.admin.bottom_fragment.NotificationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -27,13 +27,13 @@ class HomeFragment : Fragment() {
         val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottomNavigation)
         bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
-                R.id.bottom_category -> {
-                    replaceFragment(CategoryFragment())
-                    activity?.title = "Category"
+                R.id.bottom_movies -> {
+                    replaceFragment(MoviesFragment())
+                    activity?.title = "Movies"
                 }
-                R.id.bottom_history -> {
-                    replaceFragment(HistoryFragment())
-                    activity?.title = "History"
+                R.id.bottom_theators -> {
+                    replaceFragment(TheatorsFragment())
+                    activity?.title = "Theators"
                 }
                 R.id.bottom_notification -> {
                     replaceFragment(NotificationFragment())
@@ -46,10 +46,9 @@ class HomeFragment : Fragment() {
             }
             true
         }
-
-        replaceFragment(CategoryFragment())
-        activity?.title = "Category"
-        bottomNavigationView.selectedItemId = R.id.bottom_category
+        replaceFragment(MoviesFragment())
+        activity?.title = "Movies"
+        bottomNavigationView.selectedItemId = R.id.bottom_movies
 
         val addFab = view.findViewById<FloatingActionButton>(R.id.addFabBtn)
         addFab.setOnClickListener {
@@ -63,5 +62,4 @@ class HomeFragment : Fragment() {
             .replace(R.id.bottomFragment,fragment)
             .commit()
     }
-
 }

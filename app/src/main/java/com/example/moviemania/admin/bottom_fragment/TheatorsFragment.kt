@@ -1,4 +1,4 @@
-package com.example.moviemania.user.bottom_fragment
+package com.example.moviemania.admin.bottom_fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [CategoryFragment.newInstance] factory method to
+ * Use the [TheatorsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CategoryFragment : Fragment() {
+class TheatorsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -35,7 +35,7 @@ class CategoryFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.user_fragment_category, container, false)
+        return inflater.inflate(R.layout.admin_fragment_theators, container, false)
     }
 
     companion object {
@@ -45,12 +45,12 @@ class CategoryFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment CategoryFragment.
+         * @return A new instance of fragment HistoryFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            CategoryFragment().apply {
+            TheatorsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
