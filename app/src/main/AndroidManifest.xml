@@ -15,7 +15,10 @@
         android:theme="@style/Theme.MovieMania"
         tools:targetApi="31">
         <activity
-            android:name=".UserActivity"
+            android:name=".admin.AdminActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".user.UserActivity"
             android:exported="false" />
         <activity
             android:name=".ForgotPassword"

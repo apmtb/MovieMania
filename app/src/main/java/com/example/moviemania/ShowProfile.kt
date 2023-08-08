@@ -60,7 +60,6 @@ class ShowProfile : AppCompatActivity() {
                 val parent = videoView.parent.parent.parent as ViewGroup
                 parent.removeView(findViewById(R.id.videobg))
             }
-            // User is already logged in, proceed to the profile screen
             if (userId!="") {
                 val userData = fireStore.collection("Users").document(userId)
 

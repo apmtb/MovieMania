@@ -3,6 +3,8 @@ package com.example.moviemania
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import com.example.moviemania.admin.AdminActivity
+import com.example.moviemania.user.UserActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
 class UserTypeChecker(private val activity: Activity) {
@@ -24,7 +26,7 @@ class UserTypeChecker(private val activity: Activity) {
             }
     }
     private fun startAdminActivity() {
-        val intent = Intent(activity, ShowProfile::class.java)
+        val intent = Intent(activity, AdminActivity::class.java)
         activity.startActivity(intent)
         activity.finish()
     }
