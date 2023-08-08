@@ -47,9 +47,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ShowProfile"
-            android:exported="false" />
-        <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
         <activity

@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.core.content.ContextCompat
+import com.example.moviemania.user.UserActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -176,7 +177,7 @@ class RegistrationActivity : AppCompatActivity() {
                                 preferences.edit().putBoolean("isLoggedIn", true).apply()
                                 frameLayout.visibility = View.GONE
                                 videoView.stopPlayback()
-                                val intent = Intent(this, ShowProfile::class.java)
+                                val intent = Intent(this, UserActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             }
