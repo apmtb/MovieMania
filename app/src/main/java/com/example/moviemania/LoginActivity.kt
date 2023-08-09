@@ -28,7 +28,9 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.OAuthProvider
 
 @Suppress("DEPRECATION")
@@ -57,6 +59,10 @@ class LoginActivity : AppCompatActivity() {
                     val account = task.getResult(ApiException::class.java)
                     preferences.edit().putBoolean("isLoggedIn", true).apply()
                     preferences.edit().putString("userUid", account.id).apply()
+                    val authCredential: AuthCredential = GoogleAuthProvider.getCredential(
+                        account.idToken, null
+                    )
+                    auth.signInWithCredential(authCredential)
                     storeUserDataInFireStore(account)
                     userTypeChecker.checkUserTypeAndNavigate(account.email.toString())
                 } catch (e: ApiException) {
@@ -90,6 +96,7 @@ class LoginActivity : AppCompatActivity() {
         userTypeChecker = UserTypeChecker(this)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("835490974290-65ceodpl60mugbumcnf3kar29e0lne6h.apps.googleusercontent.com")
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
