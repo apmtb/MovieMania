@@ -7,9 +7,9 @@
         android:title="Movies" />
 
     <item
-        android:id="@+id/bottom_theators"
-        android:icon="@drawable/ic_theator"
-        android:title="Theators" />
+        android:id="@+id/bottom_theaters"
+        android:icon="@drawable/ic_theater"
+        android:title="Theaters" />
 
     <item
         android:id="@+id/addadminbtn"

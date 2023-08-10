@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/resetpassText"
+            android:id="@+id/newadminText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -24,10 +24,10 @@
 
 
         <EditText
-            android:id="@+id/emailforgetpass"
+            android:id="@+id/emailnewadmin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/resetpassText"
+            android:layout_below="@+id/newadminText"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="50dp"
@@ -44,10 +44,10 @@
             android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/submitemailforgetpass"
+            android:id="@+id/addnewadmin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/emailforgetpass"
+            android:layout_below="@id/emailnewadmin"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
             android:backgroundTint="#2A54EC"
@@ -56,7 +56,7 @@
             android:textSize="20dp" />
 
         <FrameLayout
-            android:id="@+id/frameLayoutFP"
+            android:id="@+id/frameLayoutNA"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#99000000"
@@ -64,7 +64,7 @@
             android:visibility="gone">
 
             <VideoView
-                android:id="@+id/videoViewLoadingCircleFP"
+                android:id="@+id/videoViewLoadingCircleNA"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center" />

@@ -5,12 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.moviemania.R
 import com.example.moviemania.admin.bottom_fragment.AddAdminFragment
 import com.example.moviemania.admin.bottom_fragment.CartFragment
 import com.example.moviemania.admin.bottom_fragment.MoviesFragment
-import com.example.moviemania.admin.bottom_fragment.TheatorsFragment
+import com.example.moviemania.admin.bottom_fragment.TheatersFragment
 import com.example.moviemania.admin.bottom_fragment.NotificationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -32,9 +31,9 @@ class HomeFragment : Fragment() {
                     replaceFragment(MoviesFragment())
                     activity?.title = "Movies"
                 }
-                R.id.bottom_theators -> {
-                    replaceFragment(TheatorsFragment())
-                    activity?.title = "Theators"
+                R.id.bottom_theaters -> {
+                    replaceFragment(TheatersFragment())
+                    activity?.title = "Theaters"
                 }
                 R.id.bottom_notification -> {
                     replaceFragment(NotificationFragment())
