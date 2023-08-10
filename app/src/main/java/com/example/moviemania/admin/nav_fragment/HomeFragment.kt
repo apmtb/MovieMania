@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.moviemania.R
+import com.example.moviemania.admin.bottom_fragment.AddAdminFragment
 import com.example.moviemania.admin.bottom_fragment.CartFragment
 import com.example.moviemania.admin.bottom_fragment.MoviesFragment
 import com.example.moviemania.admin.bottom_fragment.TheatorsFragment
@@ -50,9 +51,10 @@ class HomeFragment : Fragment() {
         activity?.title = "Movies"
         bottomNavigationView.selectedItemId = R.id.bottom_movies
 
-        val addFab = view.findViewById<FloatingActionButton>(R.id.addFabBtn)
+        val addFab = view.findViewById<FloatingActionButton>(R.id.addAdminBtn)
         addFab.setOnClickListener {
-            Toast.makeText(context,"Add Clicked",Toast.LENGTH_LONG).show()
+            replaceFragment(AddAdminFragment())
+            activity?.title = "Add admin"
         }
         return view
     }

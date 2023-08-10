@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
         activity?.title = "Movies"
         bottomNavigationView.selectedItemId = R.id.bottom_movies
 
-        val addFab = view.findViewById<FloatingActionButton>(R.id.addFabBtn)
+        val addFab = view.findViewById<FloatingActionButton>(R.id.addAdminBtn)
         addFab.setOnClickListener {
             Toast.makeText(context,"User Add Clicked",Toast.LENGTH_LONG).show()
         }
