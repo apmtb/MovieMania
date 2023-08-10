@@ -19,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.CastAdapter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -133,7 +132,7 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
     }
 
     private fun showAddCastDialog() {
-        dialogView = layoutInflater.inflate(R.layout.dialog_add_cast, null)
+        dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_cast, null)
         val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButton)
         val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
 
