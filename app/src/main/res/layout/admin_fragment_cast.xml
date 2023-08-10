@@ -46,4 +46,18 @@
         android:numColumns="auto_fit"
         android:verticalSpacing="16dp"
         android:visibility="gone" />
+    <FrameLayout
+        android:id="@+id/frameLayoutAFC"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="visible">
+
+        <VideoView
+            android:id="@+id/videoViewLoadingCircleAFC"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
 </LinearLayout>

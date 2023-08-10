@@ -17,6 +17,7 @@ import android.widget.RadioGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.moviemania.R
@@ -44,6 +45,8 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
     private var param2: String? = null
     private val db = FirebaseFirestore.getInstance()
     private lateinit var dialogView: View
+    private lateinit var videoView: VideoView
+    private lateinit var frameLayout: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,11 +138,25 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
         dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_cast, null)
         val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButton)
         val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
+        videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFC)
+        frameLayout = requireActivity().findViewById(R.id.frameLayoutAFC)
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .setTitle("Add Cast")
             .setPositiveButton("Add") { dialog, _ ->
+                val castGridView = view?.findViewById<GridView>(R.id.castGridView)
+                castGridView?.visibility = View.GONE
+                frameLayout.visibility = View.VISIBLE
+                videoView.setOnPreparedListener {
+                    it.isLooping = true
+                }
+                val videoPath = "android.resource://" + requireContext().packageName + "/" + R.raw.circle_loading
+
+                videoView.setVideoURI(Uri.parse(videoPath))
+                videoView.setZOrderOnTop(true)
+
+                videoView.start()
                 val castName =
                     dialogView.findViewById<EditText>(R.id.castNameEditText).text.toString()
                 val imageOptionRadioGroup =
@@ -156,7 +173,7 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
 
 
                     if (castName.isNotBlank() && selectedImageView.drawable != null) {
-                        uploadImageToFirebaseStorage(selectedImageView) {
+                        uploadImageToFirebaseStorage(selectedImageView,castName) {
                             addCastToFirestore(castName, it)
                         }
                     } else {
@@ -218,40 +235,72 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageView: ImageView, callback: (String) -> Unit) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("cast_images/${UUID.randomUUID()}.jpg")
+    private fun uploadImageToFirebaseStorage(imageView: ImageView,castName: String, callback: (String) -> Unit) {
+        val castCollection = db.collection("Casts")
+        castCollection.whereEqualTo("name", castName)
+            .get()
+            .addOnCompleteListener { task ->
+                val castGridView = view?.findViewById<GridView>(R.id.castGridView)
+                if (task.isSuccessful) {
+                    val querySnapshot = task.result
+                    if (querySnapshot != null && !querySnapshot.isEmpty) {
+                        // Cast name already exists, show an error message
+                        frameLayout.visibility = View.GONE
+                        videoView.stopPlayback()
+                        castGridView?.visibility = View.VISIBLE
+                        showToast("A cast with the same name already exists.")
+                    } else {
+                        val storageRef = FirebaseStorage.getInstance().reference
+                        val imagesRef = storageRef.child("cast_images/${UUID.randomUUID()}.jpg")
 
-        // Get the bitmap from the ImageView
-        val drawable = imageView.drawable
-        val bitmap = Bitmap.createBitmap(
-            drawable.intrinsicWidth,
-            drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
+                        // Get the bitmap from the ImageView
+                        val drawable = imageView.drawable
+                        val bitmap = Bitmap.createBitmap(
+                            drawable.intrinsicWidth,
+                            drawable.intrinsicHeight,
+                            Bitmap.Config.ARGB_8888
+                        )
+                        val canvas = Canvas(bitmap)
+                        drawable.setBounds(0, 0, canvas.width, canvas.height)
+                        drawable.draw(canvas)
 
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
+                        val baos = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                        val data = baos.toByteArray()
 
-        val uploadTask = imagesRef.putBytes(data)
-        uploadTask.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
-                    if (urlTask.isSuccessful) {
-                        val imageUrl = urlTask.result.toString()
-                        callback(imageUrl)
+                        val uploadTask = imagesRef.putBytes(data)
+                        uploadTask.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
+                                    if (urlTask.isSuccessful) {
+                                        frameLayout.visibility = View.GONE
+                                        videoView.stopPlayback()
+                                        val imageUrl = urlTask.result.toString()
+                                        callback(imageUrl)
+                                    } else {
+                                        frameLayout.visibility = View.GONE
+                                        videoView.stopPlayback()
+                                        castGridView?.visibility = View.VISIBLE
+                                    }
+                                }
+                            } else {
+                                frameLayout.visibility = View.GONE
+                                videoView.stopPlayback()
+                                castGridView?.visibility = View.VISIBLE
+                            }
+                        }
                     }
+                } else {
+                    frameLayout.visibility = View.GONE
+                    videoView.stopPlayback()
+                    castGridView?.visibility = View.VISIBLE
                 }
             }
-        }
     }
 
     private fun addCastToFirestore(castName: String, imageUri: String) {
         val castCollection = db.collection("Casts")
+        val castGridView = view?.findViewById<GridView>(R.id.castGridView)
 
         castCollection.whereEqualTo("name", castName)
             .get()
@@ -259,7 +308,9 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
                 if (task.isSuccessful) {
                     val querySnapshot = task.result
                     if (querySnapshot != null && !querySnapshot.isEmpty) {
-                        // Cast name already exists, show an error message
+                        frameLayout.visibility = View.GONE
+                        videoView.stopPlayback()
+                        castGridView?.visibility = View.VISIBLE
                         showToast("A cast with the same name already exists.")
                     } else {
 
@@ -271,13 +322,21 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
                         castCollection.add(castData)
                             .addOnSuccessListener {
                                 showToast("Cast added successfully.")
+                                frameLayout.visibility = View.GONE
+                                videoView.stopPlayback()
                                 loadCastData() // Reload the cast data after adding a new cast
                             }
                             .addOnFailureListener { exception ->
+                                frameLayout.visibility = View.GONE
+                                videoView.stopPlayback()
+                                castGridView?.visibility = View.VISIBLE
                                 showToast("Error adding cast: $exception")
                             }
                     }
                 } else {
+                    frameLayout.visibility = View.GONE
+                    videoView.stopPlayback()
+                    castGridView?.visibility = View.VISIBLE
                     showToast("Error checking cast name: ${task.exception}")
                 }
             }
