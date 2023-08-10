@@ -31,7 +31,7 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         castNameTextView.text = cast.name
 
         if(castNameTextView.text.isEmpty()){
-            castImageView.setImageResource(R.drawable.ic_add_24)
+            castImageView.setImageResource(R.drawable.ic_add_circle_24)
             itemView.setOnClickListener {
                 callback.onAddButtonClick()
             }
