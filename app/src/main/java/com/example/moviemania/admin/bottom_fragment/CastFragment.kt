@@ -250,21 +250,36 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
         }
     }
 
-    private fun addCastToFirestore(name: String, imageUri: String) {
+    private fun addCastToFirestore(castName: String, imageUri: String) {
         val castCollection = db.collection("Casts")
 
-        val newCast = hashMapOf(
-            "name" to name,
-            "imageUri" to imageUri
-        )
+        castCollection.whereEqualTo("name", castName)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val querySnapshot = task.result
+                    if (querySnapshot != null && !querySnapshot.isEmpty) {
+                        // Cast name already exists, show an error message
+                        showToast("A cast with the same name already exists.")
+                    } else {
 
-        castCollection.add(newCast)
-            .addOnSuccessListener {
-                showToast("Cast added successfully.")
-                loadCastData() // Refresh the cast data after adding
-            }
-            .addOnFailureListener {
-                showToast("Failed to add cast.")
+                        val castData = hashMapOf(
+                            "name" to castName,
+                            "imageUri" to imageUri
+                        )
+
+                        castCollection.add(castData)
+                            .addOnSuccessListener {
+                                showToast("Cast added successfully.")
+                                loadCastData() // Reload the cast data after adding a new cast
+                            }
+                            .addOnFailureListener { exception ->
+                                showToast("Error adding cast: $exception")
+                            }
+                    }
+                } else {
+                    showToast("Error checking cast name: ${task.exception}")
+                }
             }
     }
 
