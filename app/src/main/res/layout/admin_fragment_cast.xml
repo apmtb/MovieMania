@@ -52,7 +52,7 @@
         android:layout_height="match_parent"
         android:background="#99000000"
         android:clickable="true"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <VideoView
             android:id="@+id/videoViewLoadingCircleAFC"
