@@ -224,6 +224,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
+                    stopCircleLoading()
                     Toast.makeText(
                         this,
                         "Google Sign-in failed. Please try again.",
@@ -275,6 +276,7 @@ class LoginActivity : AppCompatActivity() {
                                 userTypeChecker.checkUserTypeAndNavigate(email)
                             }
                             .addOnFailureListener {
+                                stopCircleLoading()
                                 Toast.makeText(
                                     this,
                                     "Facebook Sign-in failed. Please try again.",
