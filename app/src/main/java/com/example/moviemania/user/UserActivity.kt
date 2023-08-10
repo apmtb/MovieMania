@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.moviemania.LoginActivity
 import com.example.moviemania.R
 import com.example.moviemania.user.nav_fragment.HomeFragment
@@ -24,7 +25,6 @@ import com.example.moviemania.user.nav_fragment.SettingFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.squareup.picasso.Picasso
 
 class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var auth: FirebaseAuth
@@ -106,14 +106,16 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             imageView.clipToOutline = true
                             // Load the user's profile image in the ImageView
                             if (photoUrl.isNotEmpty()) {
-                                Picasso.get()
+                                Glide.with(this)
                                     .load(photoUrl)
-                                    .error(R.drawable.default_logo) // Set an error image if loading fails
+                                    .error(R.drawable.default_logo)
+                                    .placeholder(R.drawable.ic_image_placeholder)
                                     .into(imageView)
                             } else {
-                                Picasso.get()
+                                Glide.with(this)
                                     .load(R.drawable.default_logo)
-                                    .error(R.drawable.default_logo)// Set an error image if loading fails
+                                    .error(R.drawable.default_logo)
+                                    .placeholder(R.drawable.ic_image_placeholder)
                                     .into(imageView)
                             }
                             textUsername.text = displayName

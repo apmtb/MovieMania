@@ -10,7 +10,7 @@ import com.example.moviemania.admin.bottom_fragment.AddAdminFragment
 import com.example.moviemania.admin.bottom_fragment.CartFragment
 import com.example.moviemania.admin.bottom_fragment.MoviesFragment
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
-import com.example.moviemania.admin.bottom_fragment.NotificationFragment
+import com.example.moviemania.admin.bottom_fragment.CastFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -35,9 +35,9 @@ class HomeFragment : Fragment() {
                     replaceFragment(TheatersFragment())
                     activity?.title = "Theaters"
                 }
-                R.id.bottom_notification -> {
-                    replaceFragment(NotificationFragment())
-                    activity?.title = "Notification"
+                R.id.bottom_cast -> {
+                    replaceFragment(CastFragment())
+                    activity?.title = "Cast"
                 }
                 R.id.bottom_cart -> {
                     replaceFragment(CartFragment())
