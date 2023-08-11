@@ -28,21 +28,8 @@ import java.io.ByteArrayOutputStream
 import java.util.UUID
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CastFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 @Suppress("DEPRECATION")
-class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class CastFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var dialogView: View
     private lateinit var videoView: VideoView
@@ -50,10 +37,7 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        instance = this
     }
 
     override fun onCreateView(
@@ -74,23 +58,11 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NotificationFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CastFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        private var instance: CastFragment? = null
+        fun newInstance():CastFragment? {
+            return instance
+        }
     }
 
     private fun loadCastData() {
@@ -118,10 +90,8 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
                             castList.add(cast)
                         }
                     }
-                    val drawableCast = Cast("", "")
-                    castList.add(drawableCast)
 
-                    val castAdapter = CastAdapter(requireContext(), castList, this)
+                    val castAdapter = CastAdapter(requireContext(), castList)
                     castGridView?.adapter = castAdapter
                 }
             }
@@ -130,7 +100,7 @@ class CastFragment : Fragment(), CastAdapter.OnAddButtonClickListener {
             }
     }
 
-    override fun onAddButtonClick() {
+    fun buttonClick() {
         showAddCastDialog()
     }
 

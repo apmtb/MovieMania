@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.moviemania.R
-import com.example.moviemania.admin.bottom_fragment.AddAdminFragment
 import com.example.moviemania.admin.bottom_fragment.CartFragment
 import com.example.moviemania.admin.bottom_fragment.MoviesFragment
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
@@ -16,7 +16,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class HomeFragment : Fragment() {
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,10 +49,23 @@ class HomeFragment : Fragment() {
         activity?.title = "Movies"
         bottomNavigationView.selectedItemId = R.id.bottom_movies
 
-        val addFab = view.findViewById<FloatingActionButton>(R.id.addAdminBtn)
-        addFab.setOnClickListener {
-            replaceFragment(AddAdminFragment())
-            activity?.title = "Add admin"
+        val addAdminBtn = view.findViewById<FloatingActionButton>(R.id.addAdminBtn)
+        addAdminBtn.setOnClickListener {
+            when (bottomNavigationView.selectedItemId) {
+                R.id.bottom_movies -> {
+                    showToast("Movies")
+                }
+                R.id.bottom_theaters -> {
+                    showToast("theaters")
+                }
+                R.id.bottom_cast -> {
+                    val cf = CastFragment.newInstance()
+                    cf?.buttonClick()
+                }
+                R.id.bottom_cart -> {
+                    showToast("Cart")
+                }
+            }
         }
         return view
     }
@@ -62,5 +74,8 @@ class HomeFragment : Fragment() {
             .beginTransaction()
             .replace(R.id.bottomFragment,fragment)
             .commit()
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

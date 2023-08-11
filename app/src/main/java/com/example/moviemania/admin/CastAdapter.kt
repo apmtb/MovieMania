@@ -11,11 +11,8 @@ import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.bottom_fragment.CastFragment
 
-class CastAdapter(private val context: Context, private val castList: List<CastFragment.Cast>, private val callback: OnAddButtonClickListener) : BaseAdapter() {
+class CastAdapter(private val context: Context, private val castList: List<CastFragment.Cast>) : BaseAdapter() {
 
-    interface OnAddButtonClickListener {
-        fun onAddButtonClick()
-    }
     override fun getCount(): Int = castList.size
 
     override fun getItem(position: Int): Any = castList[position]
@@ -25,20 +22,11 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val cast = getItem(position) as CastFragment.Cast
         val itemView = convertView ?: LayoutInflater.from(context).inflate(R.layout.grid_item_cast, parent, false)
-
         val castImageView = itemView.findViewById<ImageView>(R.id.castImageView)
         val castNameTextView = itemView.findViewById<TextView>(R.id.castNameTextView)
         castNameTextView.text = cast.name
-
-        if(castNameTextView.text.isEmpty()){
-            castImageView.setImageResource(R.drawable.ic_add_circle_24)
-            itemView.setOnClickListener {
-                callback.onAddButtonClick()
-            }
-        } else {
-            val uri = cast.imageUri
-            Glide.with(context).load(uri).centerCrop().error(R.drawable.ic_custom_error).placeholder(R.drawable.ic_image_placeholder).into(castImageView)
-        }
+        val uri = cast.imageUri
+        Glide.with(context).load(uri).centerCrop().error(R.drawable.ic_custom_error).placeholder(R.drawable.ic_image_placeholder).into(castImageView)
         return itemView
     }
 }
