@@ -45,7 +45,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
 
         val screenHeight = displaymetrics.heightPixels
         val screenWidth = displaymetrics.widthPixels
-        imageViewLayoutParams.width = (screenWidth*0.8).toInt()
+        imageViewLayoutParams.width = (screenWidth*0.85).toInt()
         imageViewLayoutParams.height = (screenHeight*0.20).toInt()
 
         Glide.with(context)
