@@ -58,7 +58,7 @@ class CastFragment : Fragment() {
     }
 
     companion object {
-        @JvmStatic
+        @Volatile
         private var instance: CastFragment? = null
         fun newInstance():CastFragment? {
             return instance
@@ -104,7 +104,7 @@ class CastFragment : Fragment() {
         }
     }
 
-    fun buttonClick() {
+    fun addCastButtonClick() {
         showAddCastDialog()
     }
 
@@ -121,7 +121,9 @@ class CastFragment : Fragment() {
                 .setTitle("Add Cast")
                 .setPositiveButton("Add") { dialog, _ ->
                     val castGridView = view?.findViewById<GridView>(R.id.castGridView)
+                    val noCastTextView = view?.findViewById<RelativeLayout>(R.id.noCastTextView)
                     castGridView?.visibility = View.GONE
+                    noCastTextView?.visibility = View.GONE
                     frameLayout.visibility = View.VISIBLE
                     videoView.setOnPreparedListener {
                         it.isLooping = true

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".admin.bottom_fragment.TheatersFragment">
+
+    <RelativeLayout
+        android:id="@+id/noTheaterTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/noTheaterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Theater added!  "
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/addTheaterTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/noTheaterText"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_toEndOf="@id/noTheaterText"
+            android:text="Add now"
+            android:textColor="#1E83D1"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/theaterGridView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="60dp"
+        android:horizontalSpacing="16dp"
+        android:numColumns="1"
+        android:verticalSpacing="16dp"
+        android:visibility="gone" />
+    <FrameLayout
+        android:id="@+id/frameLayoutAFT"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <VideoView
+            android:id="@+id/videoViewLoadingCircleAFT"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</LinearLayout>

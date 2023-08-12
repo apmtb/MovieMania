@@ -56,11 +56,12 @@ class HomeFragment : Fragment() {
                     showToast("Movies")
                 }
                 R.id.bottom_theaters -> {
-                    showToast("theaters")
+                    val tf = TheatersFragment.newInstance()
+                    tf?.addTheaterButtonClick()
                 }
                 R.id.bottom_cast -> {
                     val cf = CastFragment.newInstance()
-                    cf?.buttonClick()
+                    cf?.addCastButtonClick()
                 }
                 R.id.bottom_cart -> {
                     showToast("Cart")

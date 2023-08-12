@@ -6,25 +6,25 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/castNameEditText"
+        android:id="@+id/theaterNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Cast Name"/>
+        android:hint="Theater Name" />
 
     <RadioGroup
-        android:id="@+id/imageOptionRadioGroup"
+        android:id="@+id/imageOptionRadioGroupTheater"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/uploadImageRadioButton"
+            android:id="@+id/uploadImageRadioButtonTheater"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Upload Image"/>
 
         <RadioButton
-            android:id="@+id/urlRadioButton"
+            android:id="@+id/urlRadioButtonTheater"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enter URL"/>
@@ -32,35 +32,50 @@
     </RadioGroup>
 
     <EditText
-        android:id="@+id/castImageInput"
+        android:id="@+id/theaterImageInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Image URL"
         android:visibility="gone"/>
 
     <RelativeLayout
-        android:id="@+id/imageContainer"
+        android:id="@+id/imageContainerTheater"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:visibility="gone">
 
         <ImageView
-            android:id="@+id/selectedImageView"
+            android:id="@+id/theaterImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/image_border"/>
+            android:background="@drawable/image_border" />
 
         <Button
-            android:id="@+id/uploadImageButton"
+            android:id="@+id/uploadImageButtonTheater"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_below="@id/theaterImageView"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/selectedImageView"
-            android:text="Upload Image"
-            android:visibility="visible"/>
+            android:text="Upload Image" />
     </RelativeLayout>
 
+    <EditText
+        android:id="@+id/theaterLocationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Location" />
+
+    <EditText
+        android:id="@+id/seatColLengthEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Seat Column Length"/>
+
+    <EditText
+        android:id="@+id/seatRowLengthEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Seat Row Length"/>
 </LinearLayout>
