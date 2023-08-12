@@ -33,6 +33,15 @@ class SeatAdapter(
 
         val seatImageView: ImageView = view.findViewById(R.id.seatImageView)
 
+
+        val imageViewLayoutParams = seatImageView.layoutParams
+        val displaymetrics = context.resources.displayMetrics
+
+        val screenHeight = displaymetrics.heightPixels
+        val screenWidth = displaymetrics.widthPixels
+        imageViewLayoutParams.width = (screenWidth*0.10).toInt()
+        imageViewLayoutParams.height = imageViewLayoutParams.width
+
         if (seat.isSelected) {
             seatImageView.setImageResource(R.drawable.ic_seat_selected)
         } else {

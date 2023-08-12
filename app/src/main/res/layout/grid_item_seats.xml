@@ -8,6 +8,7 @@
         android:id="@+id/seatImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:padding="5dp"
         android:src="@drawable/ic_seat_available"/>
 
     <!-- Add any additional views or elements for seat status, such as seat number, etc. -->

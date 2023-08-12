@@ -5,17 +5,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="10dp">
 
     <!-- Add a GridView to display the seat icons -->
 
     <GridView
         android:id="@+id/seatGridView"
+        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:numColumns="auto_fit"
-        android:horizontalSpacing="8dp"
-        android:verticalSpacing="8dp"/>
+        android:numColumns="auto_fit"/>
 
     <Button
         android:id="@+id/closeButton"

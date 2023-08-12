@@ -103,9 +103,8 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val numRows = theater.seatRowLength
         val numColumns = theater.seatColLength
 
-        val seatList = ArrayList<Seat>()
-
-        // Populate seatList with seat data
+        seatGridView.numColumns = numColumns
+        val seatList = generateSeatList(theater.seatColLength, theater.seatRowLength)
 
         val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns)
         seatGridView.adapter = seatAdapter
@@ -122,9 +121,20 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         seatDialog.show()
     }
 
+    private fun generateSeatList(cols: Int, rows: Int): List<Seat> {
+        val seatList = ArrayList<Seat>()
+        for (row in 1..rows) {
+            for (col in 1..cols) {
+                val seat = Seat(col, row, false)
+                seatList.add(seat)
+            }
+        }
+        return seatList
+    }
+
     data class Seat(
-        val row: Int,
         val column: Int,
+        val row: Int,
         val isSelected: Boolean
     )
 }
