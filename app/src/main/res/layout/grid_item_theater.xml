@@ -2,7 +2,7 @@
 <!-- grid_item_theater.xml -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -15,11 +15,11 @@
 
     <TextView
         android:id="@+id/theaterNameTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="#1E83D1"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:layout_gravity="center"/>
 </LinearLayout>
