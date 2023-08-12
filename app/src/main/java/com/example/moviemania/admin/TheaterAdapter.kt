@@ -30,7 +30,6 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val theater = theaters[position]
-        val inflater = LayoutInflater.from(context)
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.grid_item_theater, parent, false)
 
         val theaterImageView = view.findViewById<ImageView>(R.id.theaterImageView)
