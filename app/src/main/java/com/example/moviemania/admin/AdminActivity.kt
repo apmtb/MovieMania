@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.moviemania.LoginActivity
 import com.example.moviemania.R
+import com.example.moviemania.admin.nav_fragment.AddAdminFragment
 import com.example.moviemania.admin.nav_fragment.HomeFragment
 import com.example.moviemania.admin.nav_fragment.ProfileFragment
 import com.example.moviemania.admin.nav_fragment.SettingFragment
@@ -196,6 +197,10 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.nav_profile -> {
                 replaceFragment(ProfileFragment())
                 title = "Profile"
+            }
+            R.id.nav_add_admin -> {
+                replaceFragment(AddAdminFragment())
+                title = "Add admin"
             }
             R.id.nav_setting -> {
                 replaceFragment(SettingFragment())
