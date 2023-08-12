@@ -12,11 +12,11 @@ import android.widget.EditText
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.core.content.ContextCompat
-import com.example.moviemania.user.UserActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class RegistrationActivity : AppCompatActivity() {
+    private lateinit var userTypeChecker: UserTypeChecker
     private lateinit var preferences: SharedPreferences
     private lateinit var auth: FirebaseAuth
     private lateinit var fireStore: FirebaseFirestore
@@ -39,6 +39,7 @@ class RegistrationActivity : AppCompatActivity() {
         confirmPasswordEditText = findViewById(R.id.password2)
         videoView = findViewById(R.id.videoViewLoadingCircleRP)
         frameLayout = findViewById(R.id.frameLayoutRP)
+        userTypeChecker = UserTypeChecker(this)
 
         val signUpButton = findViewById<Button>(R.id.signupbtn)
         signUpButton.setOnClickListener {
@@ -177,9 +178,7 @@ class RegistrationActivity : AppCompatActivity() {
                                 preferences.edit().putBoolean("isLoggedIn", true).apply()
                                 frameLayout.visibility = View.GONE
                                 videoView.stopPlayback()
-                                val intent = Intent(this, UserActivity::class.java)
-                                startActivity(intent)
-                                finish()
+                                userTypeChecker.checkUserTypeAndNavigate(email)
                             }
                             .addOnFailureListener {
                                 frameLayout.visibility = View.GONE
