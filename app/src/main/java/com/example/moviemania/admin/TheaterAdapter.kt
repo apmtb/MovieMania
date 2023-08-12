@@ -37,10 +37,6 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
 
         theaterNameTextView.text = theater.name
 
-        val aspectRatio = 16.0 / 9.0
-        val imageViewLayoutParams = theaterImageView.layoutParams
-        imageViewLayoutParams.height = (imageViewLayoutParams.width / aspectRatio).toInt()
-
         Glide.with(context)
             .load(theater.imageUri)
             .placeholder(R.drawable.ic_image_placeholder)
