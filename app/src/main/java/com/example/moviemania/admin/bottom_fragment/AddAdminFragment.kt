@@ -65,7 +65,7 @@ class AddAdminFragment : Fragment() {
                 videoView.start()
                 val adminMailCollection = db.collection("AdminUsers")
 
-                adminMailCollection.whereEqualTo("email", email)
+                adminMailCollection.whereEqualTo("email", email.trim())
                     .get()
                     .addOnSuccessListener { querySnapshot ->
                         frameLayout.visibility = View.GONE

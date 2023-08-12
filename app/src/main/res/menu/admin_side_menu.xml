@@ -12,6 +12,9 @@
         <item android:id="@+id/nav_profile"
             android:title="Profile"
             android:icon="@drawable/ic_profile_24"/>
+        <item android:id="@+id/nav_add_admin"
+            android:title="Add new admin"
+            android:icon="@drawable/ic_add_admin"/>
         <item android:id="@+id/nav_setting"
             android:title="Setting"
             android:icon="@drawable/ic_settings_24"/>

@@ -12,7 +12,7 @@ class UserTypeChecker(private val activity: Activity) {
     private val adminUsersRef = db.collection("AdminUsers")
 
     fun checkUserTypeAndNavigate(userEmail: String) {
-        adminUsersRef.whereEqualTo("email", userEmail)
+        adminUsersRef.whereEqualTo("email", userEmail.trim())
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (!querySnapshot.isEmpty) {

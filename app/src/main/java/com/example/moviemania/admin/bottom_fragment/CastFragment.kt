@@ -216,7 +216,7 @@ class CastFragment : Fragment() {
 
     private fun uploadImageToFirebaseStorage(imageView: ImageView,castName: String, callback: (String) -> Unit) {
         val castCollection = db.collection("Casts")
-        castCollection.whereEqualTo("name", castName)
+        castCollection.whereEqualTo("name", castName.trim())
             .get()
             .addOnCompleteListener { task ->
                 val castGridView = view?.findViewById<GridView>(R.id.castGridView)
@@ -281,7 +281,7 @@ class CastFragment : Fragment() {
         val castCollection = db.collection("Casts")
         val castGridView = view?.findViewById<GridView>(R.id.castGridView)
 
-        castCollection.whereEqualTo("name", castName)
+        castCollection.whereEqualTo("name", castName.trim())
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
