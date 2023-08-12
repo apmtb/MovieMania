@@ -68,7 +68,7 @@ class CastFragment : Fragment() {
     private fun loadCastData() {
         if (isAdded) {
             val castCollection = db.collection("Casts")
-            val noCastTextView = requireActivity().findViewById<RelativeLayout>(R.id.noCastTextView)
+            val noCastTextView = requireView().findViewById<RelativeLayout>(R.id.noCastTextView)
             val castGridView = view?.findViewById<GridView>(R.id.castGridView)
             castCollection.get()
                 .addOnSuccessListener { querySnapshot ->
