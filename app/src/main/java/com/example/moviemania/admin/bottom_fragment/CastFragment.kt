@@ -92,8 +92,10 @@ class CastFragment : Fragment() {
                             }
                         }
 
-                        val castAdapter = CastAdapter(requireContext(), castList)
-                        castGridView?.adapter = castAdapter
+                        if(isAdded) {
+                            val castAdapter = CastAdapter(requireContext(), castList)
+                            castGridView?.adapter = castAdapter
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
