@@ -1,6 +1,7 @@
 package com.example.moviemania.admin
 
 import android.content.Context
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
+
 
 class TheaterAdapter(private val context: Context, private val theaters: List<TheatersFragment.Theater>) : BaseAdapter() {
 
@@ -36,6 +38,15 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val theaterNameTextView = view.findViewById<TextView>(R.id.theaterNameTextView)
 
         theaterNameTextView.text = theater.name
+
+
+        val imageViewLayoutParams = theaterImageView.layoutParams
+        val displaymetrics = context.resources.displayMetrics
+
+        val screenHeight = displaymetrics.heightPixels
+        val screenWidth = displaymetrics.widthPixels
+        imageViewLayoutParams.width = (screenWidth*0.8).toInt()
+        imageViewLayoutParams.height = (screenHeight*0.20).toInt()
 
         Glide.with(context)
             .load(theater.imageUri)

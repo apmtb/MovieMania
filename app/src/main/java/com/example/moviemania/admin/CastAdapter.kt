@@ -25,6 +25,13 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         val castImageView = itemView.findViewById<ImageView>(R.id.castImageView)
         val castNameTextView = itemView.findViewById<TextView>(R.id.castNameTextView)
         castNameTextView.text = cast.name
+        val imageViewLayoutParams = castImageView.layoutParams
+        val displaymetrics = context.resources.displayMetrics
+
+        val screenHeight = displaymetrics.heightPixels
+        val screenWidth = displaymetrics.widthPixels
+        imageViewLayoutParams.width = (screenWidth*0.3).toInt()
+        imageViewLayoutParams.height = (screenHeight*0.20).toInt()
         val uri = cast.imageUri
         Glide.with(context).load(uri).centerCrop().error(R.drawable.ic_custom_error).placeholder(R.drawable.ic_image_placeholder).into(castImageView)
         return itemView

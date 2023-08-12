@@ -313,11 +313,11 @@ class TheatersFragment : Fragment() {
                             val name = document.getString("name")
                             val imageUri = document.getString("imageUri")
                             val location = document.getString("location")
-                            val seatColNum = document.getLong("seatColNum")?.toInt() ?: 0
-                            val seatRowNum = document.getLong("seatRowNum")?.toInt() ?: 0
+                            val seatColNum = document.getString("seatColnum")?.toIntOrNull() ?: 0
+                            val seatRowNum = document.getString("seatRownum")?.toIntOrNull() ?: 0
 
-                            if (name != null && location != null && imageUri != null && seatRowNum != 0 && seatColNum != 0) {
-                                val theater = Theater(name, location, Uri.parse(imageUri).toString(), seatColNum, seatRowNum)
+                            if (name != null && location != null && imageUri != null && seatRowNum > 0 && seatColNum > 0) {
+                                val theater = Theater(name, Uri.parse(imageUri).toString(), location, seatColNum, seatRowNum)
                                 theaterList.add(theater)
                             }
                         }
