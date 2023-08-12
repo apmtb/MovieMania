@@ -66,38 +66,40 @@ class CastFragment : Fragment() {
     }
 
     private fun loadCastData() {
-        val castCollection = db.collection("Casts")
-        val noCastTextView = requireActivity().findViewById<RelativeLayout>(R.id.noCastTextView)
-        val castGridView = view?.findViewById<GridView>(R.id.castGridView)
-        castCollection.get()
-            .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.isEmpty) {
-                    noCastTextView.visibility = View.VISIBLE
-                    castGridView?.visibility = View.GONE
-                } else {
-                    noCastTextView.visibility = View.GONE
-                    castGridView?.visibility = View.VISIBLE
+        if (isAdded) {
+            val castCollection = db.collection("Casts")
+            val noCastTextView = requireActivity().findViewById<RelativeLayout>(R.id.noCastTextView)
+            val castGridView = view?.findViewById<GridView>(R.id.castGridView)
+            castCollection.get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.isEmpty) {
+                        noCastTextView.visibility = View.VISIBLE
+                        castGridView?.visibility = View.GONE
+                    } else {
+                        noCastTextView.visibility = View.GONE
+                        castGridView?.visibility = View.VISIBLE
 
 
-                    val castList = ArrayList<Cast>()
+                        val castList = ArrayList<Cast>()
 
-                    for (document in querySnapshot.documents) {
-                        val name = document.getString("name")
-                        val imageUri = document.getString("imageUri")
+                        for (document in querySnapshot.documents) {
+                            val name = document.getString("name")
+                            val imageUri = document.getString("imageUri")
 
-                        if (name != null && imageUri != null) {
-                            val cast = Cast(name, Uri.parse(imageUri).toString())
-                            castList.add(cast)
+                            if (name != null && imageUri != null) {
+                                val cast = Cast(name, Uri.parse(imageUri).toString())
+                                castList.add(cast)
+                            }
                         }
-                    }
 
-                    val castAdapter = CastAdapter(requireContext(), castList)
-                    castGridView?.adapter = castAdapter
+                        val castAdapter = CastAdapter(requireContext(), castList)
+                        castGridView?.adapter = castAdapter
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                showToast("Error : $exception")
-            }
+                .addOnFailureListener { exception ->
+                    showToast("Error : $exception")
+                }
+        }
     }
 
     fun buttonClick() {
@@ -105,90 +107,95 @@ class CastFragment : Fragment() {
     }
 
     private fun showAddCastDialog() {
-        dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_cast, null)
-        val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButton)
-        val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
-        videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFC)
-        frameLayout = requireActivity().findViewById(R.id.frameLayoutAFC)
+        if(isAdded) {
+            dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_cast, null)
+            val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButton)
+            val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
+            videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFC)
+            frameLayout = requireActivity().findViewById(R.id.frameLayoutAFC)
 
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setTitle("Add Cast")
-            .setPositiveButton("Add") { dialog, _ ->
-                val castGridView = view?.findViewById<GridView>(R.id.castGridView)
-                castGridView?.visibility = View.GONE
-                frameLayout.visibility = View.VISIBLE
-                videoView.setOnPreparedListener {
-                    it.isLooping = true
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setTitle("Add Cast")
+                .setPositiveButton("Add") { dialog, _ ->
+                    val castGridView = view?.findViewById<GridView>(R.id.castGridView)
+                    castGridView?.visibility = View.GONE
+                    frameLayout.visibility = View.VISIBLE
+                    videoView.setOnPreparedListener {
+                        it.isLooping = true
+                    }
+                    val videoPath =
+                        "android.resource://" + requireContext().packageName + "/" + R.raw.circle_loading
+
+                    videoView.setVideoURI(Uri.parse(videoPath))
+                    videoView.setZOrderOnTop(true)
+
+                    videoView.start()
+                    val castName =
+                        dialogView.findViewById<EditText>(R.id.castNameEditText).text.toString()
+                    val imageOptionRadioGroup =
+                        dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
+                    val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
+                    val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButton
+
+                    val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
+                    val selectedImageView =
+                        dialogView.findViewById<ImageView>(R.id.selectedImageView)
+
+                    if (isUploadImage) {
+                        imageContainer.visibility = View.VISIBLE
+                        castImageInput.visibility = View.GONE
+
+
+                        if (castName.isNotBlank() && selectedImageView.drawable != null) {
+                            uploadImageToFirebaseStorage(selectedImageView, castName) {
+                                addCastToFirestore(castName, it)
+                            }
+                        } else {
+                            showToast("Please enter cast name and image.")
+                        }
+                        dialog.dismiss()
+                    } else {
+                        imageContainer.visibility = View.GONE
+                        castImageInput.visibility = View.VISIBLE
+                        val imageUrl = castImageInput.text.toString()
+                        if (castName.isNotBlank() && imageUrl.isNotBlank()) {
+                            addCastToFirestore(castName, imageUrl)
+                        } else {
+                            showToast("Please enter cast name and image.")
+                        }
+                    }
                 }
-                val videoPath = "android.resource://" + requireContext().packageName + "/" + R.raw.circle_loading
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
 
-                videoView.setVideoURI(Uri.parse(videoPath))
-                videoView.setZOrderOnTop(true)
-
-                videoView.start()
-                val castName =
-                    dialogView.findViewById<EditText>(R.id.castNameEditText).text.toString()
-                val imageOptionRadioGroup =
-                    dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
-                val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
-                val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButton
-
+            val imageOptionRadioGroup =
+                dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
+            imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
                 val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
-                val selectedImageView = dialogView.findViewById<ImageView>(R.id.selectedImageView)
 
-                if (isUploadImage) {
+                if (checkedId == R.id.uploadImageRadioButton) {
                     imageContainer.visibility = View.VISIBLE
                     castImageInput.visibility = View.GONE
-
-
-                    if (castName.isNotBlank() && selectedImageView.drawable != null) {
-                        uploadImageToFirebaseStorage(selectedImageView,castName) {
-                            addCastToFirestore(castName, it)
-                        }
-                    } else {
-                        showToast("Please enter cast name and image.")
-                    }
-                    dialog.dismiss()
                 } else {
                     imageContainer.visibility = View.GONE
                     castImageInput.visibility = View.VISIBLE
-                    val imageUrl = castImageInput.text.toString()
-                    if (castName.isNotBlank() && imageUrl.isNotBlank()) {
-                        addCastToFirestore(castName, imageUrl)
-                    } else {
-                        showToast("Please enter cast name and image.")
-                    }
                 }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
+            uploadImageButton.setOnClickListener {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(
+                    Intent.createChooser(intent, "Select Picture"),
+                    123
+                )
             }
-            .create()
 
-        val imageOptionRadioGroup = dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
-        imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
-
-            if (checkedId == R.id.uploadImageRadioButton) {
-                imageContainer.visibility = View.VISIBLE
-                castImageInput.visibility = View.GONE
-            } else {
-                imageContainer.visibility = View.GONE
-                castImageInput.visibility = View.VISIBLE
-            }
+            dialog.show()
         }
-        uploadImageButton.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(
-                Intent.createChooser(intent, "Select Picture"),
-                123
-            )
-        }
-
-        dialog.show()
     }
 
     @Deprecated("")
