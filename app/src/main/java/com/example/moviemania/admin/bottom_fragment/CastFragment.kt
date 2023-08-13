@@ -156,6 +156,9 @@ class CastFragment : Fragment() {
                                 addCastToFirestore(castName, it)
                             }
                         } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            castGridView?.visibility = View.VISIBLE
                             showToast("Please enter cast name and image.")
                         }
                         dialog.dismiss()
@@ -166,6 +169,9 @@ class CastFragment : Fragment() {
                         if (castName.isNotBlank() && imageUrl.isNotBlank()) {
                             addCastToFirestore(castName, imageUrl)
                         } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            castGridView?.visibility = View.VISIBLE
                             showToast("Please enter cast name and image.")
                         }
                     }
