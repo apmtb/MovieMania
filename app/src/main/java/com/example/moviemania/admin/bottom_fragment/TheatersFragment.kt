@@ -248,6 +248,8 @@ class TheatersFragment : Fragment() {
     private fun addTheaterToFirestore(theaterName: String, imageUri: String, theaterLocation: String,seatColLength: String,seatRowLength: String) {
         val theaterCollection = db.collection("Theaters")
         val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
+        val colLength = seatColLength.toInt()
+        val rowLength = seatRowLength.toInt()
 
         theaterCollection.whereEqualTo("name", theaterName.trim())
             .get()
@@ -260,16 +262,17 @@ class TheatersFragment : Fragment() {
                         theaterGridView?.visibility = View.VISIBLE
                         showToast("A theater with the same name already exists.")
                     } else {
-
-                        val castData = hashMapOf(
+                        val initialSeatState = MutableList(colLength * rowLength) { false }
+                        val theaterData = hashMapOf(
                             "name" to theaterName,
                             "imageUri" to imageUri,
                             "location" to theaterLocation,
                             "seatColnum" to seatColLength,
                             "seatRownum" to seatRowLength,
+                            "seats" to initialSeatState
                         )
 
-                        theaterCollection.add(castData)
+                        theaterCollection.add(theaterData)
                             .addOnSuccessListener {
                                 showToast("Theater added successfully.")
                                 frameLayout.visibility = View.GONE
@@ -315,9 +318,9 @@ class TheatersFragment : Fragment() {
                             val location = document.getString("location")
                             val seatColNum = document.getString("seatColnum")?.toIntOrNull() ?: 0
                             val seatRowNum = document.getString("seatRownum")?.toIntOrNull() ?: 0
-
+                            val seatStates = document.get("seats") as? List<Boolean> ?: emptyList()
                             if (name != null && location != null && imageUri != null && seatRowNum > 0 && seatColNum > 0) {
-                                val theater = Theater(name, Uri.parse(imageUri).toString(), location, seatColNum, seatRowNum)
+                                val theater = Theater(name, Uri.parse(imageUri).toString(), location, seatColNum, seatRowNum, seatStates)
                                 theaterList.add(theater)
                             }
                         }
@@ -335,7 +338,8 @@ class TheatersFragment : Fragment() {
     }
 
 
-    data class Theater(val name: String, val imageUri: String, val theaterLocation: String, val seatColLength: Int, val seatRowLength: Int)
+    data class Theater(val name: String, val imageUri: String, val theaterLocation: String,
+                       val seatColLength: Int, val seatRowLength: Int, val seatStates: List<Boolean>)
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

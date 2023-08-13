@@ -14,9 +14,12 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class TheaterAdapter(private val context: Context, private val theaters: List<TheatersFragment.Theater>) : BaseAdapter() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     override fun getCount(): Int {
         return theaters.size
@@ -97,35 +100,106 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
     private fun showSeatSelectionDialog(theater: TheatersFragment.Theater) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_seat_selection, null)
         val seatGridView: GridView = dialogView.findViewById(R.id.seatGridView)
-        val closeButton: Button = dialogView.findViewById(R.id.closeButton)
 
         // Calculate numRows and numColumns based on theater's seatRowLength and seatColumnLength
         val numRows = theater.seatRowLength
         val numColumns = theater.seatColLength
 
         seatGridView.numColumns = numColumns
-        val seatList = generateSeatList(theater.seatColLength, theater.seatRowLength)
+        val initialSeatList = generateSeatList(theater.seatColLength, theater.seatRowLength)
 
-        val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns)
-        seatGridView.adapter = seatAdapter
-
+        val initialSeatAdapter = SeatAdapter(context, initialSeatList, numRows, numColumns) { _, _ ->
+            // Initial adapter, no need to handle seat status update here
+        }
         val seatDialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setTitle("Select Seats")
+            .setPositiveButton("Book") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
             .create()
 
-        closeButton.setOnClickListener {
-            seatDialog.dismiss()
+        val theaterName = theater.name
+
+        loadSeatData(theaterName, numColumns) { seatList ->
+            val mutableSeatList = seatList.toMutableList()
+            val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns) { seatIndex, isSelected ->
+                updateSeatStatus(theaterName, seatIndex, numColumns, isSelected) { updatedSeatList ->
+                    mutableSeatList.clear()
+                    mutableSeatList.addAll(updatedSeatList)
+                    initialSeatAdapter.notifyDataSetChanged()
+                }
+            }
+            seatGridView.adapter = seatAdapter
         }
 
         seatDialog.show()
+    }
+
+    private fun loadSeatData(theaterName: String, numColumns: Int, callback: (List<Seat>) -> Unit) {
+        val theaterCollection = db.collection("Theaters")
+
+        theaterCollection.whereEqualTo("name", theaterName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val documentSnapshot = querySnapshot.documents[0]
+                    val seatGrid = documentSnapshot.get("seats") as? List<Boolean>
+                    val seatList = mutableListOf<Seat>()
+                    seatGrid?.forEachIndexed { index, isSelected ->
+                        val seatId = "Seat_${index + 1}" // Adjust the seat ID creation if needed
+                        val row = index / numColumns + 1
+                        val column = index % numColumns + 1
+                        seatList.add(Seat(seatId, column, row, isSelected))
+                    }
+                    callback(seatList)
+                }
+            }
+            .addOnFailureListener { e ->
+                // Handle error
+            }
+    }
+
+
+    private fun updateSeatStatus(theaterName: String, seatIndex: Int, numColumns: Int, isSelected: Boolean, callback: (List<Seat>) -> Unit) {
+        val theaterCollection = db.collection("Theaters")
+        theaterCollection.whereEqualTo("name", theaterName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val document = querySnapshot.documents[0]
+                    val theaterRef = document.reference
+
+                    val seatGrid = document.get("seats") as? MutableList<Boolean>
+                    seatGrid?.let {
+                        if (seatIndex >= 0 && seatIndex < it.size) {
+                            it[seatIndex] = isSelected
+
+                            theaterRef.update("seats", seatGrid)
+                                .addOnSuccessListener {
+                                    // Successfully updated
+                                    callback(seatGrid.mapIndexed { index, isSelected ->
+                                        Seat("Seat_${index + 1}", index % numColumns + 1, index / numColumns + 1, isSelected)
+                                    })
+                                }
+                                .addOnFailureListener { e ->
+                                    // Handle error
+                                }
+                        }
+                    }
+                }
+            }
     }
 
     private fun generateSeatList(cols: Int, rows: Int): List<Seat> {
         val seatList = ArrayList<Seat>()
         for (row in 1..rows) {
             for (col in 1..cols) {
-                val seat = Seat(col, row, false)
+                val seatId = "Seat_${row}_${col}"
+                val seat = Seat(seatId, col, row, false)
                 seatList.add(seat)
             }
         }
@@ -133,8 +207,9 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
     }
 
     data class Seat(
+        val id: String,
         val column: Int,
         val row: Int,
-        val isSelected: Boolean
+        val isSelected: Boolean,
     )
 }
