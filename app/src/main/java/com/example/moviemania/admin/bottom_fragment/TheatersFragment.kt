@@ -123,6 +123,9 @@ class TheatersFragment : Fragment() {
                                 addTheaterToFirestore(theaterName, it,theaterLocation,seatColLength,seatRowLength)
                             }
                         } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            theaterGridView?.visibility = View.VISIBLE
                             showToast("Please enter Valid Data.")
                         }
                         dialog.dismiss()
@@ -133,6 +136,9 @@ class TheatersFragment : Fragment() {
                         if (theaterName.isNotBlank() && imageUrl.isNotBlank()) {
                             addTheaterToFirestore(theaterName, imageUrl,theaterLocation,seatColLength,seatRowLength)
                         } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            theaterGridView?.visibility = View.VISIBLE
                             showToast("Please enter Valid Data.")
                         }
                     }
