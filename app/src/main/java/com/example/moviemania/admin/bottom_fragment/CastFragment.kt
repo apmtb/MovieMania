@@ -13,12 +13,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.moviemania.R
 import com.example.moviemania.admin.CastAdapter
@@ -104,6 +107,25 @@ class CastFragment : Fragment() {
         }
     }
 
+    private fun validateForm(
+        castName: EditText,
+        imageUri: EditText,
+        imageView: ImageView,
+        textView: TextView
+    ): Boolean {
+        val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
+        icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+        if (castName.text.trim().isEmpty()) {
+            castName.setError("Cast Name is Required!",icon)
+            return false
+        }
+        if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
+
     fun addCastButtonClick() {
         showAddCastDialog()
     }
@@ -115,67 +137,12 @@ class CastFragment : Fragment() {
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFC)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFC)
+            val imageError = dialogView.findViewById<TextView>(R.id.imageError)
 
             val dialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
                 .setTitle("Add Cast")
-                .setPositiveButton("Add") { dialog, _ ->
-                    val castGridView = view?.findViewById<GridView>(R.id.castGridView)
-                    val noCastTextView = view?.findViewById<RelativeLayout>(R.id.noCastTextView)
-                    castGridView?.visibility = View.GONE
-                    noCastTextView?.visibility = View.GONE
-                    frameLayout.visibility = View.VISIBLE
-                    videoView.setOnPreparedListener {
-                        it.isLooping = true
-                    }
-                    val videoPath =
-                        "android.resource://" + requireContext().packageName + "/" + R.raw.circle_loading
-
-                    videoView.setVideoURI(Uri.parse(videoPath))
-                    videoView.setZOrderOnTop(true)
-
-                    videoView.start()
-                    val castName =
-                        dialogView.findViewById<EditText>(R.id.castNameEditText).text.toString()
-                    val imageOptionRadioGroup =
-                        dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
-                    val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
-                    val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButton
-
-                    val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
-                    val selectedImageView =
-                        dialogView.findViewById<ImageView>(R.id.selectedImageView)
-
-                    if (isUploadImage) {
-                        imageContainer.visibility = View.VISIBLE
-                        castImageInput.visibility = View.GONE
-
-
-                        if (castName.isNotBlank() && selectedImageView.drawable != null) {
-                            uploadImageToFirebaseStorage(selectedImageView, castName) {
-                                addCastToFirestore(castName, it)
-                            }
-                        } else {
-                            frameLayout.visibility = View.GONE
-                            videoView.stopPlayback()
-                            castGridView?.visibility = View.VISIBLE
-                            showToast("Please enter cast name and image.")
-                        }
-                        dialog.dismiss()
-                    } else {
-                        imageContainer.visibility = View.GONE
-                        castImageInput.visibility = View.VISIBLE
-                        val imageUrl = castImageInput.text.toString()
-                        if (castName.isNotBlank() && imageUrl.isNotBlank()) {
-                            addCastToFirestore(castName, imageUrl)
-                        } else {
-                            frameLayout.visibility = View.GONE
-                            videoView.stopPlayback()
-                            castGridView?.visibility = View.VISIBLE
-                            showToast("Please enter cast name and image.")
-                        }
-                    }
-                }
+                .setPositiveButton("Add",null)
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -183,13 +150,22 @@ class CastFragment : Fragment() {
 
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
+            val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
+            castImageInput.addTextChangedListener {
+                if(castImageInput.text.trim().isNotEmpty()){
+                    imageError.visibility = View.GONE
+                } else {
+                    imageError.visibility =View.VISIBLE
+                }
+            }
             imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-                val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
-
+                imageError.visibility = View.GONE
                 if (checkedId == R.id.uploadImageRadioButton) {
+                    imageError.text = "image is Required!"
                     imageContainer.visibility = View.VISIBLE
                     castImageInput.visibility = View.GONE
                 } else {
+                    imageError.text = "image URL is Required!"
                     imageContainer.visibility = View.GONE
                     castImageInput.visibility = View.VISIBLE
                 }
@@ -205,6 +181,50 @@ class CastFragment : Fragment() {
             }
 
             dialog.show()
+            val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            addButton.setOnClickListener{
+                val castNameEditText =
+                    dialogView.findViewById<EditText>(R.id.castNameEditText)
+                val castName = castNameEditText.text.toString()
+                val imageOptionRadioGroup =
+                    dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
+                val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
+                val selectedImageView =
+                    dialogView.findViewById<ImageView>(R.id.selectedImageView)
+                if(validateForm(castNameEditText,castImageInput,selectedImageView,imageError)) {
+                    val castGridView = view?.findViewById<GridView>(R.id.castGridView)
+                    val noCastTextView = view?.findViewById<RelativeLayout>(R.id.noCastTextView)
+                    castGridView?.visibility = View.GONE
+                    noCastTextView?.visibility = View.GONE
+                    frameLayout.visibility = View.VISIBLE
+                    videoView.setOnPreparedListener {
+                        it.isLooping = true
+                    }
+                    val videoPath =
+                        "android.resource://" + requireContext().packageName + "/" + R.raw.circle_loading
+
+                    videoView.setVideoURI(Uri.parse(videoPath))
+                    videoView.setZOrderOnTop(true)
+
+                    videoView.start()
+                    val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
+                    val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButton
+
+                    if (isUploadImage) {
+                        imageContainer.visibility = View.VISIBLE
+                        castImageInput.visibility = View.GONE
+                        uploadImageToFirebaseStorage(selectedImageView, castName) {
+                            addCastToFirestore(castName, it)
+                        }
+                    } else {
+                        imageContainer.visibility = View.GONE
+                        castImageInput.visibility = View.VISIBLE
+                        val imageUrl = castImageInput.text.toString()
+                        addCastToFirestore(castName, imageUrl)
+                    }
+                    dialog.dismiss()
+                }
+            }
         }
     }
 
@@ -216,6 +236,8 @@ class CastFragment : Fragment() {
                 val selectedImageURI = data?.data
                 val selectedImageView = dialogView.findViewById<ImageView>(R.id.selectedImageView)
                 if (selectedImageURI != null) {
+                    val imageError = dialogView.findViewById<TextView>(R.id.imageError)
+                    imageError.visibility = View.GONE
                     selectedImageView.setImageURI(selectedImageURI)
                 }
             }

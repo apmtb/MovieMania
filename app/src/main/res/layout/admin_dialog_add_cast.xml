@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -21,7 +22,8 @@
             android:id="@+id/uploadImageRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload Image"/>
+            android:text="Upload Image"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/urlRadioButton"
@@ -43,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/selectedImageView"
@@ -62,5 +64,17 @@
             android:text="Upload Image"
             android:visibility="visible"/>
     </RelativeLayout>
+    <TextView
+        android:drawablePadding="5dp"
+        android:id="@+id/imageError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="image is Required!"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:textColor="#ff0000"
+        android:layout_gravity="center"
+        app:drawableStartCompat="@drawable/ic_custom_error" />
 
 </LinearLayout>
