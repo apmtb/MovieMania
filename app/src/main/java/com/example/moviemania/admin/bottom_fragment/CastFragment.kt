@@ -333,5 +333,9 @@ class CastFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        instance = null
+    }
     data class Cast(val name: String, val imageUri: String)
 }
