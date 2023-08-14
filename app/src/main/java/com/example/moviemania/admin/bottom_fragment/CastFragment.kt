@@ -75,7 +75,7 @@ class CastFragment : Fragment() {
             val castGridView = view?.findViewById<GridView>(R.id.castGridView)
             val displaymetrics = requireContext().resources.displayMetrics
             val screenWidth = displaymetrics.widthPixels
-            castGridView?.columnWidth = (screenWidth*0.49).toInt()
+            castGridView?.columnWidth = (screenWidth*0.40).toInt()
             castCollection.get()
                 .addOnSuccessListener { querySnapshot ->
                     if (querySnapshot.isEmpty) {

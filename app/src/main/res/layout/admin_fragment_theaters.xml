@@ -40,13 +40,15 @@
         android:id="@+id/theaterGridView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
         android:layout_marginBottom="60dp"
         android:horizontalSpacing="16dp"
         android:numColumns="1"
         android:verticalSpacing="16dp"
-        android:visibility="visible"/>
+        android:visibility="gone"
+        android:gravity="center"
+        android:clipToPadding="false"
+        android:paddingTop="30dp"
+        android:paddingBottom="50dp"/>
     <FrameLayout
         android:id="@+id/frameLayoutAFT"
         android:layout_width="match_parent"

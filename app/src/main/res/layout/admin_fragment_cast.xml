@@ -45,7 +45,10 @@
         android:horizontalSpacing="5dp"
         android:numColumns="auto_fit"
         android:verticalSpacing="16dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:clipToPadding="false"
+        android:paddingTop="30dp"
+        android:paddingBottom="50dp"/>
     <FrameLayout
         android:id="@+id/frameLayoutAFC"
         android:layout_width="match_parent"
