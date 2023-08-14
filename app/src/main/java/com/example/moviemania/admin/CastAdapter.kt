@@ -27,7 +27,6 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         castNameTextView.text = cast.name
         val imageViewLayoutParams = castImageView.layoutParams
         val displaymetrics = context.resources.displayMetrics
-
         val screenHeight = displaymetrics.heightPixels
         val screenWidth = displaymetrics.widthPixels
         imageViewLayoutParams.width = (screenWidth*0.3).toInt()

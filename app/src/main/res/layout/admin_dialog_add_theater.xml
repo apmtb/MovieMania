@@ -21,7 +21,8 @@
             android:id="@+id/uploadImageRadioButtonTheater"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload Image"/>
+            android:text="Upload Image"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/urlRadioButtonTheater"
@@ -43,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/theaterImageView"
@@ -71,11 +72,13 @@
         android:id="@+id/seatColLengthEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Seat Column Length"/>
+        android:hint="Seat Column Length"
+        android:inputType="number"/>
 
     <EditText
         android:id="@+id/seatRowLengthEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Seat Row Length"/>
+        android:hint="Seat Row Length"
+        android:inputType="number"/>
 </LinearLayout>

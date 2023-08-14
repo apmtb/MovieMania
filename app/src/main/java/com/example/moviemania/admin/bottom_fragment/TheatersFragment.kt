@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.example.moviemania.R
 import com.example.moviemania.admin.TheaterAdapter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -343,6 +344,24 @@ class TheatersFragment : Fragment() {
         }
     }
 
+    private fun validateForm(
+        theaterName: EditText,
+        imageUri: EditText,
+        imageView: ImageView,
+        textView: TextView
+    ): Boolean {
+        val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
+        icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+        if (theaterName.text.trim().isEmpty()) {
+            theaterName.setError("TheaterName Name is Required!",icon)
+            return false
+        }
+        if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
 
     data class Theater(val name: String, val imageUri: String, val theaterLocation: String,
                        val seatColLength: Int, val seatRowLength: Int, val seatStates: List<Boolean>)
