@@ -68,17 +68,43 @@
         android:layout_height="wrap_content"
         android:hint="Location" />
 
-    <EditText
-        android:id="@+id/seatColLengthEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Seat Column Length"
-        android:inputType="number"/>
 
-    <EditText
-        android:id="@+id/seatRowLengthEditText"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Seat Row Length"
-        android:inputType="number"/>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textViewRowLength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Seat Row Length:"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingRight="40dp" />
+
+        <NumberPicker
+            android:id="@+id/rowLengthPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewRowLength"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/textViewColLength"
+            android:layout_below="@id/rowLengthPicker"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:text="Select Seat Column Length:"
+            android:layout_marginTop="5dp"
+            android:paddingRight="20dp"/>
+
+        <NumberPicker
+            android:id="@+id/colLengthPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewColLength"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
 </LinearLayout>

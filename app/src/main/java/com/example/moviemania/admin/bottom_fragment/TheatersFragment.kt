@@ -10,12 +10,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.ImageView
+import android.widget.NumberPicker
 import android.widget.RadioGroup
 import android.widget.RelativeLayout
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
@@ -74,8 +77,16 @@ class TheatersFragment : Fragment() {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_theater, null)
             val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButtonTheater)
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainerTheater)
-            val seatColLengthEditText = dialogView.findViewById<EditText>(R.id.seatColLengthEditText)
-            val seatRowLengthEditText = dialogView.findViewById<EditText>(R.id.seatRowLengthEditText)
+            val rowLengthPicker: NumberPicker = dialogView.findViewById(R.id.rowLengthPicker)
+            val colLengthPicker: NumberPicker = dialogView.findViewById(R.id.colLengthPicker)
+
+            rowLengthPicker.minValue = 1
+            rowLengthPicker.maxValue = 10
+            rowLengthPicker.value = 1
+
+            colLengthPicker.minValue = 1
+            colLengthPicker.maxValue = 10
+            colLengthPicker.value = 1
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFT)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFT)
 
@@ -111,8 +122,8 @@ class TheatersFragment : Fragment() {
                     val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
                     val selectedImageView =
                         dialogView.findViewById<ImageView>(R.id.theaterImageView)
-                    val seatColLength = seatColLengthEditText.text.toString()
-                    val seatRowLength = seatRowLengthEditText.text.toString()
+                    val seatColLength = colLengthPicker.value.toString()
+                    val seatRowLength = rowLengthPicker.value.toString()
 
                     if (isUploadImage) {
                         imageContainer.visibility = View.VISIBLE
