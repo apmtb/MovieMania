@@ -6,9 +6,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp">
-
-    <!-- Add a GridView to display the seat icons -->
-
     <GridView
         android:id="@+id/seatGridView"
         android:gravity="center"

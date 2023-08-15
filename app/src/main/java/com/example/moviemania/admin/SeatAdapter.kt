@@ -40,7 +40,9 @@ class SeatAdapter(
         val displaymetrics = context.resources.displayMetrics
 
         val screenWidth = displaymetrics.widthPixels
-        imageViewLayoutParams.width = (screenWidth*0.10).toInt()
+        val ratio = 100/numColumns*0.01
+        val tmp = ratio - (ratio*0.3)
+        imageViewLayoutParams.width = (screenWidth*tmp).toInt()
         imageViewLayoutParams.height = imageViewLayoutParams.width
 
         if (seat.isSelected) {
