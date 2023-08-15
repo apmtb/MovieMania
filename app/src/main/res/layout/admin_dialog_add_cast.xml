@@ -16,20 +16,23 @@
         android:id="@+id/imageOptionRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
 
         <RadioButton
             android:id="@+id/uploadImageRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Upload Image"
-            android:checked="true"/>
+            android:checked="true"
+            android:layout_marginRight="10dp"/>
 
         <RadioButton
             android:id="@+id/urlRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter URL"/>
+            android:text="Enter URL"
+            android:layout_marginLeft="10dp"/>
 
     </RadioGroup>
 

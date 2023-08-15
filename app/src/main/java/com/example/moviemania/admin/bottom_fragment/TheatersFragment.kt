@@ -24,6 +24,7 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import com.example.moviemania.R
 import com.example.moviemania.admin.TheaterAdapter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -72,6 +73,29 @@ class TheatersFragment : Fragment() {
     fun addTheaterButtonClick() {
         showAddTheaterDialog()
     }
+    private fun validateForm(
+        theaterName: EditText,
+        imageUri: EditText,
+        imageView: ImageView,
+        textView: TextView,
+        theaterLocation: EditText
+    ): Boolean {
+        val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
+        icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+        if (theaterName.text.trim().isEmpty()) {
+            theaterName.setError("Theater Name is Required!",icon)
+            return false
+        }
+        if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        if (theaterLocation.text.trim().isEmpty()) {
+            theaterLocation.setError("Theater Location is Required!",icon)
+            return false
+        }
+        return true
+    }
     private fun showAddTheaterDialog() {
         if (isAdded) {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_theater, null)
@@ -80,20 +104,68 @@ class TheatersFragment : Fragment() {
             val rowLengthPicker: NumberPicker = dialogView.findViewById(R.id.rowLengthPicker)
             val colLengthPicker: NumberPicker = dialogView.findViewById(R.id.colLengthPicker)
 
-            rowLengthPicker.minValue = 1
+            rowLengthPicker.minValue = 2
             rowLengthPicker.maxValue = 10
-            rowLengthPicker.value = 1
+            rowLengthPicker.value = 2
 
-            colLengthPicker.minValue = 1
+            colLengthPicker.minValue = 2
             colLengthPicker.maxValue = 10
-            colLengthPicker.value = 1
+            colLengthPicker.value = 2
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFT)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFT)
+            val imageError = dialogView.findViewById<TextView>(R.id.imageErrorTheater)
 
             val dialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
                 .setTitle("Add Theater")
-                .setPositiveButton("Add") { dialog, _ ->
+                .setPositiveButton("Add",null)
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+
+            val imageOptionRadioGroup =
+                dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
+            imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                imageError.visibility = View.GONE
+                val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
+
+                theaterImageUri.addTextChangedListener {
+                    if(theaterImageUri.text.trim().isNotEmpty()){
+                        imageError.visibility = View.GONE
+                    } else {
+                        imageError.visibility =View.VISIBLE
+                    }
+                }
+
+                if (checkedId == R.id.uploadImageRadioButtonTheater) {
+                    imageError.text = "image is Required!"
+                    imageContainer.visibility = View.VISIBLE
+                    theaterImageUri.visibility = View.GONE
+                } else {
+                    imageError.text = "image URL is Required!"
+                    imageContainer.visibility = View.GONE
+                    theaterImageUri.visibility = View.VISIBLE
+                }
+            }
+            uploadImageButton.setOnClickListener {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(
+                    Intent.createChooser(intent, "Select Picture"),
+                    234
+                )
+            }
+
+            dialog.show()
+            val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            addButton.setOnClickListener {
+                val theaterNameEditText = dialogView.findViewById<EditText>(R.id.theaterNameEditText)
+                val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
+                val selectedImageView = dialogView.findViewById<ImageView>(R.id.theaterImageView)
+                val theaterLocationEditText = dialogView.findViewById<EditText>(R.id.theaterLocationEditText)
+                if(validateForm(theaterNameEditText,theaterImageUri,selectedImageView,imageError,theaterLocationEditText)) {
                     val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
                     val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noTheaterTextView)
                     theaterGridView?.visibility = View.GONE
@@ -110,80 +182,32 @@ class TheatersFragment : Fragment() {
 
                     videoView.start()
 
-                    val theaterName =
-                        dialogView.findViewById<EditText>(R.id.theaterNameEditText).text.toString()
-                    val theaterLocation =
-                        dialogView.findViewById<EditText>(R.id.theaterLocationEditText).text.toString()
+                    val theaterName = theaterNameEditText.text.toString()
+                    val theaterLocation = theaterLocationEditText.text.toString()
                     val imageOptionRadioGroup =
                         dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
                     val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
                     val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButtonTheater
-
-                    val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
-                    val selectedImageView =
-                        dialogView.findViewById<ImageView>(R.id.theaterImageView)
                     val seatColLength = colLengthPicker.value.toString()
                     val seatRowLength = rowLengthPicker.value.toString()
 
                     if (isUploadImage) {
                         imageContainer.visibility = View.VISIBLE
                         theaterImageUri.visibility = View.GONE
-
-                        if (theaterName.isNotBlank() && selectedImageView.drawable != null && theaterLocation.isNotBlank() && seatColLength.isNotBlank()
-                            && seatRowLength.isNotBlank()) {
-                            uploadImageToFirebaseStorage(selectedImageView, theaterName) {
-                                addTheaterToFirestore(theaterName, it,theaterLocation,seatColLength,seatRowLength)
-                            }
-                        } else {
-                            frameLayout.visibility = View.GONE
-                            videoView.stopPlayback()
-                            theaterGridView?.visibility = View.VISIBLE
-                            showToast("Please enter Valid Data.")
+                        uploadImageToFirebaseStorage(selectedImageView, theaterName) {
+                            addTheaterToFirestore(theaterName, it, theaterLocation,
+                                seatColLength, seatRowLength)
                         }
-                        dialog.dismiss()
                     } else {
                         imageContainer.visibility = View.GONE
                         theaterImageUri.visibility = View.VISIBLE
                         val imageUrl = theaterImageUri.text.toString()
-                        if (theaterName.isNotBlank() && imageUrl.isNotBlank()) {
-                            addTheaterToFirestore(theaterName, imageUrl,theaterLocation,seatColLength,seatRowLength)
-                        } else {
-                            frameLayout.visibility = View.GONE
-                            videoView.stopPlayback()
-                            theaterGridView?.visibility = View.VISIBLE
-                            showToast("Please enter Valid Data.")
-                        }
+                        addTheaterToFirestore(theaterName, imageUrl, theaterLocation,
+                            seatColLength, seatRowLength)
                     }
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
-                .create()
-
-            val imageOptionRadioGroup =
-                dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
-            imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-                val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
-
-                if (checkedId == R.id.uploadImageRadioButtonTheater) {
-                    imageContainer.visibility = View.VISIBLE
-                    theaterImageUri.visibility = View.GONE
-                } else {
-                    imageContainer.visibility = View.GONE
-                    theaterImageUri.visibility = View.VISIBLE
-                }
             }
-            uploadImageButton.setOnClickListener {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    234
-                )
-            }
-
-            dialog.show()
         }
     }
 
@@ -195,6 +219,8 @@ class TheatersFragment : Fragment() {
                 val selectedImageURI = data?.data
                 val selectedImageView = dialogView.findViewById<ImageView>(R.id.theaterImageView)
                 if (selectedImageURI != null) {
+                    val imageError = dialogView.findViewById<TextView>(R.id.imageErrorTheater)
+                    imageError.visibility = View.GONE
                     selectedImageView.setImageURI(selectedImageURI)
                 }
             }
@@ -353,25 +379,6 @@ class TheatersFragment : Fragment() {
                     showToast("Error: $exception")
                 }
         }
-    }
-
-    private fun validateForm(
-        theaterName: EditText,
-        imageUri: EditText,
-        imageView: ImageView,
-        textView: TextView
-    ): Boolean {
-        val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
-        icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-        if (theaterName.text.trim().isEmpty()) {
-            theaterName.setError("TheaterName Name is Required!",icon)
-            return false
-        }
-        if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
-            textView.visibility = View.VISIBLE
-            return false
-        }
-        return true
     }
 
     data class Theater(val name: String, val imageUri: String, val theaterLocation: String,
