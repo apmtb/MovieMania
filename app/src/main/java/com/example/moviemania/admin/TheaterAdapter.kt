@@ -136,17 +136,21 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         seatDialog.show()
         val bookButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         bookButton.setOnClickListener {
-            updateSeatStatus(theaterName, mutableSeatList, true) { status ->
-                if (status) {
-                    Toast.makeText(context, "Booked Successfully!", Toast.LENGTH_SHORT).show()
-                    initialSeatAdapter.notifyDataSetChanged()
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Booking failed, Please try again later!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+            if (mutableSeatList.isNotEmpty()) {
+                updateSeatStatus(theaterName, mutableSeatList, true) { status ->
+                    if (status) {
+                        Toast.makeText(context, "Booked Successfully!", Toast.LENGTH_SHORT).show()
+                        initialSeatAdapter.notifyDataSetChanged()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Booking failed, Please try again later!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
+            } else {
+                Toast.makeText(context, "Select atleast one seat to book!", Toast.LENGTH_SHORT).show()
             }
             seatDialog.dismiss()
         }
