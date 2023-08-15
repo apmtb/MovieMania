@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TheaterAdapter(private val context: Context, private val theaters: List<TheatersFragment.Theater>) : BaseAdapter() {
 
     private val db = FirebaseFirestore.getInstance()
+    private val status = false
 
     override fun getCount(): Int {
         return theaters.size
@@ -100,6 +102,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
     private fun showSeatSelectionDialog(theater: TheatersFragment.Theater) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_seat_selection, null)
         val seatGridView: GridView = dialogView.findViewById(R.id.seatGridView)
+        val mutableSeatList:MutableList<Int> = mutableListOf()
 
         // Calculate numRows and numColumns based on theater's seatRowLength and seatColumnLength
         val numRows = theater.seatRowLength
@@ -108,15 +111,13 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         seatGridView.numColumns = numColumns
         val initialSeatList = generateSeatList(theater.seatColLength, theater.seatRowLength)
 
-        val initialSeatAdapter = SeatAdapter(context, initialSeatList, numRows, numColumns) { _, _ ->
+        val initialSeatAdapter = SeatAdapter(context, initialSeatList, numRows, numColumns) { _ ->
             // Initial adapter, no need to handle seat status update here
         }
         val seatDialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setTitle("Select Seats")
-            .setPositiveButton("Book") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setPositiveButton("Book",null)
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }
@@ -125,18 +126,30 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val theaterName = theater.name
 
         loadSeatData(theaterName, numColumns) { seatList ->
-            val mutableSeatList = seatList.toMutableList()
-            val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns) { seatIndex, isSelected ->
-                updateSeatStatus(theaterName, seatIndex, numColumns, isSelected) { updatedSeatList ->
-                    mutableSeatList.clear()
-                    mutableSeatList.addAll(updatedSeatList)
-                    initialSeatAdapter.notifyDataSetChanged()
-                }
+            val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns) { list ->
+                mutableSeatList.clear()
+                mutableSeatList.addAll(list)
             }
             seatGridView.adapter = seatAdapter
         }
 
         seatDialog.show()
+        val bookButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        bookButton.setOnClickListener {
+            updateSeatStatus(theaterName, mutableSeatList, true) { status ->
+                if (status) {
+                    Toast.makeText(context, "Booked Successfully!", Toast.LENGTH_SHORT).show()
+                    initialSeatAdapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Booking failed, Please try again later!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            seatDialog.dismiss()
+        }
     }
 
     private fun loadSeatData(theaterName: String, numColumns: Int, callback: (List<Seat>) -> Unit) {
@@ -164,7 +177,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
     }
 
 
-    private fun updateSeatStatus(theaterName: String, seatIndex: Int, numColumns: Int, isSelected: Boolean, callback: (List<Seat>) -> Unit) {
+    private fun updateSeatStatus(theaterName: String, seatPositions: List<Int>, isSelected: Boolean, callback: (Boolean) -> Unit) {
         val theaterCollection = db.collection("Theaters")
         theaterCollection.whereEqualTo("name", theaterName)
             .get()
@@ -175,20 +188,21 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
 
                     val seatGrid = document.get("seats") as? MutableList<Boolean>
                     seatGrid?.let {
-                        if (seatIndex >= 0 && seatIndex < it.size) {
-                            it[seatIndex] = isSelected
-
-                            theaterRef.update("seats", seatGrid)
-                                .addOnSuccessListener {
-                                    // Successfully updated
-                                    callback(seatGrid.mapIndexed { index, isSelected ->
-                                        Seat("Seat_${index + 1}", index % numColumns + 1, index / numColumns + 1, isSelected)
-                                    })
-                                }
-                                .addOnFailureListener { e ->
-                                    // Handle error
-                                }
+                        for (seatPosition in seatPositions) {
+                            if (seatPosition >= 0 && seatPosition < it.size) {
+                                it[seatPosition] = isSelected
+                            }
                         }
+
+                        theaterRef.update("seats", seatGrid)
+                            .addOnSuccessListener {
+                                // Successfully updated
+                                callback(true)
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle error
+                                callback(false)
+                            }
                     }
                 }
             }

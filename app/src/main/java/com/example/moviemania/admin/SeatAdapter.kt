@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.moviemania.R
 
@@ -14,8 +15,10 @@ class SeatAdapter(
     private val seats: List<TheaterAdapter.Seat>,
     private val numRows: Int,
     private val numColumns: Int,
-    private val onSeatClick: (Int, Boolean) -> Unit
+    private val onSeatClick: (MutableList<Int>) -> Unit
 ) : BaseAdapter() {
+
+    private val selectedSeatPositions: MutableList<Int> = mutableListOf()
 
     override fun getCount(): Int {
         return numRows * numColumns
@@ -52,11 +55,19 @@ class SeatAdapter(
         }
 
         view.setOnClickListener {
-            if(!seat.isSelected) {
+            if (seat.isSelected) {
+                seatImageView.setImageResource(R.drawable.ic_seat_booked)
+            } else if (!selectedSeatPositions.contains(position)) {
+                selectedSeatPositions.add(position)
                 seatImageView.setImageResource(R.drawable.ic_seat_selected)
                 seatImageView.background =
                     ContextCompat.getDrawable(context, R.drawable.image_border)
+            } else {
+                selectedSeatPositions.remove(position)
+                seatImageView.background = null
+                seatImageView.setImageResource(R.drawable.ic_seat_available)
             }
+            onSeatClick(selectedSeatPositions)
         }
 
         return view
