@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.bottom_fragment.CartFragment">
+    tools:context=".admin.bottom_fragment.PaymentFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Admin Cart"
+        android:text="Payments Received"
         android:textSize="32sp"
         android:textStyle="bold"
         android:gravity="center"

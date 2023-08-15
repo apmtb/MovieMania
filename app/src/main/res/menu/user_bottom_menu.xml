@@ -2,27 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottom_movies"
+        android:id="@+id/user_bottom_movies"
         android:icon="@drawable/ic_movie"
         android:title="Movies" />
 
     <item
-        android:id="@+id/bottom_history"
+        android:id="@+id/user_bottom_history"
         android:icon="@drawable/ic_history_24"
         android:title="History" />
 
     <item
-        android:id="@+id/addadminbtn"
+        android:id="@+id/user_plus_btn"
         android:enabled="false"
         android:title="" />
 
     <item
-        android:id="@+id/bottom_notification"
+        android:id="@+id/user_bottom_notification"
         android:icon="@drawable/ic_notifications_24"
         android:title="Notification" />
 
     <item
-        android:id="@+id/bottom_cart"
+        android:id="@+id/user_bottom_cart"
         android:icon="@drawable/ic_cart_24"
         android:title="Cart" />
 </menu>

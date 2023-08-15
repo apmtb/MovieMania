@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.example.moviemania.R
 
 
-class MoviesFragment : Fragment() {
+class PaymentFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,17 +20,16 @@ class MoviesFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.admin_fragment_movies, container, false)
+        return inflater.inflate(R.layout.admin_fragment_payment, container, false)
     }
 
     companion object {
         @Volatile
-        private var instance: MoviesFragment? = null
-        fun newInstance():MoviesFragment? {
+        private var instance: PaymentFragment? = null
+        fun newInstance():PaymentFragment? {
             return instance
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         instance = null

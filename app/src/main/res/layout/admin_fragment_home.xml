@@ -10,10 +10,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/bottomFragment"/>
+        android:id="@+id/adminBottomFragment"/>
 
     <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
+        android:id="@+id/adminBottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -25,7 +25,7 @@
         app:fabAlignmentMode="center">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
+            android:id="@+id/adminBottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:backgroundTint="@android:color/transparent"
@@ -39,12 +39,12 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-       android:id="@+id/addAdminBtn"
+       android:id="@+id/adminPlusBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add_24"
         android:tint="@color/white"
         android:backgroundTint="@color/rippleColor"
-        app:layout_anchor="@id/bottomAppBar"/>
+        app:layout_anchor="@id/adminBottomAppBar"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

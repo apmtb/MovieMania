@@ -162,7 +162,7 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         /// Default Navigation bar Tab Selected
         replaceFragment(HomeFragment())
-        navigationView.setCheckedItem(R.id.nav_home)
+        navigationView.setCheckedItem(R.id.user_nav_home)
     }
 
     private fun signOut() {
@@ -190,21 +190,21 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.nav_home -> {
+            R.id.user_nav_home -> {
                 replaceFragment(HomeFragment())
             }
-            R.id.nav_profile -> {
+            R.id.user_nav_profile -> {
                 replaceFragment(ProfileFragment())
                 title = "Profile"
             }
-            R.id.nav_setting -> {
+            R.id.user_nav_setting -> {
                 replaceFragment(SettingFragment())
                 title = "Setting"
             }
-            R.id.nav_share -> {
+            R.id.user_nav_share -> {
                 Toast.makeText(this,"Share Clicked", Toast.LENGTH_LONG).show()
             }
-            R.id.nav_logout -> {
+            R.id.user_nav_logout -> {
                 signOut()
             }
         }

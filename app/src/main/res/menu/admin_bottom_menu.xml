@@ -2,27 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottom_movies"
+        android:id="@+id/admin_bottom_movies"
         android:icon="@drawable/ic_movie"
         android:title="Movies" />
 
     <item
-        android:id="@+id/bottom_theaters"
+        android:id="@+id/admin_bottom_theaters"
         android:icon="@drawable/ic_theater"
         android:title="Theaters" />
 
     <item
-        android:id="@+id/addadminbtn"
+        android:id="@+id/admin_plus_btn"
         android:enabled="false"
         android:title="" />
 
     <item
-        android:id="@+id/bottom_cast"
+        android:id="@+id/admin_bottom_cast"
         android:icon="@drawable/ic_cast"
-        android:title="Cast" />
+        android:title="Casts" />
 
     <item
-        android:id="@+id/bottom_cart"
-        android:icon="@drawable/ic_cart_24"
-        android:title="Cart" />
+        android:id="@+id/admin_bottom_payment"
+        android:icon="@drawable/ic_currency_rupee"
+        android:title="Payments" />
 </menu>

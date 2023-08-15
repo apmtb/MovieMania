@@ -24,22 +24,22 @@ class HomeFragment : Fragment() {
     ): View {
         val view =  inflater.inflate(R.layout.user_fragment_home, container, false)
 
-        val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.userBottomNavigation)
         bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
-                R.id.bottom_movies -> {
+                R.id.user_bottom_movies -> {
                     replaceFragment(MoviesFragment())
                     activity?.title = "Movies"
                 }
-                R.id.bottom_history -> {
+                R.id.user_bottom_history -> {
                     replaceFragment(HistoryFragment())
                     activity?.title = "History"
                 }
-                R.id.bottom_notification -> {
+                R.id.user_bottom_notification -> {
                     replaceFragment(NotificationFragment())
                     activity?.title = "Notification"
                 }
-                R.id.bottom_cart -> {
+                R.id.user_bottom_cart -> {
                     replaceFragment(CartFragment())
                     activity?.title = "Cart"
                 }
@@ -49,18 +49,18 @@ class HomeFragment : Fragment() {
 
         replaceFragment(MoviesFragment())
         activity?.title = "Movies"
-        bottomNavigationView.selectedItemId = R.id.bottom_movies
+        bottomNavigationView.selectedItemId = R.id.user_bottom_movies
 
-        val addFab = view.findViewById<FloatingActionButton>(R.id.addAdminBtn)
+        val addFab = view.findViewById<FloatingActionButton>(R.id.userPlusBtn)
         addFab.setOnClickListener {
-            Toast.makeText(context,"User Add Clicked",Toast.LENGTH_LONG).show()
+            Toast.makeText(context,"User Plus Clicked",Toast.LENGTH_LONG).show()
         }
         return view
     }
     private fun replaceFragment(fragment: Fragment) {
         parentFragmentManager
             .beginTransaction()
-            .replace(R.id.bottomFragment,fragment)
+            .replace(R.id.userBottomFragment,fragment)
             .commit()
     }
 

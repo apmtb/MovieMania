@@ -163,7 +163,7 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         /// Default Navigation bar Tab Selected
         replaceFragment(HomeFragment())
-        navigationView.setCheckedItem(R.id.nav_home)
+        navigationView.setCheckedItem(R.id.admin_nav_home)
     }
 
     private fun signOut() {
@@ -191,25 +191,25 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.nav_home -> {
+            R.id.admin_nav_home -> {
                 replaceFragment(HomeFragment())
             }
-            R.id.nav_profile -> {
+            R.id.admin_nav_profile -> {
                 replaceFragment(ProfileFragment())
                 title = "Profile"
             }
-            R.id.nav_add_admin -> {
+            R.id.admin_nav_add_admin -> {
                 replaceFragment(AddAdminFragment())
                 title = "Add admin"
             }
-            R.id.nav_setting -> {
+            R.id.admin_nav_setting -> {
                 replaceFragment(SettingFragment())
                 title = "Setting"
             }
-            R.id.nav_share -> {
+            R.id.admin_nav_share -> {
                 Toast.makeText(this,"Share Clicked",Toast.LENGTH_LONG).show()
             }
-            R.id.nav_logout -> {
+            R.id.admin_nav_logout -> {
                 signOut()
             }
         }

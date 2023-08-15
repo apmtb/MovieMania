@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.moviemania.R
-import com.example.moviemania.admin.bottom_fragment.CartFragment
+import com.example.moviemania.admin.bottom_fragment.PaymentFragment
 import com.example.moviemania.admin.bottom_fragment.MoviesFragment
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
 import com.example.moviemania.admin.bottom_fragment.CastFragment
@@ -23,23 +23,23 @@ class HomeFragment : Fragment() {
     ): View {
         val view =  inflater.inflate(R.layout.admin_fragment_home, container, false)
 
-        val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.adminBottomNavigation)
         bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
-                R.id.bottom_movies -> {
+                R.id.admin_bottom_movies -> {
                     replaceFragment(MoviesFragment())
                     activity?.title = "Movies"
                 }
-                R.id.bottom_theaters -> {
+                R.id.admin_bottom_theaters -> {
                     replaceFragment(TheatersFragment())
                     activity?.title = "Theaters"
                 }
-                R.id.bottom_cast -> {
+                R.id.admin_bottom_cast -> {
                     replaceFragment(CastFragment())
                     activity?.title = "Cast"
                 }
-                R.id.bottom_cart -> {
-                    replaceFragment(CartFragment())
+                R.id.admin_bottom_payment -> {
+                    replaceFragment(PaymentFragment())
                     activity?.title = "Cart"
                 }
             }
@@ -47,24 +47,24 @@ class HomeFragment : Fragment() {
         }
         replaceFragment(MoviesFragment())
         activity?.title = "Movies"
-        bottomNavigationView.selectedItemId = R.id.bottom_movies
+        bottomNavigationView.selectedItemId = R.id.admin_bottom_movies
 
-        val addAdminBtn = view.findViewById<FloatingActionButton>(R.id.addAdminBtn)
+        val addAdminBtn = view.findViewById<FloatingActionButton>(R.id.adminPlusBtn)
         addAdminBtn.setOnClickListener {
             when (bottomNavigationView.selectedItemId) {
-                R.id.bottom_movies -> {
+                R.id.admin_bottom_movies -> {
                     showToast("Movies")
                 }
-                R.id.bottom_theaters -> {
+                R.id.admin_bottom_theaters -> {
                     val tf = TheatersFragment.newInstance()
                     tf?.addTheaterButtonClick()
                 }
-                R.id.bottom_cast -> {
+                R.id.admin_bottom_cast -> {
                     val cf = CastFragment.newInstance()
                     cf?.addCastButtonClick()
                 }
-                R.id.bottom_cart -> {
-                    showToast("Cart")
+                R.id.admin_bottom_payment -> {
+                    showToast("Payment")
                 }
             }
         }
@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
     private fun replaceFragment(fragment: Fragment) {
         parentFragmentManager
             .beginTransaction()
-            .replace(R.id.bottomFragment,fragment)
+            .replace(R.id.adminBottomFragment,fragment)
             .commit()
     }
     private fun showToast(message: String) {
