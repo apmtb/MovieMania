@@ -210,16 +210,16 @@ class MoviesFragment : Fragment() {
                     if (isUploadImage) {
                         imageContainer.visibility = View.VISIBLE
                         movieImageUri.visibility = View.GONE
-                        uploadImageToFirebaseStorage(selectedImageView, movieName) {
-                            addMovieToFirestore(movieName, it, movieDescription, section,
-                                type, ticketPrice,isUpcomingchecked)
-                        }
+//                        uploadImageToFirebaseStorage(selectedImageView, movieName) {
+//                            addMovieToFirestore(movieName, it, movieDescription, section,
+//                                type, ticketPrice,isUpcomingchecked)
+//                        }
                     } else {
                         imageContainer.visibility = View.GONE
                         movieImageUri.visibility = View.VISIBLE
                         val imageUrl = movieImageUri.text.toString()
-                        addMovieToFirestore(movieName, imageUrl, movieDescription, section,
-                            type, ticketPrice,isUpcomingchecked)
+//                        addMovieToFirestore(movieName, imageUrl, movieDescription, section,
+//                            type, ticketPrice,isUpcomingchecked)
                     }
                     dialog.dismiss()
                 }
