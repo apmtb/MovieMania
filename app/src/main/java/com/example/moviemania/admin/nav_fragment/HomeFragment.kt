@@ -40,13 +40,11 @@ class HomeFragment : Fragment() {
                 }
                 R.id.admin_bottom_payment -> {
                     replaceFragment(PaymentFragment())
-                    activity?.title = "Cart"
+                    activity?.title = "Payment"
                 }
             }
             true
         }
-        replaceFragment(MoviesFragment())
-        activity?.title = "Movies"
         bottomNavigationView.selectedItemId = R.id.admin_bottom_movies
 
         val addAdminBtn = view.findViewById<FloatingActionButton>(R.id.adminPlusBtn)
