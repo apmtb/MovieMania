@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/movieTitleEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Movie Title" />
+
+    <RadioGroup
+        android:id="@+id/movieImageOptionRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/movieUploadImageRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:checked="true"
+            android:text="Upload Image" />
+
+        <RadioButton
+            android:id="@+id/movieUrlRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Enter URL" />
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/movieImageInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Image URL"
+        android:visibility="gone" />
+
+
+    <RelativeLayout
+        android:id="@+id/movieImageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/movieSelectedImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/image_border" />
+
+        <Button
+            android:id="@+id/movieUploadImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/movieSelectedImageView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="Upload Image"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/movieImageError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="5dp"
+        android:text="Image is Required!"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_custom_error" />
+
+    <EditText
+        android:id="@+id/movieDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description" />
+
+    <RadioGroup
+        android:id="@+id/movieSectionRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/sectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Section: "
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/trendingRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trending"
+            android:textSize="12dp" />
+
+        <RadioButton
+            android:id="@+id/popularRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Popular"
+            android:textSize="12dp" />
+
+        <RadioButton
+            android:id="@+id/radioNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:textSize="12dp" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/movieTypeRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/typeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type: "
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/hollywoodRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hollywood"
+            android:textSize="12dp" />
+
+        <RadioButton
+            android:id="@+id/bollywoodRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bollywood"
+            android:textSize="12dp" />
+
+        <RadioButton
+            android:id="@+id/tollywoodRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tollywood"
+            android:textSize="12dp" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/movieTicketPriceEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ticket Price ( in Rupees )"
+        android:inputType="numberDecimal" />
+
+    <CheckBox
+        android:id="@+id/movieUpcomingCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upcoming" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/languageLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Languages: "
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/movieLanguageSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/languageLabel"
+        android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/castLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/languageLabel"
+        android:layout_marginTop="16dp"
+        android:text="Casts: "
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/movieCastSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="33dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/theaterLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Theaters: "
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/movieTheaterSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="16dp" />
+    </LinearLayout>
+</LinearLayout>

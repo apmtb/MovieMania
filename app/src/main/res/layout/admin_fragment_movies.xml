@@ -1,17 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".admin.bottom_fragment.MoviesFragment">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/noMoviesTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Movies"
-        android:textSize="32sp"
-        android:textStyle="bold"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="@color/backgroundColor"/>
+        android:visibility="gone">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/noMoviesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Movies added!  "
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/addMoviesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/noMoviesText"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_toEndOf="@id/noMoviesText"
+            android:text="Add now"
+            android:textColor="#1E83D1"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/moviesGridView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="60dp"
+        android:horizontalSpacing="5dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="16dp"
+        android:visibility="gone"
+        android:clipToPadding="false"
+        android:paddingTop="30dp"
+        android:paddingBottom="50dp"/>
+
+    <FrameLayout
+        android:id="@+id/frameLayoutAFM"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <VideoView
+            android:id="@+id/videoViewLoadingCircleAFM"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</LinearLayout>
