@@ -71,7 +71,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    fun addTheaterButtonClick() {
+    fun addMovieButtonClick() {
         showAddMoviesDialog()
     }
     private fun validateForm(

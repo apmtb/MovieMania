@@ -185,12 +185,19 @@
         android:text="Languages: "
         android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/movieLanguageSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/languageLabel"
-        android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/languagesEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/languageLabel"
+            android:hint="Select Languages"
+            android:textAlignment="center"
+            android:textSize="15dp"
+            android:background="@drawable/black_border"
+            android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:paddingRight="3dp"
+            android:layout_marginLeft="5dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -206,12 +213,19 @@
         android:text="Casts: "
         android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/movieCastSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="33dp" />
+        <EditText
+            android:id="@+id/castsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/castLabel"
+            android:hint="Select Casts"
+            android:textAlignment="center"
+            android:textSize="15dp"
+            android:background="@drawable/black_border"
+            android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:paddingRight="3dp"
+            android:layout_marginLeft="38dp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -225,11 +239,17 @@
         android:text="Theaters: "
         android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/movieTheaterSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/theatersEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Select Theaters"
+            android:textAlignment="center"
+            android:textSize="15dp"
+            android:background="@drawable/black_border"
+            android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:paddingRight="3dp"
+            android:layout_marginLeft="18dp" />
     </LinearLayout>
 </LinearLayout>
