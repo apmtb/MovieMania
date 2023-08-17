@@ -7,4 +7,24 @@
     <string name="close_drawer">Close Drawer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+<string-array name="languages_array">
+    <item>English</item>
+    <item>Spanish</item>
+    <item>French</item>
+    <!-- Add more languages here -->
+</string-array>
+
+<string-array name="casts_array">
+    <item>Actor 1</item>
+    <item>Actor 2</item>
+    <item>Actor 3</item>
+    <!-- Add more cast members here -->
+</string-array>
+
+<string-array name="theaters_array">
+    <item>Theater 1</item>
+    <item>Theater 2</item>
+    <item>Theater 3</item>
+    <!-- Add more theaters here -->
+</string-array>
 </resources>

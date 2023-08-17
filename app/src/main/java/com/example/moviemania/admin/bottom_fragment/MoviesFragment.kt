@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -117,6 +118,15 @@ class MoviesFragment : Fragment() {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_movie, null)
             val uploadImageButton = dialogView.findViewById<Button>(R.id.movieUploadImageButton)
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.movieImageContainer)
+            setupMultiSelectEditText(R.id.languagesEditText, resources.getStringArray(R.array.languages_array),"Select Languages"){ list ->
+                showToast(list.toString())
+            }
+            setupMultiSelectEditText(R.id.castsEditText, resources.getStringArray(R.array.casts_array),"Select Casts"){ list ->
+                showToast(list.toString())
+            }
+            setupMultiSelectEditText(R.id.theatersEditText, resources.getStringArray(R.array.theaters_array),"Select Theaters"){ list ->
+                showToast(list.toString())
+            }
 
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFM)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFM)
@@ -356,6 +366,69 @@ class MoviesFragment : Fragment() {
                     showToast("Error checking movie title: ${task.exception}")
                 }
             }
+    }
+
+    private fun setupMultiSelectEditText(textViewId: Int, itemsArray: Array<String>,title: String,callback: (ArrayList<String>) -> Unit) {
+        val textView = dialogView.findViewById<TextView>(textViewId)
+        val selectedItems = ArrayList<String>()
+        val checkedItems = BooleanArray(itemsArray.size) { false }
+        textView.setOnClickListener {
+            showMultiSelectDialog(textView, itemsArray, title, selectedItems, checkedItems) { list->
+                callback(list)
+            }
+        }
+    }
+
+    private fun showMultiSelectDialog(textView: TextView, itemsArray: Array<String>,title: String, selectedItems:ArrayList<String>, checkedItems: BooleanArray, callback: (ArrayList<String>) -> Unit) {
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Select Items")
+            .setCancelable(false)
+            .setMultiChoiceItems(itemsArray, checkedItems) { _, which, isChecked ->
+                if (isChecked) {
+                    selectedItems.add(itemsArray[which])
+                    selectedItems.sort()
+                } else {
+                    selectedItems.remove(itemsArray[which])
+                }
+            }
+            .setPositiveButton("OK",null)
+            .setNeutralButton("Clear",null)
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+        val okBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        okBtn.setOnClickListener {
+            val selectedText = selectedItems.joinToString(", ")
+            if (selectedText.isNullOrEmpty()){
+                textView.text = title
+                textView.setTextColor(Color.GRAY)
+            } else {
+                if(selectedItems.size>1) {
+                    textView.text = "${selectedItems.size} Selected"
+                } else {
+                    textView.text = selectedItems.joinToString("")
+                }
+                textView.setTextColor(Color.BLACK)
+                callback(selectedItems)
+            }
+            dialog.dismiss()
+        }
+        val clearBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+        clearBtn.setOnClickListener {
+            if(selectedItems.size == 0) {
+                dialog.dismiss()
+            } else {
+                for (i in checkedItems.indices) {
+                    checkedItems[i] = false
+                }
+                textView.text = title
+                selectedItems.clear()
+                textView.setTextColor(Color.GRAY)
+                dialog.dismiss()
+            }
+        }
     }
 
     private fun loadMoviesData() {
