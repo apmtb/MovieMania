@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.moviemania.R
 
@@ -19,7 +18,7 @@ class SeatAdapter(
 ) : BaseAdapter() {
 
     private val selectedSeatPositions: MutableList<Int> = mutableListOf()
-    private val SeatPositions: MutableList<Int> = mutableListOf()
+    private val seatPositions: MutableList<Int> = mutableListOf()
 
     override fun getCount(): Int {
         return numRows * numColumns
@@ -58,17 +57,18 @@ class SeatAdapter(
 
         if(seat.id.isEmpty()){
             seatImageView.setImageResource(0)
+            view.isClickable = true
         } else {
             view.setOnClickListener {
                 if (seat.isSelected) {
                     seatImageView.setImageResource(R.drawable.ic_seat_booked)
-                } else if (!SeatPositions.contains(position)) {
+                } else if (!seatPositions.contains(position)) {
                     if((numColumns+1)/2 > column){
                         selectedSeatPositions.add(position-seat.row+1)
-                        SeatPositions.add(position)
+                        seatPositions.add(position)
                     } else {
                         selectedSeatPositions.add(position-seat.row)
-                        SeatPositions.add(position)
+                        seatPositions.add(position)
                     }
                     seatImageView.setImageResource(R.drawable.ic_seat_selected)
                     seatImageView.background =
@@ -76,10 +76,10 @@ class SeatAdapter(
                 } else {
                     if((numColumns+1)/2 > column){
                         selectedSeatPositions.remove((position-seat.row+1))
-                        SeatPositions.remove(position)
+                        seatPositions.remove(position)
                     } else {
                         selectedSeatPositions.remove((position-seat.row))
-                        SeatPositions.remove(position)
+                        seatPositions.remove(position)
                     }
                     seatImageView.background = null
                     seatImageView.setImageResource(R.drawable.ic_seat_available)
@@ -90,6 +90,3 @@ class SeatAdapter(
         return view
     }
 }
-
-//val newSelectedState = !seat.isSelected
-//onSeatClick(position, newSelectedState)
