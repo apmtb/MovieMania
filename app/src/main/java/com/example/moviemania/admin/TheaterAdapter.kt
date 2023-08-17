@@ -1,7 +1,6 @@
 package com.example.moviemania.admin
 
 import android.content.Context
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TheaterAdapter(private val context: Context, private val theaters: List<TheatersFragment.Theater>) : BaseAdapter() {
 
     private val db = FirebaseFirestore.getInstance()
-    private val status = false
 
     override fun getCount(): Int {
         return theaters.size
@@ -108,12 +106,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val numRows = theater.seatRowLength
         val numColumns = theater.seatColLength
 
-        seatGridView.numColumns = numColumns
-        val initialSeatList = generateSeatList(theater.seatColLength, theater.seatRowLength)
-
-        val initialSeatAdapter = SeatAdapter(context, initialSeatList, numRows, numColumns) { _ ->
-            // Initial adapter, no need to handle seat status update here
-        }
+        seatGridView.numColumns = numColumns + 1
         val seatDialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setTitle("Select Seats")
@@ -126,7 +119,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val theaterName = theater.name
 
         loadSeatData(theaterName, numColumns) { seatList ->
-            val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns) { list ->
+            val seatAdapter = SeatAdapter(context, seatList, numRows, numColumns+1) { list ->
                 mutableSeatList.clear()
                 mutableSeatList.addAll(list)
             }
@@ -140,7 +133,6 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                 updateSeatStatus(theaterName, mutableSeatList, true) { status ->
                     if (status) {
                         Toast.makeText(context, "Booked Successfully!", Toast.LENGTH_SHORT).show()
-                        initialSeatAdapter.notifyDataSetChanged()
                     } else {
                         Toast.makeText(
                             context,
@@ -171,6 +163,9 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                         val row = index / numColumns + 1
                         val column = index % numColumns + 1
                         seatList.add(Seat(seatId, column, row, isSelected))
+                        if (numColumns/2 == column){
+                            seatList.add(Seat("", column, row, isSelected))
+                        }
                     }
                     callback(seatList)
                 }
@@ -210,18 +205,6 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                     }
                 }
             }
-    }
-
-    private fun generateSeatList(cols: Int, rows: Int): List<Seat> {
-        val seatList = ArrayList<Seat>()
-        for (row in 1..rows) {
-            for (col in 1..cols) {
-                val seatId = "Seat_${row}_${col}"
-                val seat = Seat(seatId, col, row, false)
-                seatList.add(seat)
-            }
-        }
-        return seatList
     }
 
     data class Seat(
