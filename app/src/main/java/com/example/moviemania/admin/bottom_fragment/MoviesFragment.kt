@@ -44,9 +44,9 @@ class MoviesFragment : Fragment() {
     private lateinit var imageError: TextView
     private lateinit var selectSectionError: TextView
     private lateinit var selectTypeError: TextView
-    private lateinit var selectLanguageError: TextView
-    private lateinit var selectCastError: TextView
-    private lateinit var selectTheaterError: TextView
+//    private lateinit var selectLanguageError: TextView
+//    private lateinit var selectCastError: TextView
+//    private lateinit var selectTheaterError: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,9 +86,9 @@ class MoviesFragment : Fragment() {
         imageError.visibility = View.GONE
         selectSectionError.visibility = View.GONE
         selectTypeError.visibility = View.GONE
-        selectLanguageError.visibility = View.GONE
-        selectCastError.visibility = View.GONE
-        selectTheaterError.visibility = View.GONE
+//        selectLanguageError.visibility = View.GONE
+//        selectCastError.visibility = View.GONE
+//        selectTheaterError.visibility = View.GONE
     }
     private fun validateForm(
         movieTitle: EditText,
@@ -272,9 +272,8 @@ class MoviesFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 234) {
                 val selectedImageURI = data?.data
-                val selectedImageView = dialogView.findViewById<ImageView>(R.id.theaterImageView)
+                val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieSelectedImageView)
                 if (selectedImageURI != null) {
-                    val imageError = dialogView.findViewById<TextView>(R.id.imageErrorTheater)
                     imageError.visibility = View.GONE
                     selectedImageView.setImageURI(selectedImageURI)
                 }
