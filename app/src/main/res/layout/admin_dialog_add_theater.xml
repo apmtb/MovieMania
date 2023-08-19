@@ -1,143 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:fillViewport="true"
     android:padding="16dp">
-
-    <EditText
-        android:id="@+id/theaterNameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Theater Name" />
-
-    <RadioGroup
-        android:id="@+id/imageOptionRadioGroupTheater"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <RadioButton
-            android:id="@+id/uploadImageRadioButtonTheater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload Image"
-            android:checked="true"
-            android:layout_marginRight="10dp"/>
-
-        <RadioButton
-            android:id="@+id/urlRadioButtonTheater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enter URL"
-            android:layout_marginLeft="10dp"/>
-
-    </RadioGroup>
-
-    <EditText
-        android:id="@+id/theaterImageInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Image URL"
-        android:visibility="gone"/>
-
-    <RelativeLayout
-        android:id="@+id/imageContainerTheater"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/theaterImageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/image_border" />
-
-        <Button
-            android:id="@+id/uploadImageButtonTheater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/theaterImageView"
-            android:layout_centerHorizontal="true"
-            android:text="Upload Image" />
-    </RelativeLayout>
-    <TextView
-        android:drawablePadding="5dp"
-        android:id="@+id/imageErrorTheater"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="image is Required!"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"
-        android:textStyle="bold"
-        android:textColor="#ff0000"
-        android:layout_gravity="center"
-        app:drawableLeftCompat="@drawable/ic_custom_error" />
-
-    <EditText
-        android:id="@+id/theaterLocationEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Location" />
-
-    <TextView
-        android:id="@+id/textViewSelectLengths"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Select Seat Lengths"
-        android:layout_margin="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:layout_width="0dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/theaterNameEditText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:hint="Theater Name" />
 
-            <TextView
-                android:id="@+id/textViewColLength"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Columns : "
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center_horizontal"/>
-
-            <NumberPicker
-                android:id="@+id/colLengthPicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
+        <RadioGroup
+            android:id="@+id/imageOptionRadioGroupTheater"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textViewRowLength"
+            <RadioButton
+                android:id="@+id/uploadImageRadioButtonTheater"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Rows :"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:text="Upload Image" />
 
-            <NumberPicker
-                android:id="@+id/rowLengthPicker"
+            <RadioButton
+                android:id="@+id/urlRadioButtonTheater"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_marginLeft="10dp"
+                android:text="Enter URL" />
+
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/theaterImageInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Image URL"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/imageContainerTheater"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/theaterImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/image_border" />
+
+            <Button
+                android:id="@+id/uploadImageButtonTheater"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/theaterImageView"
+                android:layout_centerHorizontal="true"
+                android:text="Upload Image" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/imageErrorTheater"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="5dp"
+            android:text="image is Required!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableLeftCompat="@drawable/ic_custom_error" />
+
+        <EditText
+            android:id="@+id/theaterLocationEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Location" />
+
+        <TextView
+            android:id="@+id/textViewSelectLengths"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Select Seat Lengths"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textViewColLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="Columns : "
+                    android:textStyle="bold" />
+
+                <NumberPicker
+                    android:id="@+id/colLengthPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textViewRowLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="Rows :"
+                    android:textStyle="bold" />
+
+                <NumberPicker
+                    android:id="@+id/rowLengthPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

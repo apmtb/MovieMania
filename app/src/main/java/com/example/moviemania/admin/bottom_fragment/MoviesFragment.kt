@@ -41,6 +41,12 @@ class MoviesFragment : Fragment() {
     private lateinit var dialogView: View
     private lateinit var videoView: VideoView
     private lateinit var frameLayout: View
+    private lateinit var imageError: TextView
+    private lateinit var selectSectionError: TextView
+    private lateinit var selectTypeError: TextView
+    private lateinit var selectLanguageError: TextView
+    private lateinit var selectCastError: TextView
+    private lateinit var selectTheaterError: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,32 +81,54 @@ class MoviesFragment : Fragment() {
     fun addMovieButtonClick() {
         showAddMoviesDialog()
     }
+
+    private fun clearTextViewErrors(){
+        imageError.visibility = View.GONE
+        selectSectionError.visibility = View.GONE
+        selectTypeError.visibility = View.GONE
+        selectLanguageError.visibility = View.GONE
+        selectCastError.visibility = View.GONE
+        selectTheaterError.visibility = View.GONE
+    }
     private fun validateForm(
-        theaterName: EditText,
+        movieTitle: EditText,
         imageUri: EditText,
         imageView: ImageView,
-        textView: TextView,
+        imageError: TextView,
         movieDescription: EditText,
+        sectionRadioGroup: RadioGroup,
+        selectSectionError: TextView,
+        typeRadioGroup: RadioGroup,
+        selectTypeError: TextView,
         ticketPriceEditText: EditText
     ): Boolean {
+        clearTextViewErrors()
         val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
         icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-        if (theaterName.text.trim().isEmpty()) {
-            theaterName.setError("Theater Name is Required!",icon)
+        if (movieTitle.text.trim().isEmpty()) {
+            movieTitle.setError("Movie Title is Required!",icon)
             return false
         }
         if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
-            textView.visibility = View.VISIBLE
+            imageError.visibility = View.VISIBLE
             return false
         }
         if (movieDescription.text.trim().isEmpty()) {
-            movieDescription.setError("Theater Location is Required!",icon)
+            movieDescription.setError("Movie Location is Required!",icon)
+            return false
+        }
+        if (sectionRadioGroup.checkedRadioButtonId == -1) {
+            selectSectionError.visibility = View.VISIBLE
+            return false
+        }
+        if (typeRadioGroup.checkedRadioButtonId == -1) {
+            selectTypeError.visibility = View.VISIBLE
             return false
         }
         val ticketPrice = ticketPriceEditText.text.toString()
         if (ticketPrice.isEmpty()) {
             // Ticket price is empty
-            ticketPriceEditText.error = "Ticket price is required!"
+            ticketPriceEditText.setError("Ticket price is required!",icon)
             return false
         }
 
@@ -108,7 +136,7 @@ class MoviesFragment : Fragment() {
 
         if (ticketPriceValue == null || ticketPriceValue <= 0) {
             // Invalid ticket price
-            ticketPriceEditText.error = "Invalid ticket price!"
+            ticketPriceEditText.setError("Invalid ticket price!",icon)
             return false
         }
         return true
@@ -130,7 +158,7 @@ class MoviesFragment : Fragment() {
 
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFM)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFM)
-            val imageError = dialogView.findViewById<TextView>(R.id.movieImageError)
+            imageError = dialogView.findViewById(R.id.movieImageError)
 
             val dialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
@@ -174,16 +202,20 @@ class MoviesFragment : Fragment() {
                     234
                 )
             }
-
             dialog.show()
             val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             addButton.setOnClickListener {
                 val movieNameEditText = dialogView.findViewById<EditText>(R.id.movieTitleEditText)
                 val movieImageUri = dialogView.findViewById<EditText>(R.id.movieImageInput)
-                val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieImageView)
+                val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieSelectedImageView)
                 val movieDescriptionEditText = dialogView.findViewById<EditText>(R.id.movieDescriptionEditText)
                 val ticketPriceEditText = dialogView.findViewById<EditText>(R.id.movieTicketPriceEditText)
-                if(validateForm(movieNameEditText,movieImageUri,selectedImageView,imageError,movieDescriptionEditText,ticketPriceEditText)) {
+                val sectionOptionRadioGroup = dialogView.findViewById<RadioGroup>(R.id.movieSectionRadioGroup)
+                selectSectionError = dialogView.findViewById(R.id.movieSelectSectionError)
+                val typeOptionRadioGroup = dialogView.findViewById<RadioGroup>(R.id.movieTypeRadioGroup)
+                selectTypeError = dialogView.findViewById(R.id.movieSelectTypeError)
+                if(validateForm(movieNameEditText,movieImageUri,selectedImageView,imageError,movieDescriptionEditText,
+                        sectionOptionRadioGroup, selectSectionError, typeOptionRadioGroup, selectTypeError, ticketPriceEditText)) {
                     val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
                     val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noTheaterTextView)
                     theaterGridView?.visibility = View.GONE
@@ -202,12 +234,9 @@ class MoviesFragment : Fragment() {
 
                     val movieName = movieNameEditText.text.toString()
                     val movieDescription = movieDescriptionEditText.text.toString()
-                    val sectionOptionRadioGroup =
-                        dialogView.findViewById<RadioGroup>(R.id.movieSectionRadioGroup)
+
                     val selectedSectionId = sectionOptionRadioGroup.checkedRadioButtonId
                     val section = dialogView.findViewById<RadioButton>(selectedSectionId).text.toString()
-                    val typeOptionRadioGroup =
-                        dialogView.findViewById<RadioGroup>(R.id.movieTypeRadioGroup)
                     val selectedTypeId = typeOptionRadioGroup.checkedRadioButtonId
                     val type = dialogView.findViewById<RadioButton>(selectedTypeId).text.toString()
                     val imageOptionRadioGroup =

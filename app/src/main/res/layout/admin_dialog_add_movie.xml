@@ -1,295 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:fillViewport="true"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/movieTitleEditText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Movie Title" />
+        android:orientation="vertical">
 
-    <RadioGroup
-        android:id="@+id/movieImageOptionRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/movieUploadImageRadioButton"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/movieTitleEditText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:checked="true"
-            android:text="Upload Image" />
+            android:hint="Movie Title" />
 
-        <RadioButton
-            android:id="@+id/movieUrlRadioButton"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/movieImageOptionRadioGroup"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Enter URL" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/movieUploadImageRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:text="Upload Image" />
 
-    <EditText
-        android:id="@+id/movieImageInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Image URL"
-        android:visibility="gone" />
+            <RadioButton
+                android:id="@+id/movieUrlRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Enter URL" />
 
+        </RadioGroup>
 
-    <RelativeLayout
-        android:id="@+id/movieImageContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/movieSelectedImageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/image_border" />
-
-        <Button
-            android:id="@+id/movieUploadImageButton"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/movieImageInput"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/movieSelectedImageView"
-            android:layout_centerHorizontal="true"
+            android:hint="Image URL"
+            android:visibility="gone" />
+
+
+        <RelativeLayout
+            android:id="@+id/movieImageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Upload Image"
-            android:visibility="visible" />
-    </RelativeLayout>
+            android:visibility="visible">
 
-    <TextView
-        android:id="@+id/movieImageError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:drawablePadding="5dp"
-        android:text="Image is Required!"
-        android:textColor="#ff0000"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:drawableStartCompat="@drawable/ic_custom_error" />
+            <ImageView
+                android:id="@+id/movieSelectedImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/image_border" />
 
-    <EditText
-        android:id="@+id/movieDescriptionEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Description" />
-
-    <RadioGroup
-        android:id="@+id/movieSectionRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+            <Button
+                android:id="@+id/movieUploadImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/movieSelectedImageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:text="Upload Image"
+                android:visibility="visible" />
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/sectionLabel"
+            android:id="@+id/movieImageError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Section: "
-            android:textStyle="bold" />
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:drawablePadding="5dp"
+            android:text="Image is Required!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
 
-        <RadioButton
-            android:id="@+id/trendingRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trending"
-            android:textSize="12dp"
-            android:checked="true"/>
-
-        <RadioButton
-            android:id="@+id/popularRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Popular"
-            android:textSize="12dp" />
-
-        <RadioButton
-            android:id="@+id/radioNone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="None"
-            android:textSize="12dp" />
-    </RadioGroup>
-
-    <RadioGroup
-        android:id="@+id/movieTypeRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/typeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Type: "
-            android:textStyle="bold" />
-
-        <RadioButton
-            android:id="@+id/hollywoodRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hollywood"
-            android:textSize="12dp"
-            android:checked="true"/>
-
-        <RadioButton
-            android:id="@+id/bollywoodRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bollywood"
-            android:textSize="12dp" />
-
-        <RadioButton
-            android:id="@+id/tollywoodRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tollywood"
-            android:textSize="12dp" />
-    </RadioGroup>
-
-    <EditText
-        android:id="@+id/movieTicketPriceEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ticket Price ( in Rupees )"
-        android:inputType="numberDecimal" />
-
-    <CheckBox
-        android:id="@+id/movieUpcomingCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Upcoming" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <TextView
-        android:id="@+id/languageLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Languages: "
-        android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/languagesEditText"
+        <EditText
+            android:id="@+id/movieDescriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Select Languages"
-            android:textAlignment="center"
-            android:textSize="15sp"
-            android:background="@drawable/black_border"
-            android:paddingEnd="3dp"
-            android:layout_marginStart="5dp"
-            app:drawableEndCompat="@drawable/ic_arrow_drop_down"/>
-    </LinearLayout>
+            android:hint="Description" />
 
-    <TextView
-        android:id="@+id/movieSelectLanguageError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:drawablePadding="5dp"
-        android:text="Select at least one Language!"
-        android:textColor="#ff0000"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:drawableStartCompat="@drawable/ic_custom_error" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <TextView
-        android:id="@+id/castLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Casts: "
-        android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/castsEditText"
+        <RadioGroup
+            android:id="@+id/movieSectionRadioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Select Casts"
-            android:textAlignment="center"
-            android:textSize="15sp"
-            android:background="@drawable/black_border"
-            android:paddingEnd="3dp"
-            android:layout_marginStart="38dp"
-            app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
-    </LinearLayout>
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/movieSelectCastError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:drawablePadding="5dp"
-        android:text="Select at least one Cast!"
-        android:textColor="#ff0000"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:drawableStartCompat="@drawable/ic_custom_error" />
+            <TextView
+                android:id="@+id/sectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Section: "
+                android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <TextView
-        android:id="@+id/theaterLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Theaters: "
-        android:textStyle="bold" />
+            <RadioButton
+                android:id="@+id/trendingRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trending"
+                android:textSize="12dp" />
+
+            <RadioButton
+                android:id="@+id/popularRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Popular"
+                android:textSize="12dp" />
+
+            <RadioButton
+                android:id="@+id/radioNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="None"
+                android:textSize="12dp" />
+        </RadioGroup>
 
         <TextView
-            android:id="@+id/theatersEditText"
+            android:id="@+id/movieSelectSectionError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:drawablePadding="5dp"
+            android:text="Select section!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
+
+        <RadioGroup
+            android:id="@+id/movieTypeRadioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Select Theaters"
-            android:textAlignment="center"
-            android:textSize="15sp"
-            android:background="@drawable/black_border"
-            android:paddingEnd="3dp"
-            android:layout_marginStart="18dp"
-            app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/typeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Type: "
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/hollywoodRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hollywood"
+                android:textSize="12dp" />
+
+            <RadioButton
+                android:id="@+id/bollywoodRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bollywood"
+                android:textSize="12dp" />
+
+            <RadioButton
+                android:id="@+id/tollywoodRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tollywood"
+                android:textSize="12dp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/movieSelectTypeError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:drawablePadding="5dp"
+            android:text="Select Movie Type!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
+
+        <EditText
+            android:id="@+id/movieTicketPriceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ticket Price ( in Rupees )"
+            android:inputType="numberDecimal" />
+
+        <CheckBox
+            android:id="@+id/movieUpcomingCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upcoming" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/languageLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Languages: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/languagesEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/black_border"
+                android:paddingEnd="3dp"
+                android:text="Select Languages"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/movieSelectLanguageError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:drawablePadding="5dp"
+            android:text="Select at least one Language!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/castLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Casts: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/castsEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/black_border"
+                android:paddingEnd="3dp"
+                android:text="Select Casts"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/movieSelectCastError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:drawablePadding="5dp"
+            android:text="Select at least one Cast!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/theaterLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Theaters: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/theatersEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/black_border"
+                android:paddingEnd="3dp"
+                android:text="Select Theaters"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/movieSelectTheaterError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:drawablePadding="5dp"
+            android:text="Select at least one Theater!"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/movieSelectTheaterError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:drawablePadding="5dp"
-        android:text="Select at least one Theater!"
-        android:textColor="#ff0000"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:drawableStartCompat="@drawable/ic_custom_error" />
-
-</LinearLayout>
+</ScrollView>
