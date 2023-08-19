@@ -107,7 +107,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Trending"
-            android:textSize="12dp" />
+            android:textSize="12dp"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/popularRadioButton"
@@ -143,7 +144,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hollywood"
-            android:textSize="12dp" />
+            android:textSize="12dp"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/bollywoodRadioButton"
@@ -199,6 +201,19 @@
             app:drawableEndCompat="@drawable/ic_arrow_drop_down"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/movieSelectLanguageError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:drawablePadding="5dp"
+        android:text="Select at least one Language!"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_custom_error" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -224,6 +239,20 @@
             android:layout_marginStart="38dp"
             app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/movieSelectCastError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:drawablePadding="5dp"
+        android:text="Select at least one Cast!"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_custom_error" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -249,4 +278,18 @@
             android:layout_marginStart="18dp"
             app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/movieSelectTheaterError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:drawablePadding="5dp"
+        android:text="Select at least one Theater!"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_custom_error" />
+
 </LinearLayout>
