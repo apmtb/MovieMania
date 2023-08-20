@@ -82,6 +82,10 @@ class SeatAdapter(
                         seatPositions.remove(position)
                     }
                     seatImageView.background = null
+                    val dp = 5
+                    val scale = displayMetrics.density
+                    val dpToPx = (dp * scale +0.5f).toInt()
+                    seatImageView.setPadding(dpToPx,dpToPx,dpToPx,dpToPx)
                     seatImageView.setImageResource(R.drawable.ic_seat_available)
                 }
                 onSeatClick(selectedSeatPositions)
