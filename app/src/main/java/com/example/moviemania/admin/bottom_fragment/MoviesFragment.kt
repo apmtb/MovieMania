@@ -146,13 +146,13 @@ class MoviesFragment : Fragment() {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_movie, null)
             val uploadImageButton = dialogView.findViewById<Button>(R.id.movieUploadImageButton)
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.movieImageContainer)
-            setupMultiSelectEditText(R.id.languagesEditText, resources.getStringArray(R.array.languages_array),"Select Languages"){ list ->
+            setupMultiSelectEditText(R.id.languagesSpinnerTextView, resources.getStringArray(R.array.languages_array),"Select Languages"){ list ->
                 showToast(list.toString())
             }
-            setupMultiSelectEditText(R.id.castsEditText, resources.getStringArray(R.array.casts_array),"Select Casts"){ list ->
+            setupMultiSelectEditText(R.id.castsSpinnerTextView, resources.getStringArray(R.array.casts_array),"Select Casts"){ list ->
                 showToast(list.toString())
             }
-            setupMultiSelectEditText(R.id.theatersEditText, resources.getStringArray(R.array.theaters_array),"Select Theaters"){ list ->
+            setupMultiSelectEditText(R.id.theatersSpinnerTextView, resources.getStringArray(R.array.theaters_array),"Select Theaters"){ list ->
                 showToast(list.toString())
             }
 

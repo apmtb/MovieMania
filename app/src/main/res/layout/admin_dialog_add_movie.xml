@@ -220,7 +220,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/languagesEditText"
+                android:id="@+id/languagesSpinnerTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -260,7 +260,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/castsEditText"
+                android:id="@+id/castsSpinnerTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="38dp"
@@ -300,7 +300,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/theatersEditText"
+                android:id="@+id/theatersSpinnerTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
