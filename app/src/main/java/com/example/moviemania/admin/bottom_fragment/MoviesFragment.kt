@@ -16,7 +16,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.ImageView
-import android.widget.NumberPicker
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.RelativeLayout
@@ -28,7 +27,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.moviemania.R
 import com.example.moviemania.admin.MovieAdapter
-import com.example.moviemania.admin.TheaterAdapter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
@@ -231,7 +229,7 @@ class MoviesFragment : Fragment() {
             dialog.show()
             val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             addButton.setOnClickListener {
-                val movieNameEditText = dialogView.findViewById<EditText>(R.id.movieTitleEditText)
+                val movieTitleEditText = dialogView.findViewById<EditText>(R.id.movieTitleEditText)
                 val movieImageUri = dialogView.findViewById<EditText>(R.id.movieImageInput)
                 val movieDescriptionEditText = dialogView.findViewById<EditText>(R.id.movieDescriptionEditText)
                 val ticketPriceEditText = dialogView.findViewById<EditText>(R.id.movieTicketPriceEditText)
@@ -242,7 +240,7 @@ class MoviesFragment : Fragment() {
                 selectLanguageError = dialogView.findViewById(R.id.movieSelectLanguageError)
                 selectCastError = dialogView.findViewById(R.id.movieSelectCastError)
                 selectTheaterError = dialogView.findViewById(R.id.movieSelectTheaterError)
-                if(validateForm(movieNameEditText,movieImageUri,selectedImageView,movieDescriptionEditText,
+                if(validateForm(movieTitleEditText,movieImageUri,selectedImageView,movieDescriptionEditText,
                         sectionOptionRadioGroup, typeOptionRadioGroup, ticketPriceEditText,languagesList,castsList,theatersList)) {
                     val theaterGridView = view?.findViewById<GridView>(R.id.moviesGridView)
                     val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noMoviesTextView)
@@ -260,7 +258,7 @@ class MoviesFragment : Fragment() {
 
                     videoView.start()
 
-                    val movieName = movieNameEditText.text.toString()
+                    val movieTitle = movieTitleEditText.text.toString()
                     val movieDescription = movieDescriptionEditText.text.toString()
 
                     val selectedSectionId = sectionOptionRadioGroup.checkedRadioButtonId
@@ -271,21 +269,21 @@ class MoviesFragment : Fragment() {
                         dialogView.findViewById<RadioGroup>(R.id.movieImageOptionRadioGroup)
                     val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
                     val ticketPrice = ticketPriceEditText.text.toString().toDouble()
-                    val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButtonTheater
+                    val isUploadImage = selectedRadioButtonId == R.id.movieUploadImageRadioButton
                     val isUpcomingchecked = dialogView.findViewById<CheckBox>(R.id.movieUpcomingCheckBox).isChecked
 
                     if (isUploadImage) {
                         imageContainer.visibility = View.VISIBLE
                         movieImageUri.visibility = View.GONE
-                        uploadImageToFirebaseStorage(selectedImageView, movieName) {
-                            addMovieToFirestore(movieName, it, movieDescription, section,
+                        uploadImageToFirebaseStorage(selectedImageView, movieTitle) {
+                            addMovieToFirestore(movieTitle, it, movieDescription, section,
                                 type, ticketPrice,isUpcomingchecked,languagesList.toString(),castsList,theatersList)
                         }
                     } else {
                         imageContainer.visibility = View.GONE
                         movieImageUri.visibility = View.VISIBLE
                         val imageUrl = movieImageUri.text.toString()
-                        addMovieToFirestore(movieName, imageUrl, movieDescription, section,
+                        addMovieToFirestore(movieTitle, imageUrl, movieDescription, section,
                             type, ticketPrice,isUpcomingchecked,languagesList.joinToString(", "),castsList,theatersList)
                     }
                     dialog.dismiss()
@@ -309,9 +307,9 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageView: ImageView, movieName: String, callback: (String) -> Unit) {
-        val theaterCollection = db.collection("Movies")
-        theaterCollection.whereEqualTo("name", movieName.trim())
+    private fun uploadImageToFirebaseStorage(imageView: ImageView, movieTitle: String, callback: (String) -> Unit) {
+        val movieCollection = db.collection("Movies")
+        movieCollection.whereEqualTo("title", movieTitle.trim())
             .get()
             .addOnCompleteListener { task ->
                 val moviesGridView = view?.findViewById<GridView>(R.id.moviesGridView)

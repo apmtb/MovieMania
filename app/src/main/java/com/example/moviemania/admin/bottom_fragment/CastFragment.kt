@@ -151,6 +151,7 @@ class CastFragment : Fragment() {
                 }
                 .create()
 
+            val selectedImageView = dialogView.findViewById<ImageView>(R.id.selectedImageView)
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
             val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
@@ -169,6 +170,7 @@ class CastFragment : Fragment() {
                     castImageInput.visibility = View.GONE
                 } else {
                     imageError.text = "image URL is Required!"
+                    selectedImageView.setImageResource(0)
                     imageContainer.visibility = View.GONE
                     castImageInput.visibility = View.VISIBLE
                 }

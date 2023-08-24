@@ -51,7 +51,8 @@ class HomeFragment : Fragment() {
         addAdminBtn.setOnClickListener {
             when (bottomNavigationView.selectedItemId) {
                 R.id.admin_bottom_movies -> {
-                    showToast("Movies")
+                    val mf = MoviesFragment.newInstance()
+                    mf?.addMovieButtonClick()
                 }
                 R.id.admin_bottom_theaters -> {
                     val tf = TheatersFragment.newInstance()

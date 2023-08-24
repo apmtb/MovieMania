@@ -123,6 +123,7 @@ class TheatersFragment : Fragment() {
                     dialog.dismiss()
                 }
                 .create()
+            val selectedImageView = dialogView.findViewById<ImageView>(R.id.theaterImageView)
 
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
@@ -144,6 +145,7 @@ class TheatersFragment : Fragment() {
                     theaterImageUri.visibility = View.GONE
                 } else {
                     imageError.text = "image URL is Required!"
+                    selectedImageView.setImageResource(0)
                     imageContainer.visibility = View.GONE
                     theaterImageUri.visibility = View.VISIBLE
                 }
