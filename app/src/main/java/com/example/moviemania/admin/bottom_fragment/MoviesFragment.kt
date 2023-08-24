@@ -44,9 +44,9 @@ class MoviesFragment : Fragment() {
     private lateinit var imageError: TextView
     private lateinit var selectSectionError: TextView
     private lateinit var selectTypeError: TextView
-//    private lateinit var selectLanguageError: TextView
-//    private lateinit var selectCastError: TextView
-//    private lateinit var selectTheaterError: TextView
+    private lateinit var selectLanguageError: TextView
+    private lateinit var selectCastError: TextView
+    private lateinit var selectTheaterError: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,21 +86,21 @@ class MoviesFragment : Fragment() {
         imageError.visibility = View.GONE
         selectSectionError.visibility = View.GONE
         selectTypeError.visibility = View.GONE
-//        selectLanguageError.visibility = View.GONE
-//        selectCastError.visibility = View.GONE
-//        selectTheaterError.visibility = View.GONE
+        selectLanguageError.visibility = View.GONE
+        selectCastError.visibility = View.GONE
+        selectTheaterError.visibility = View.GONE
     }
     private fun validateForm(
         movieTitle: EditText,
         imageUri: EditText,
         imageView: ImageView,
-        imageError: TextView,
         movieDescription: EditText,
         sectionRadioGroup: RadioGroup,
-        selectSectionError: TextView,
         typeRadioGroup: RadioGroup,
-        selectTypeError: TextView,
-        ticketPriceEditText: EditText
+        ticketPriceEditText: EditText,
+        languagesList: MutableList<String>,
+        castList: MutableList<String>,
+        theatersList: MutableList<String>
     ): Boolean {
         clearTextViewErrors()
         val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
@@ -139,6 +139,21 @@ class MoviesFragment : Fragment() {
             ticketPriceEditText.setError("Invalid ticket price!",icon)
             return false
         }
+
+        if(languagesList.isEmpty()){
+            selectLanguageError.visibility = View.VISIBLE
+            return false
+        }
+
+        if(castList.isEmpty()){
+            selectCastError.visibility = View.VISIBLE
+            return false
+        }
+
+        if(theatersList.isEmpty()){
+            selectTheaterError.visibility = View.VISIBLE
+            return false
+        }
         return true
     }
     private fun showAddMoviesDialog() {
@@ -146,13 +161,22 @@ class MoviesFragment : Fragment() {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_movie, null)
             val uploadImageButton = dialogView.findViewById<Button>(R.id.movieUploadImageButton)
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.movieImageContainer)
+            val languagesList:MutableList<String> = mutableListOf()
+            val castsList:MutableList<String> = mutableListOf()
+            val theatersList:MutableList<String> = mutableListOf()
             setupMultiSelectTextView(R.id.languagesSpinnerTextView, resources.getStringArray(R.array.languages_array),"Select Languages"){ list ->
-                showToast(list.toString())
+                languagesList.clear()
+                languagesList.addAll(list)
+                showToast(languagesList.toString())
             }
             setupMultiSelectTextView(R.id.castsSpinnerTextView, resources.getStringArray(R.array.casts_array),"Select Casts"){ list ->
+                castsList.clear()
+                castsList.addAll(list)
                 showToast(list.toString())
             }
             setupMultiSelectTextView(R.id.theatersSpinnerTextView, resources.getStringArray(R.array.theaters_array),"Select Theaters"){ list ->
+                theatersList.clear()
+                theatersList.addAll(list)
                 showToast(list.toString())
             }
 
@@ -169,6 +193,7 @@ class MoviesFragment : Fragment() {
                 }
                 .create()
 
+            val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieSelectedImageView)
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.movieImageOptionRadioGroup)
             imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -189,6 +214,7 @@ class MoviesFragment : Fragment() {
                     movieImageUri.visibility = View.GONE
                 } else {
                     imageError.text = "image URL is Required!"
+                    selectedImageView.setImageResource(0)
                     imageContainer.visibility = View.GONE
                     movieImageUri.visibility = View.VISIBLE
                 }
@@ -207,17 +233,19 @@ class MoviesFragment : Fragment() {
             addButton.setOnClickListener {
                 val movieNameEditText = dialogView.findViewById<EditText>(R.id.movieTitleEditText)
                 val movieImageUri = dialogView.findViewById<EditText>(R.id.movieImageInput)
-                val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieSelectedImageView)
                 val movieDescriptionEditText = dialogView.findViewById<EditText>(R.id.movieDescriptionEditText)
                 val ticketPriceEditText = dialogView.findViewById<EditText>(R.id.movieTicketPriceEditText)
                 val sectionOptionRadioGroup = dialogView.findViewById<RadioGroup>(R.id.movieSectionRadioGroup)
                 selectSectionError = dialogView.findViewById(R.id.movieSelectSectionError)
                 val typeOptionRadioGroup = dialogView.findViewById<RadioGroup>(R.id.movieTypeRadioGroup)
                 selectTypeError = dialogView.findViewById(R.id.movieSelectTypeError)
-                if(validateForm(movieNameEditText,movieImageUri,selectedImageView,imageError,movieDescriptionEditText,
-                        sectionOptionRadioGroup, selectSectionError, typeOptionRadioGroup, selectTypeError, ticketPriceEditText)) {
-                    val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
-                    val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noTheaterTextView)
+                selectLanguageError = dialogView.findViewById(R.id.movieSelectLanguageError)
+                selectCastError = dialogView.findViewById(R.id.movieSelectCastError)
+                selectTheaterError = dialogView.findViewById(R.id.movieSelectTheaterError)
+                if(validateForm(movieNameEditText,movieImageUri,selectedImageView,movieDescriptionEditText,
+                        sectionOptionRadioGroup, typeOptionRadioGroup, ticketPriceEditText,languagesList,castsList,theatersList)) {
+                    val theaterGridView = view?.findViewById<GridView>(R.id.moviesGridView)
+                    val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noMoviesTextView)
                     theaterGridView?.visibility = View.GONE
                     noTheaterTextView?.visibility = View.GONE
                     frameLayout.visibility = View.VISIBLE
@@ -240,7 +268,7 @@ class MoviesFragment : Fragment() {
                     val selectedTypeId = typeOptionRadioGroup.checkedRadioButtonId
                     val type = dialogView.findViewById<RadioButton>(selectedTypeId).text.toString()
                     val imageOptionRadioGroup =
-                        dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
+                        dialogView.findViewById<RadioGroup>(R.id.movieImageOptionRadioGroup)
                     val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
                     val ticketPrice = ticketPriceEditText.text.toString().toDouble()
                     val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButtonTheater
@@ -249,16 +277,16 @@ class MoviesFragment : Fragment() {
                     if (isUploadImage) {
                         imageContainer.visibility = View.VISIBLE
                         movieImageUri.visibility = View.GONE
-//                        uploadImageToFirebaseStorage(selectedImageView, movieName) {
-//                            addMovieToFirestore(movieName, it, movieDescription, section,
-//                                type, ticketPrice,isUpcomingchecked)
-//                        }
+                        uploadImageToFirebaseStorage(selectedImageView, movieName) {
+                            addMovieToFirestore(movieName, it, movieDescription, section,
+                                type, ticketPrice,isUpcomingchecked,languagesList.toString(),castsList,theatersList)
+                        }
                     } else {
                         imageContainer.visibility = View.GONE
                         movieImageUri.visibility = View.VISIBLE
                         val imageUrl = movieImageUri.text.toString()
-//                        addMovieToFirestore(movieName, imageUrl, movieDescription, section,
-//                            type, ticketPrice,isUpcomingchecked)
+                        addMovieToFirestore(movieName, imageUrl, movieDescription, section,
+                            type, ticketPrice,isUpcomingchecked,languagesList.joinToString(", "),castsList,theatersList)
                     }
                     dialog.dismiss()
                 }
@@ -281,22 +309,22 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageView: ImageView, theaterName: String, callback: (String) -> Unit) {
-        val theaterCollection = db.collection("Theaters")
-        theaterCollection.whereEqualTo("name", theaterName.trim())
+    private fun uploadImageToFirebaseStorage(imageView: ImageView, movieName: String, callback: (String) -> Unit) {
+        val theaterCollection = db.collection("Movies")
+        theaterCollection.whereEqualTo("name", movieName.trim())
             .get()
             .addOnCompleteListener { task ->
-                val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
+                val moviesGridView = view?.findViewById<GridView>(R.id.moviesGridView)
                 if (task.isSuccessful) {
                     val querySnapshot = task.result
                     if (querySnapshot != null && !querySnapshot.isEmpty) {
                         frameLayout.visibility = View.GONE
                         videoView.stopPlayback()
-                        theaterGridView?.visibility = View.VISIBLE
-                        showToast("A theater with the same name already exists.")
+                        moviesGridView?.visibility = View.VISIBLE
+                        showToast("A movie with the same name already exists.")
                     } else {
                         val storageRef = FirebaseStorage.getInstance().reference
-                        val imagesRef = storageRef.child("theater_images/${UUID.randomUUID()}.jpg")
+                        val imagesRef = storageRef.child("movies_images/${UUID.randomUUID()}.jpg")
 
                         // Get the bitmap from the ImageView
                         val drawable = imageView.drawable
@@ -325,20 +353,20 @@ class MoviesFragment : Fragment() {
                                     } else {
                                         frameLayout.visibility = View.GONE
                                         videoView.stopPlayback()
-                                        theaterGridView?.visibility = View.VISIBLE
+                                        moviesGridView?.visibility = View.VISIBLE
                                     }
                                 }
                             } else {
                                 frameLayout.visibility = View.GONE
                                 videoView.stopPlayback()
-                                theaterGridView?.visibility = View.VISIBLE
+                                moviesGridView?.visibility = View.VISIBLE
                             }
                         }
                     }
                 } else {
                     frameLayout.visibility = View.GONE
                     videoView.stopPlayback()
-                    theaterGridView?.visibility = View.VISIBLE
+                    moviesGridView?.visibility = View.VISIBLE
                 }
             }
     }
@@ -432,6 +460,7 @@ class MoviesFragment : Fragment() {
             if (selectedText.isNullOrEmpty()){
                 textView.text = title
                 textView.setTextColor(Color.GRAY)
+                selectedItems.clear()
             } else {
                 if(selectedItems.size>1) {
                     textView.text = "${selectedItems.size} Selected"
@@ -439,8 +468,8 @@ class MoviesFragment : Fragment() {
                     textView.text = selectedItems.joinToString("")
                 }
                 textView.setTextColor(Color.BLACK)
-                callback(selectedItems)
             }
+            callback(selectedItems)
             dialog.dismiss()
         }
         val clearBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
@@ -456,6 +485,7 @@ class MoviesFragment : Fragment() {
                 textView.setTextColor(Color.GRAY)
                 dialog.dismiss()
             }
+            callback(selectedItems)
         }
     }
 
@@ -483,14 +513,13 @@ class MoviesFragment : Fragment() {
                             val section = document.getString("section")
                             val type = document.getString("type")
                             val ticketPrice = document.getDouble("ticketPrice") ?: 0.0
-                            val dateTime = document.getString("dateTime")
                             val isUpcoming = document.getBoolean("isUpcoming") ?: false
                             val language = document.getString("language")
                             val castList = document.get("castList") as? List<String> ?: emptyList()
                             val theaterList = document.get("theaterList") as? List<String> ?: emptyList()
 
                             if (title != null && photoUri != null && description != null && section != null &&
-                                type != null && dateTime != null && language != null) {
+                                type != null && language != null) {
                                 val movie = Movie(title, photoUri, description, section, type, ticketPrice,
                                     isUpcoming, language, castList, theaterList)
                                 moviesList.add(movie)

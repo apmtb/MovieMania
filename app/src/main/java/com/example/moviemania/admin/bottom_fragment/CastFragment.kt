@@ -327,7 +327,7 @@ class CastFragment : Fragment() {
                     } else {
 
                         val castData = hashMapOf(
-                            "name" to castName,
+                            "name" to castName.trim(),
                             "imageUri" to imageUri
                         )
 

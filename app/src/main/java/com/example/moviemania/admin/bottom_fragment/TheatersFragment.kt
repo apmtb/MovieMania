@@ -308,7 +308,7 @@ class TheatersFragment : Fragment() {
                     } else {
                         val initialSeatState = MutableList(colLength * rowLength) { false }
                         val theaterData = hashMapOf(
-                            "name" to theaterName,
+                            "name" to theaterName.trim(),
                             "imageUri" to imageUri,
                             "location" to theaterLocation,
                             "seatColnum" to seatColLength,
