@@ -160,24 +160,32 @@ class MoviesFragment : Fragment() {
             val uploadImageButton = dialogView.findViewById<Button>(R.id.movieUploadImageButton)
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.movieImageContainer)
             val languagesList:MutableList<String> = mutableListOf()
-            val castsList:MutableList<String> = mutableListOf()
-            val theatersList:MutableList<String> = mutableListOf()
+            val castsListIds:MutableList<String> = mutableListOf()
+            val theatersListIds:MutableList<String> = mutableListOf()
+
+            retrieveDocumentNames("Casts"){ list->
+                setupMultiSelectTextView(R.id.castsSpinnerTextView, list.toTypedArray(),"Select Casts"){ list ->
+                    castsListIds.clear()
+                    getDocumentIdsFromNames("Casts",list){ ids ->
+                        castsListIds.addAll(ids)
+                    }
+                    showToast(list.toString())
+                }
+            }
+            retrieveDocumentNames("Theaters"){ list->
+                setupMultiSelectTextView(R.id.theatersSpinnerTextView, list.toTypedArray(),"Select Theaters"){ list ->
+                    theatersListIds.clear()
+                    getDocumentIdsFromNames("Theaters",list){ ids ->
+                        theatersListIds.addAll(ids)
+                    }
+                    showToast(list.toString())
+                }
+            }
             setupMultiSelectTextView(R.id.languagesSpinnerTextView, resources.getStringArray(R.array.languages_array),"Select Languages"){ list ->
                 languagesList.clear()
                 languagesList.addAll(list)
                 showToast(languagesList.toString())
             }
-            setupMultiSelectTextView(R.id.castsSpinnerTextView, resources.getStringArray(R.array.casts_array),"Select Casts"){ list ->
-                castsList.clear()
-                castsList.addAll(list)
-                showToast(list.toString())
-            }
-            setupMultiSelectTextView(R.id.theatersSpinnerTextView, resources.getStringArray(R.array.theaters_array),"Select Theaters"){ list ->
-                theatersList.clear()
-                theatersList.addAll(list)
-                showToast(list.toString())
-            }
-
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFM)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFM)
             imageError = dialogView.findViewById(R.id.movieImageError)
@@ -241,7 +249,7 @@ class MoviesFragment : Fragment() {
                 selectCastError = dialogView.findViewById(R.id.movieSelectCastError)
                 selectTheaterError = dialogView.findViewById(R.id.movieSelectTheaterError)
                 if(validateForm(movieTitleEditText,movieImageUri,selectedImageView,movieDescriptionEditText,
-                        sectionOptionRadioGroup, typeOptionRadioGroup, ticketPriceEditText,languagesList,castsList,theatersList)) {
+                        sectionOptionRadioGroup, typeOptionRadioGroup, ticketPriceEditText,languagesList,castsListIds,theatersListIds)) {
                     val theaterGridView = view?.findViewById<GridView>(R.id.moviesGridView)
                     val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noMoviesTextView)
                     theaterGridView?.visibility = View.GONE
@@ -277,14 +285,14 @@ class MoviesFragment : Fragment() {
                         movieImageUri.visibility = View.GONE
                         uploadImageToFirebaseStorage(selectedImageView, movieTitle) {
                             addMovieToFirestore(movieTitle, it, movieDescription, section,
-                                type, ticketPrice,isUpcomingchecked,languagesList.toString(),castsList,theatersList)
+                                type, ticketPrice,isUpcomingchecked,languagesList.joinToString(", "),castsListIds,theatersListIds)
                         }
                     } else {
                         imageContainer.visibility = View.GONE
                         movieImageUri.visibility = View.VISIBLE
                         val imageUrl = movieImageUri.text.toString()
                         addMovieToFirestore(movieTitle, imageUrl, movieDescription, section,
-                            type, ticketPrice,isUpcomingchecked,languagesList.joinToString(", "),castsList,theatersList)
+                            type, ticketPrice,isUpcomingchecked,languagesList.joinToString(", "),castsListIds,theatersListIds)
                     }
                     dialog.dismiss()
                 }
@@ -436,7 +444,7 @@ class MoviesFragment : Fragment() {
     private fun showMultiSelectDialog(textView: TextView, itemsArray: Array<String>,title: String, selectedItems:ArrayList<String>, checkedItems: BooleanArray, callback: (ArrayList<String>) -> Unit) {
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Select Items")
+            .setTitle(title)
             .setCancelable(false)
             .setMultiChoiceItems(itemsArray, checkedItems) { _, which, isChecked ->
                 if (isChecked) {
@@ -535,6 +543,41 @@ class MoviesFragment : Fragment() {
                 }
         }
     }
+
+    private fun getDocumentIdsFromNames(collectionPath: String, names: List<String>, callback: (List<String>) -> Unit) {
+        val collection = db.collection(collectionPath)
+
+        collection.whereIn("name", names)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documentIds = mutableListOf<String>()
+                for (document in querySnapshot.documents) {
+                    val documentId = document.id
+                    documentIds.add(documentId)
+                }
+                callback(documentIds)
+            }
+            .addOnFailureListener { e ->
+                showToast("Error : $e")
+            }
+    }
+    private fun retrieveDocumentNames(collectionPath: String, callback: (List<String>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection(collectionPath)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val names = querySnapshot.documents.map { document ->
+                    document.getString("name") ?: ""
+                }
+                callback(names)
+            }
+            .addOnFailureListener { e ->
+                showToast("Error Retrieving Document Names!")
+            }
+    }
+
+
 
     data class Movie(val title: String, val photoUri: String, val description: String,
                      val section: String, val type: String, val ticketPrice: Double,
