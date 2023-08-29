@@ -9,7 +9,7 @@ import android.widget.Toast
 import com.example.moviemania.R
 import com.example.moviemania.user.bottom_fragment.CartFragment
 import com.example.moviemania.user.bottom_fragment.MoviesFragment
-import com.example.moviemania.user.bottom_fragment.HistoryFragment
+import com.example.moviemania.user.bottom_fragment.UpcomingFragment
 import com.example.moviemania.user.bottom_fragment.NotificationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -31,9 +31,9 @@ class HomeFragment : Fragment() {
                     replaceFragment(MoviesFragment())
                     activity?.title = "Movies"
                 }
-                R.id.user_bottom_history -> {
-                    replaceFragment(HistoryFragment())
-                    activity?.title = "History"
+                R.id.user_bottom_upcoming_movies -> {
+                    replaceFragment(UpcomingFragment())
+                    activity?.title = "Upcoming Movies"
                 }
                 R.id.user_bottom_notification -> {
                     replaceFragment(NotificationFragment())
@@ -50,11 +50,6 @@ class HomeFragment : Fragment() {
         replaceFragment(MoviesFragment())
         activity?.title = "Movies"
         bottomNavigationView.selectedItemId = R.id.user_bottom_movies
-
-        val addFab = view.findViewById<FloatingActionButton>(R.id.userPlusBtn)
-        addFab.setOnClickListener {
-            Toast.makeText(context,"User Plus Clicked",Toast.LENGTH_LONG).show()
-        }
         return view
     }
     private fun replaceFragment(fragment: Fragment) {

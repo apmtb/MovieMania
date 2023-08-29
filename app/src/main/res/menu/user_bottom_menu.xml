@@ -7,14 +7,9 @@
         android:title="Movies" />
 
     <item
-        android:id="@+id/user_bottom_history"
-        android:icon="@drawable/ic_history_24"
-        android:title="History" />
-
-    <item
-        android:id="@+id/user_plus_btn"
-        android:enabled="false"
-        android:title="" />
+        android:id="@+id/user_bottom_upcoming_movies"
+        android:icon="@drawable/ic_upcoming"
+        android:title="Upcoming" />
 
     <item
         android:id="@+id/user_bottom_notification"

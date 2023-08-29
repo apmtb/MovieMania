@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.GridView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -13,52 +12,44 @@ import android.widget.Toast
 import com.example.moviemania.R
 import com.example.moviemania.admin.MovieAdapter
 import com.example.moviemania.admin.bottom_fragment.MoviesFragment
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
 
-
-class MoviesFragment : Fragment() {
+class UpcomingFragment : Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var movieAdapter:MovieAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        val view =  inflater.inflate(R.layout.user_fragment_movies, container, false)
-        val tabLayout = view.findViewById<TabLayout>(R.id.userMoviesTabLayout)
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                loadMoviesData(tab?.position?:0)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-
-        return view
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.user_fragment_upcoming, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadMoviesData(0)
+        loadMoviesData()
     }
 
-    private fun loadMoviesData(tabPosition: Int) {
+    private fun loadMoviesData() {
         if (isAdded) {
             val moviesCollection = db.collection("Movies")
             val noMoviesText = requireActivity().findViewById<TextView>(R.id.noMoviesText)
-            val moviesGridView = view?.findViewById<GridView>(R.id.userMoviesGridView)
+            val upcomingMoviesGridView = view?.findViewById<GridView>(R.id.upcomingMoviesGridView)
 
             moviesCollection.get()
                 .addOnSuccessListener { querySnapshot ->
                     if (querySnapshot.isEmpty) {
                         noMoviesText.visibility = View.VISIBLE
-                        moviesGridView?.visibility = View.GONE
+                        upcomingMoviesGridView?.visibility = View.GONE
                     } else {
                         noMoviesText.visibility = View.GONE
-                        moviesGridView?.visibility = View.VISIBLE
+                        upcomingMoviesGridView?.visibility = View.VISIBLE
 
                         val moviesList = ArrayList<MoviesFragment.Movie>()
 
@@ -79,17 +70,15 @@ class MoviesFragment : Fragment() {
                                     title, photoUri, description, section, ticketPrice,
                                     isUpcoming, language, castList, theaterList
                                 )
-                                if ((section == "Trending" && tabPosition == 1) ||
-                                    (section == "Popular" && tabPosition == 2) ||
-                                    tabPosition == 0 && !isUpcoming) {
+                                if(isUpcoming){
                                     moviesList.add(movie)
                                 }
                             }
                         }
 
                         if (isAdded) {
-                            movieAdapter = MovieAdapter(requireContext(), moviesList)
-                            moviesGridView?.adapter = movieAdapter
+                            val movieAdapter = MovieAdapter(requireContext(), moviesList)
+                            upcomingMoviesGridView?.adapter = movieAdapter
                         }
                     }
                 }
@@ -98,11 +87,6 @@ class MoviesFragment : Fragment() {
                 }
         }
     }
-
-    data class Movie(val title: String, val photoUri: String, val description: String,
-                     val section: String, val ticketPrice: Double,
-                     val isUpcoming: Boolean, val language: String,
-                     val castList: List<String>, val theaterList: List<String>)
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

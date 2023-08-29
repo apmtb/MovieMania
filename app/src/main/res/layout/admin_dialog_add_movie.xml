@@ -123,10 +123,10 @@
                 android:textSize="12dp" />
 
             <RadioButton
-                android:id="@+id/radioNone"
+                android:id="@+id/radioAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="None"
+                android:text="All"
                 android:textSize="12dp" />
         </RadioGroup>
 
@@ -138,56 +138,6 @@
             android:layout_marginTop="5dp"
             android:drawablePadding="5dp"
             android:text="Select section!"
-            android:textColor="#ff0000"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:drawableStartCompat="@drawable/ic_custom_error" />
-
-        <RadioGroup
-            android:id="@+id/movieTypeRadioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/typeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Type: "
-                android:textStyle="bold" />
-
-            <RadioButton
-                android:id="@+id/hollywoodRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hollywood"
-                android:textSize="12dp" />
-
-            <RadioButton
-                android:id="@+id/bollywoodRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bollywood"
-                android:textSize="12dp" />
-
-            <RadioButton
-                android:id="@+id/tollywoodRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tollywood"
-                android:textSize="12dp" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/movieSelectTypeError"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:drawablePadding="5dp"
-            android:text="Select Movie Type!"
             android:textColor="#ff0000"
             android:textStyle="bold"
             android:visibility="gone"

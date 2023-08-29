@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".user.bottom_fragment.UpcomingFragment">
+
+
+    <TextView
+        android:id="@+id/noMoviesText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No Upcoming Movies \n\nAvailable Currently!"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textColorHint="@color/black"
+        android:textSize="20dp"
+        android:visibility="gone"/>
+
+    <GridView
+        android:id="@+id/upcomingMoviesGridView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:paddingTop="30dp"
+        android:paddingBottom="50dp"
+        android:verticalSpacing="16dp"
+        android:visibility="gone" />
+
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frameLayoutAFM"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#99000000"-->
+<!--        android:clickable="true"-->
+<!--        android:visibility="gone">-->
+
+<!--        <VideoView-->
+<!--            android:id="@+id/videoViewLoadingCircleAFM"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_gravity="center" />-->
+<!--    </FrameLayout>-->
+</LinearLayout>

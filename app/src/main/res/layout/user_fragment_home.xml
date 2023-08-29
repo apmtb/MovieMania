@@ -37,13 +37,4 @@
             app:menu="@menu/user_bottom_menu"/>
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-       android:id="@+id/userPlusBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_24"
-        android:tint="@color/white"
-        android:backgroundTint="@color/rippleColor"
-        app:layout_anchor="@id/userBottomAppBar"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
