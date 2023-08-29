@@ -169,7 +169,6 @@ class MoviesFragment : Fragment() {
                     getDocumentIdsFromNames("Casts",list){ ids ->
                         castsListIds.addAll(ids)
                     }
-                    showToast(list.toString())
                 }
             }
             retrieveDocumentNames("Theaters"){ list->
@@ -178,13 +177,11 @@ class MoviesFragment : Fragment() {
                     getDocumentIdsFromNames("Theaters",list){ ids ->
                         theatersListIds.addAll(ids)
                     }
-                    showToast(list.toString())
                 }
             }
             setupMultiSelectTextView(R.id.languagesSpinnerTextView, resources.getStringArray(R.array.languages_array),"Select Languages"){ list ->
                 languagesList.clear()
                 languagesList.addAll(list)
-                showToast(languagesList.toString())
             }
             videoView = requireActivity().findViewById(R.id.videoViewLoadingCircleAFM)
             frameLayout = requireActivity().findViewById(R.id.frameLayoutAFM)

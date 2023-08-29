@@ -30,8 +30,8 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         val displaymetrics = context.resources.displayMetrics
         val screenHeight = displaymetrics.heightPixels
         val screenWidth = displaymetrics.widthPixels
-        imageViewLayoutParams.width = (screenWidth*0.3).toInt()
-        imageViewLayoutParams.height = (screenHeight*0.20).toInt()
+        imageViewLayoutParams.width = (screenWidth*0.45).toInt()
+        imageViewLayoutParams.height = (screenHeight*0.30).toInt()
 
         val uri = movie.photoUri
         Glide.with(context).load(uri).centerCrop().error(R.drawable.ic_custom_error)
