@@ -3,7 +3,6 @@ package com.example.moviemania.admin
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
@@ -12,6 +11,7 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -26,6 +26,7 @@ import com.example.moviemania.admin.nav_fragment.SettingFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+
 
 class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var auth: FirebaseAuth
@@ -207,7 +208,12 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 title = "Setting"
             }
             R.id.admin_nav_share -> {
-                Toast.makeText(this,"Share Clicked",Toast.LENGTH_LONG).show()
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "MovieMania")
+                val shareMessage = "https://play.google.com/store/apps/MovieMania"
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+                startActivity(Intent.createChooser(shareIntent, "choose one"))
             }
             R.id.admin_nav_logout -> {
                 signOut()

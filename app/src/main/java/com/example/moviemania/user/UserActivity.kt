@@ -202,7 +202,12 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 title = "Setting"
             }
             R.id.user_nav_share -> {
-                Toast.makeText(this,"Share Clicked", Toast.LENGTH_LONG).show()
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "MovieMania")
+                val shareMessage = "https://play.google.com/store/apps/MovieMania"
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+                startActivity(Intent.createChooser(shareIntent, "choose one"))
             }
             R.id.user_nav_logout -> {
                 signOut()
