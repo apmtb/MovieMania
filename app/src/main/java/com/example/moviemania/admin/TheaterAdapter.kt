@@ -11,8 +11,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
+import com.example.moviemania.admin.bottom_fragment.CastFragment
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -51,6 +53,13 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         imageViewLayoutParams.width = (screenWidth*0.85).toInt()
         imageViewLayoutParams.height = (screenHeight*0.20).toInt()
 
+
+        val theaterEditButton = view.findViewById<Button>(R.id.editButtonTheater)
+        val theaterDeleteButton = view.findViewById<Button>(R.id.deleteButtonTheater)
+
+        theaterDeleteButton.setOnClickListener {
+            deleteTheater(theater.name)
+        }
         Glide.with(context)
             .load(theater.imageUri)
             .placeholder(R.drawable.ic_image_placeholder)
@@ -205,6 +214,48 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                     }
                 }
             }
+    }
+
+    private fun deleteTheater(theaterName: String) {
+        val cf = CastFragment.newInstance()
+        val alertDialog = AlertDialog.Builder(context)
+            .setTitle("Delete Cast")
+            .setMessage(
+                HtmlCompat.fromHtml("<br/><b>Are you sure,</b><br/>you want to delete $theaterName?<br/>",
+                    HtmlCompat.FROM_HTML_MODE_LEGACY))
+            .setPositiveButton("Yes") { _, _ ->
+                // Delete the cast from Firestore
+                val theatersCollection = db.collection("Theaters")
+                theatersCollection.whereEqualTo("name", theaterName)
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        if (!querySnapshot.isEmpty) {
+                            val documentSnapshot = querySnapshot.documents[0]
+                            val castId = documentSnapshot.id
+
+                            theatersCollection.document(castId)
+                                .delete()
+                                .addOnSuccessListener {
+                                    showToast("$theaterName deleted successfully!")
+                                    cf?.loadCastData()
+                                }
+                                .addOnFailureListener { e ->
+                                    showToast("Error deleting $theaterName: ${e.message}")
+                                }
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        showToast("Error retrieving cast: ${e.message}")
+                    }
+            }
+            .setNegativeButton("No", null)
+            .create()
+
+        alertDialog.show()
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
     data class Seat(

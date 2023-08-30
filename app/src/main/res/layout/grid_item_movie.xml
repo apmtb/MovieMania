@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/deleteButtonMovie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -37,6 +38,7 @@
             android:paddingBottom="0dp"
             android:drawableTop="@drawable/ic_delete"/>
         <Button
+            android:id="@+id/editButtonMovie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

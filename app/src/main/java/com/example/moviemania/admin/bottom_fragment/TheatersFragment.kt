@@ -25,6 +25,7 @@ import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.TheaterAdapter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -125,6 +126,14 @@ class TheatersFragment : Fragment() {
                 .create()
             val selectedImageView = dialogView.findViewById<ImageView>(R.id.theaterImageView)
 
+            val imageViewLayoutParams = selectedImageView.layoutParams
+            val displaymetrics = requireContext().resources.displayMetrics
+
+            val screenHeight = displaymetrics.heightPixels
+            val screenWidth = displaymetrics.widthPixels
+            imageViewLayoutParams.width = (screenWidth*0.85).toInt()
+            imageViewLayoutParams.height = (screenHeight*0.20).toInt()
+
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
             imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -223,7 +232,9 @@ class TheatersFragment : Fragment() {
                 if (selectedImageURI != null) {
                     val imageError = dialogView.findViewById<TextView>(R.id.imageErrorTheater)
                     imageError.visibility = View.GONE
-                    selectedImageView.setImageURI(selectedImageURI)
+                    Glide.with(requireContext()).load(selectedImageURI).centerCrop()
+                        .error(R.drawable.ic_custom_error)
+                        .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
                 }
             }
         }
