@@ -352,7 +352,7 @@ class TheatersFragment : Fragment() {
             }
     }
 
-    private fun loadTheaterData() {
+    fun loadTheaterData() {
         if (isAdded) {
             val theaterCollection = db.collection("Theaters")
             val noTheaterTextView = requireActivity().findViewById<RelativeLayout>(R.id.noTheaterTextView)

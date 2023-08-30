@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
-import com.example.moviemania.admin.bottom_fragment.CastFragment
 import com.example.moviemania.admin.bottom_fragment.TheatersFragment
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -217,27 +216,27 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
     }
 
     private fun deleteTheater(theaterName: String) {
-        val cf = CastFragment.newInstance()
+        val tf = TheatersFragment.newInstance()
         val alertDialog = AlertDialog.Builder(context)
-            .setTitle("Delete Cast")
+            .setTitle("Delete Theater")
             .setMessage(
                 HtmlCompat.fromHtml("<br/><b>Are you sure,</b><br/>you want to delete $theaterName?<br/>",
                     HtmlCompat.FROM_HTML_MODE_LEGACY))
             .setPositiveButton("Yes") { _, _ ->
-                // Delete the cast from Firestore
+                // Delete the Theater from Firestore
                 val theatersCollection = db.collection("Theaters")
                 theatersCollection.whereEqualTo("name", theaterName)
                     .get()
                     .addOnSuccessListener { querySnapshot ->
                         if (!querySnapshot.isEmpty) {
                             val documentSnapshot = querySnapshot.documents[0]
-                            val castId = documentSnapshot.id
+                            val theaterId = documentSnapshot.id
 
-                            theatersCollection.document(castId)
+                            theatersCollection.document(theaterId)
                                 .delete()
                                 .addOnSuccessListener {
                                     showToast("$theaterName deleted successfully!")
-                                    cf?.loadCastData()
+                                    tf?.loadTheaterData()
                                 }
                                 .addOnFailureListener { e ->
                                     showToast("Error deleting $theaterName: ${e.message}")
@@ -245,7 +244,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                         }
                     }
                     .addOnFailureListener { e ->
-                        showToast("Error retrieving cast: ${e.message}")
+                        showToast("Error retrieving theater: ${e.message}")
                     }
             }
             .setNegativeButton("No", null)
