@@ -65,7 +65,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
             .setPositiveButton("Yes") { _, _ ->
                 // Delete the Movie from Firestore
                 val moviesCollection = db.collection("Movies")
-                moviesCollection.whereEqualTo("name", movieTitle)
+                moviesCollection.whereEqualTo("title", movieTitle)
                     .get()
                     .addOnSuccessListener { querySnapshot ->
                         if (!querySnapshot.isEmpty) {
