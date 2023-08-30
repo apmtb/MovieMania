@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.CastAdapter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,9 +35,9 @@ import java.util.UUID
 @Suppress("DEPRECATION")
 class CastFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var dialogView: View
-    private lateinit var videoView: VideoView
-    private lateinit var frameLayout: View
+    lateinit var dialogView: View
+    lateinit var videoView: VideoView
+    lateinit var frameLayout: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,19 +64,19 @@ class CastFragment : Fragment() {
     companion object {
         @Volatile
         private var instance: CastFragment? = null
-        fun newInstance():CastFragment? {
+        fun newInstance(): CastFragment? {
             return instance
         }
     }
 
-    private fun loadCastData() {
+    fun loadCastData() {
         if (isAdded) {
             val castCollection = db.collection("Casts")
             val noCastTextView = requireView().findViewById<RelativeLayout>(R.id.noCastTextView)
             val castGridView = view?.findViewById<GridView>(R.id.castGridView)
             val displaymetrics = requireContext().resources.displayMetrics
             val screenWidth = displaymetrics.widthPixels
-            castGridView?.columnWidth = (screenWidth*0.40).toInt()
+            castGridView?.columnWidth = (screenWidth * 0.40).toInt()
             castCollection.get()
                 .addOnSuccessListener { querySnapshot ->
                     if (querySnapshot.isEmpty) {
@@ -98,7 +99,7 @@ class CastFragment : Fragment() {
                             }
                         }
 
-                        if(isAdded) {
+                        if (isAdded) {
                             val castAdapter = CastAdapter(requireContext(), castList)
                             castGridView?.adapter = castAdapter
                         }
@@ -119,10 +120,10 @@ class CastFragment : Fragment() {
         val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
         icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
         if (castName.text.trim().isEmpty()) {
-            castName.setError("Cast Name is Required!",icon)
+            castName.setError("Cast Name is Required!", icon)
             return false
         }
-        if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
+        if (imageUri.text.trim().isEmpty() && imageView.drawable == null) {
             textView.visibility = View.VISIBLE
             return false
         }
@@ -134,7 +135,7 @@ class CastFragment : Fragment() {
     }
 
     private fun showAddCastDialog() {
-        if(isAdded) {
+        if (isAdded) {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_cast, null)
             val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButton)
             val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
@@ -145,7 +146,7 @@ class CastFragment : Fragment() {
             val dialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
                 .setTitle("Add Cast")
-                .setPositiveButton("Add",null)
+                .setPositiveButton("Add", null)
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -154,12 +155,18 @@ class CastFragment : Fragment() {
             val selectedImageView = dialogView.findViewById<ImageView>(R.id.selectedImageView)
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroup)
+            val imageViewLayoutParams = selectedImageView.layoutParams
+            val displaymetrics = requireContext().resources.displayMetrics
+            val screenHeight = displaymetrics.heightPixels
+            val screenWidth = displaymetrics.widthPixels
+            imageViewLayoutParams.width = (screenWidth * 0.3).toInt()
+            imageViewLayoutParams.height = (screenHeight * 0.20).toInt()
             val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
             castImageInput.addTextChangedListener {
-                if(castImageInput.text.trim().isNotEmpty()){
+                if (castImageInput.text.trim().isNotEmpty()) {
                     imageError.visibility = View.GONE
                 } else {
-                    imageError.visibility =View.VISIBLE
+                    imageError.visibility = View.VISIBLE
                 }
             }
             imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -176,18 +183,12 @@ class CastFragment : Fragment() {
                 }
             }
             uploadImageButton.setOnClickListener {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    123
-                )
+                selectImageIntent()
             }
 
             dialog.show()
             val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            addButton.setOnClickListener{
+            addButton.setOnClickListener {
                 val castNameEditText =
                     dialogView.findViewById<EditText>(R.id.castNameEditText)
                 val castName = castNameEditText.text.toString()
@@ -196,7 +197,7 @@ class CastFragment : Fragment() {
                 val castImageInput = dialogView.findViewById<EditText>(R.id.castImageInput)
                 val selectedImageView =
                     dialogView.findViewById<ImageView>(R.id.selectedImageView)
-                if(validateForm(castNameEditText,castImageInput,selectedImageView,imageError)) {
+                if (validateForm(castNameEditText, castImageInput, selectedImageView, imageError)) {
                     val castGridView = view?.findViewById<GridView>(R.id.castGridView)
                     val noCastTextView = view?.findViewById<RelativeLayout>(R.id.noCastTextView)
                     castGridView?.visibility = View.GONE
@@ -233,6 +234,16 @@ class CastFragment : Fragment() {
         }
     }
 
+    fun selectImageIntent() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(
+            Intent.createChooser(intent, "Select Picture"),
+            123
+        )
+    }
+
     @Deprecated("")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -243,13 +254,20 @@ class CastFragment : Fragment() {
                 if (selectedImageURI != null) {
                     val imageError = dialogView.findViewById<TextView>(R.id.imageError)
                     imageError.visibility = View.GONE
-                    selectedImageView.setImageURI(selectedImageURI)
+                    selectedImageView.tag = "1"
+                    Glide.with(requireContext()).load(selectedImageURI).centerCrop()
+                        .error(R.drawable.ic_custom_error)
+                        .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
                 }
             }
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageView: ImageView,castName: String, callback: (String) -> Unit) {
+    fun uploadImageToFirebaseStorage(
+        imageView: ImageView,
+        castName: String,
+        callback: (String) -> Unit
+    ) {
         val castCollection = db.collection("Casts")
         castCollection.whereEqualTo("name", castName.trim())
             .get()
@@ -257,51 +275,43 @@ class CastFragment : Fragment() {
                 val castGridView = view?.findViewById<GridView>(R.id.castGridView)
                 if (task.isSuccessful) {
                     val querySnapshot = task.result
-                    if (querySnapshot != null && !querySnapshot.isEmpty) {
-                        // Cast name already exists, show an error message
-                        frameLayout.visibility = View.GONE
-                        videoView.stopPlayback()
-                        castGridView?.visibility = View.VISIBLE
-                        showToast("A cast with the same name already exists.")
-                    } else {
-                        val storageRef = FirebaseStorage.getInstance().reference
-                        val imagesRef = storageRef.child("cast_images/${UUID.randomUUID()}.jpg")
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val imagesRef = storageRef.child("cast_images/${UUID.randomUUID()}.jpg")
 
-                        // Get the bitmap from the ImageView
-                        val drawable = imageView.drawable
-                        val bitmap = Bitmap.createBitmap(
-                            drawable.intrinsicWidth,
-                            drawable.intrinsicHeight,
-                            Bitmap.Config.ARGB_8888
-                        )
-                        val canvas = Canvas(bitmap)
-                        drawable.setBounds(0, 0, canvas.width, canvas.height)
-                        drawable.draw(canvas)
+                    // Get the bitmap from the ImageView
+                    val drawable = imageView.drawable
+                    val bitmap = Bitmap.createBitmap(
+                        drawable.intrinsicWidth,
+                        drawable.intrinsicHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
 
-                        val baos = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                        val data = baos.toByteArray()
+                    val baos = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    val data = baos.toByteArray()
 
-                        val uploadTask = imagesRef.putBytes(data)
-                        uploadTask.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
-                                    if (urlTask.isSuccessful) {
-                                        frameLayout.visibility = View.GONE
-                                        videoView.stopPlayback()
-                                        val imageUrl = urlTask.result.toString()
-                                        callback(imageUrl)
-                                    } else {
-                                        frameLayout.visibility = View.GONE
-                                        videoView.stopPlayback()
-                                        castGridView?.visibility = View.VISIBLE
-                                    }
+                    val uploadTask = imagesRef.putBytes(data)
+                    uploadTask.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
+                                if (urlTask.isSuccessful) {
+                                    frameLayout.visibility = View.GONE
+                                    videoView.stopPlayback()
+                                    val imageUrl = urlTask.result.toString()
+                                    callback(imageUrl)
+                                } else {
+                                    frameLayout.visibility = View.GONE
+                                    videoView.stopPlayback()
+                                    castGridView?.visibility = View.VISIBLE
                                 }
-                            } else {
-                                frameLayout.visibility = View.GONE
-                                videoView.stopPlayback()
-                                castGridView?.visibility = View.VISIBLE
                             }
+                        } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            castGridView?.visibility = View.VISIBLE
                         }
                     }
                 } else {
@@ -364,5 +374,6 @@ class CastFragment : Fragment() {
         super.onDestroy()
         instance = null
     }
+
     data class Cast(val name: String, val imageUri: String)
 }
