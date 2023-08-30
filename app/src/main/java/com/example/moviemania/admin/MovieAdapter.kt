@@ -60,7 +60,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         val alertDialog = AlertDialog.Builder(context)
             .setTitle("Delete Movie")
             .setMessage(
-                HtmlCompat.fromHtml("<br/><b>Are you sure,</b><br/>you want to delete $movieTitle?<br/>",
+                HtmlCompat.fromHtml("<br/><b>Are you sure,</b> you want to delete<br/><br/> $movieTitle?<br/>",
                     HtmlCompat.FROM_HTML_MODE_LEGACY))
             .setPositiveButton("Yes") { _, _ ->
                 // Delete the Movie from Firestore

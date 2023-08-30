@@ -221,7 +221,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val alertDialog = AlertDialog.Builder(context)
             .setTitle("Delete Theater")
             .setMessage(
-                HtmlCompat.fromHtml("<br/><b>Are you sure,</b><br/>you want to delete $theaterName?<br/>",
+                HtmlCompat.fromHtml("<br/><b>Are you sure,</b> you want to delete<br/><br/> $theaterName?<br/>",
                     HtmlCompat.FROM_HTML_MODE_LEGACY))
             .setPositiveButton("Yes") { _, _ ->
                 // Delete the Theater from Firestore

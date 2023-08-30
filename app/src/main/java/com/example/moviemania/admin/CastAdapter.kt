@@ -232,7 +232,7 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         val cf =CastFragment.newInstance()
         val alertDialog = AlertDialog.Builder(context)
             .setTitle("Delete Cast")
-            .setMessage(HtmlCompat.fromHtml("<br/><b>Are you sure,</b><br/>you want to delete $castName?<br/>",HtmlCompat.FROM_HTML_MODE_LEGACY))
+            .setMessage(HtmlCompat.fromHtml("<br/><b>Are you sure,</b> you want to delete<br/><br/> $castName?<br/>",HtmlCompat.FROM_HTML_MODE_LEGACY))
             .setPositiveButton("Yes") { _, _ ->
                 // Delete the cast from Firestore
                 val castCollection = db.collection("Casts")
