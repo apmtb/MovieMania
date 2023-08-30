@@ -381,7 +381,7 @@ class MoviesFragment : Fragment() {
                         showToast("A movie with the same title already exists.")
                     } else {
                         val movieData = hashMapOf(
-                            "title" to movieTitle,
+                            "title" to movieTitle.trim(),
                             "photoUri" to photoUri,
                             "description" to description,
                             "section" to section,
