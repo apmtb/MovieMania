@@ -340,7 +340,7 @@ class CastFragment : Fragment() {
 
                         val castData = hashMapOf(
                             "name" to castName.trim(),
-                            "imageUri" to imageUri
+                            "imageUri" to imageUri.trim()
                         )
 
                         castCollection.add(castData)

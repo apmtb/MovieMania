@@ -28,7 +28,7 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
     BaseAdapter() {
 
     private val db = FirebaseFirestore.getInstance()
-    var dataChanged = false
+    private var imageChanged = false
 
     override fun getCount(): Int = castList.size
 
@@ -64,6 +64,8 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
     }
 
     private fun validateForm(
+        currentCastName: String,
+        currentImageUri: String,
         castName: EditText,
         imageUri: EditText,
         imageView: ImageView,
@@ -80,15 +82,18 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
             imageError.visibility = View.VISIBLE
             return false
         }
-        if (!isDataChanged()){
+        if ( currentCastName == castName.text.trim().toString() &&
+            currentImageUri == imageUri.text.trim().toString() &&
+            !isImageChanged()){
             noDataChangedError.visibility = View.VISIBLE
             return false
         }
+
         return true
     }
 
-    private fun isDataChanged(): Boolean {
-        return dataChanged
+    private fun isImageChanged(): Boolean {
+        return imageChanged
     }
 
     private fun showUpdateCastDialog(currentName: String, currentImageUrl: String) {
@@ -126,17 +131,15 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         castImageInput.setText(currentImageUrl)
         Glide.with(context).load(currentImageUrl).centerCrop().error(R.drawable.ic_custom_error)
             .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
-        castNameEditText.addTextChangedListener {
-            dataChanged = castNameEditText.text.trim().toString() != currentName
-        }
+
         castImageInput.addTextChangedListener {
             if (castImageInput.text.trim().isNotEmpty()) {
                 imageError.visibility = View.GONE
             } else {
                 imageError.visibility = View.VISIBLE
             }
-            dataChanged = castImageInput.text.trim().toString() != currentImageUrl
         }
+
         imageOptionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             imageError.visibility = View.GONE
             if (checkedId == R.id.uploadImageRadioButton) {
@@ -158,9 +161,10 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         val updateButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
         updateButton.setOnClickListener {
             if (selectedImageView.tag == "1") {
-                dataChanged = true
+                imageChanged = true
             }
-            if (validateForm(castNameEditText, castImageInput, selectedImageView, imageError, noDataChangedError)) {
+            if (validateForm(currentName, currentImageUrl, castNameEditText, castImageInput,
+                    selectedImageView, imageError, noDataChangedError)) {
                 val castGridView = cf.view?.findViewById<GridView>(R.id.castGridView)
                 castGridView?.visibility = View.GONE
                 cf.frameLayout.visibility = View.VISIBLE

@@ -224,13 +224,7 @@ class MoviesFragment : Fragment() {
                 }
             }
             uploadImageButton.setOnClickListener {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    234
-                )
+                selectImageIntent()
             }
             dialog.show()
             val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -294,6 +288,16 @@ class MoviesFragment : Fragment() {
         }
     }
 
+    fun selectImageIntent() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(
+            Intent.createChooser(intent, "Select Picture"),
+            234
+        )
+    }
+
     @Deprecated("")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -303,6 +307,7 @@ class MoviesFragment : Fragment() {
                 val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieSelectedImageView)
                 if (selectedImageURI != null) {
                     imageError.visibility = View.GONE
+                    selectedImageView.tag = "1"
                     Glide.with(requireContext()).load(selectedImageURI).centerCrop()
                         .error(R.drawable.ic_custom_error)
                         .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
@@ -318,51 +323,43 @@ class MoviesFragment : Fragment() {
             .addOnCompleteListener { task ->
                 val moviesGridView = view?.findViewById<GridView>(R.id.moviesGridView)
                 if (task.isSuccessful) {
-                    val querySnapshot = task.result
-                    if (querySnapshot != null && !querySnapshot.isEmpty) {
-                        frameLayout.visibility = View.GONE
-                        videoView.stopPlayback()
-                        moviesGridView?.visibility = View.VISIBLE
-                        showToast("A movie with the same name already exists.")
-                    } else {
-                        val storageRef = FirebaseStorage.getInstance().reference
-                        val imagesRef = storageRef.child("movies_images/${UUID.randomUUID()}.jpg")
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val imagesRef = storageRef.child("movies_images/${UUID.randomUUID()}.jpg")
 
-                        // Get the bitmap from the ImageView
-                        val drawable = imageView.drawable
-                        val bitmap = Bitmap.createBitmap(
-                            drawable.intrinsicWidth,
-                            drawable.intrinsicHeight,
-                            Bitmap.Config.ARGB_8888
-                        )
-                        val canvas = Canvas(bitmap)
-                        drawable.setBounds(0, 0, canvas.width, canvas.height)
-                        drawable.draw(canvas)
+                    // Get the bitmap from the ImageView
+                    val drawable = imageView.drawable
+                    val bitmap = Bitmap.createBitmap(
+                        drawable.intrinsicWidth,
+                        drawable.intrinsicHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
 
-                        val baos = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                        val data = baos.toByteArray()
+                    val baos = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    val data = baos.toByteArray()
 
-                        val uploadTask = imagesRef.putBytes(data)
-                        uploadTask.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
-                                    if (urlTask.isSuccessful) {
-                                        frameLayout.visibility = View.GONE
-                                        videoView.stopPlayback()
-                                        val imageUrl = urlTask.result.toString()
-                                        callback(imageUrl)
-                                    } else {
-                                        frameLayout.visibility = View.GONE
-                                        videoView.stopPlayback()
-                                        moviesGridView?.visibility = View.VISIBLE
-                                    }
+                    val uploadTask = imagesRef.putBytes(data)
+                    uploadTask.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
+                                if (urlTask.isSuccessful) {
+                                    frameLayout.visibility = View.GONE
+                                    videoView.stopPlayback()
+                                    val imageUrl = urlTask.result.toString()
+                                    callback(imageUrl)
+                                } else {
+                                    frameLayout.visibility = View.GONE
+                                    videoView.stopPlayback()
+                                    moviesGridView?.visibility = View.VISIBLE
                                 }
-                            } else {
-                                frameLayout.visibility = View.GONE
-                                videoView.stopPlayback()
-                                moviesGridView?.visibility = View.VISIBLE
                             }
+                        } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            moviesGridView?.visibility = View.VISIBLE
                         }
                     }
                 } else {

@@ -38,9 +38,9 @@ import java.util.UUID
 class TheatersFragment : Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var dialogView: View
-    private lateinit var videoView: VideoView
-    private lateinit var frameLayout: View
+    lateinit var dialogView: View
+    lateinit var videoView: VideoView
+    lateinit var frameLayout: View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
@@ -57,7 +57,7 @@ class TheatersFragment : Fragment() {
     companion object {
         @Volatile
         private var instance: TheatersFragment? = null
-        fun newInstance():TheatersFragment? {
+        fun newInstance(): TheatersFragment? {
             return instance
         }
     }
@@ -74,6 +74,7 @@ class TheatersFragment : Fragment() {
     fun addTheaterButtonClick() {
         showAddTheaterDialog()
     }
+
     private fun validateForm(
         theaterName: EditText,
         imageUri: EditText,
@@ -84,19 +85,20 @@ class TheatersFragment : Fragment() {
         val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_custom_error)
         icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
         if (theaterName.text.trim().isEmpty()) {
-            theaterName.setError("Theater Name is Required!",icon)
+            theaterName.setError("Theater Name is Required!", icon)
             return false
         }
-        if(imageUri.text.trim().isEmpty() && imageView.drawable == null) {
+        if (imageUri.text.trim().isEmpty() && imageView.drawable == null) {
             textView.visibility = View.VISIBLE
             return false
         }
         if (theaterLocation.text.trim().isEmpty()) {
-            theaterLocation.setError("Theater Location is Required!",icon)
+            theaterLocation.setError("Theater Location is Required!", icon)
             return false
         }
         return true
     }
+
     private fun showAddTheaterDialog() {
         if (isAdded) {
             dialogView = layoutInflater.inflate(R.layout.admin_dialog_add_theater, null)
@@ -119,7 +121,7 @@ class TheatersFragment : Fragment() {
             val dialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
                 .setTitle("Add Theater")
-                .setPositiveButton("Add",null)
+                .setPositiveButton("Add", null)
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -131,8 +133,8 @@ class TheatersFragment : Fragment() {
 
             val screenHeight = displaymetrics.heightPixels
             val screenWidth = displaymetrics.widthPixels
-            imageViewLayoutParams.width = (screenWidth*0.85).toInt()
-            imageViewLayoutParams.height = (screenHeight*0.20).toInt()
+            imageViewLayoutParams.width = (screenWidth * 0.85).toInt()
+            imageViewLayoutParams.height = (screenHeight * 0.20).toInt()
 
             val imageOptionRadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
@@ -141,10 +143,10 @@ class TheatersFragment : Fragment() {
                 val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
 
                 theaterImageUri.addTextChangedListener {
-                    if(theaterImageUri.text.trim().isNotEmpty()){
+                    if (theaterImageUri.text.trim().isNotEmpty()) {
                         imageError.visibility = View.GONE
                     } else {
-                        imageError.visibility =View.VISIBLE
+                        imageError.visibility = View.VISIBLE
                     }
                 }
 
@@ -160,25 +162,29 @@ class TheatersFragment : Fragment() {
                 }
             }
             uploadImageButton.setOnClickListener {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    234
-                )
+                selectImageIntent()
             }
 
             dialog.show()
             val addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             addButton.setOnClickListener {
-                val theaterNameEditText = dialogView.findViewById<EditText>(R.id.theaterNameEditText)
+                val theaterNameEditText =
+                    dialogView.findViewById<EditText>(R.id.theaterNameEditText)
                 val theaterImageUri = dialogView.findViewById<EditText>(R.id.theaterImageInput)
                 val selectedImageView = dialogView.findViewById<ImageView>(R.id.theaterImageView)
-                val theaterLocationEditText = dialogView.findViewById<EditText>(R.id.theaterLocationEditText)
-                if(validateForm(theaterNameEditText,theaterImageUri,selectedImageView,imageError,theaterLocationEditText)) {
+                val theaterLocationEditText =
+                    dialogView.findViewById<EditText>(R.id.theaterLocationEditText)
+                if (validateForm(
+                        theaterNameEditText,
+                        theaterImageUri,
+                        selectedImageView,
+                        imageError,
+                        theaterLocationEditText
+                    )
+                ) {
                     val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
-                    val noTheaterTextView = view?.findViewById<RelativeLayout>(R.id.noTheaterTextView)
+                    val noTheaterTextView =
+                        view?.findViewById<RelativeLayout>(R.id.noTheaterTextView)
                     theaterGridView?.visibility = View.GONE
                     noTheaterTextView?.visibility = View.GONE
                     frameLayout.visibility = View.VISIBLE
@@ -206,20 +212,34 @@ class TheatersFragment : Fragment() {
                         imageContainer.visibility = View.VISIBLE
                         theaterImageUri.visibility = View.GONE
                         uploadImageToFirebaseStorage(selectedImageView, theaterName) {
-                            addTheaterToFirestore(theaterName, it, theaterLocation,
-                                seatColLength, seatRowLength)
+                            addTheaterToFirestore(
+                                theaterName, it, theaterLocation,
+                                seatColLength, seatRowLength
+                            )
                         }
                     } else {
                         imageContainer.visibility = View.GONE
                         theaterImageUri.visibility = View.VISIBLE
                         val imageUrl = theaterImageUri.text.toString()
-                        addTheaterToFirestore(theaterName, imageUrl, theaterLocation,
-                            seatColLength, seatRowLength)
+                        addTheaterToFirestore(
+                            theaterName, imageUrl, theaterLocation,
+                            seatColLength, seatRowLength
+                        )
                     }
                     dialog.dismiss()
                 }
             }
         }
+    }
+
+    fun selectImageIntent() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(
+            Intent.createChooser(intent, "Select Picture"),
+            234
+        )
     }
 
     @Deprecated("")
@@ -232,6 +252,7 @@ class TheatersFragment : Fragment() {
                 if (selectedImageURI != null) {
                     val imageError = dialogView.findViewById<TextView>(R.id.imageErrorTheater)
                     imageError.visibility = View.GONE
+                    selectedImageView.tag = "1"
                     Glide.with(requireContext()).load(selectedImageURI).centerCrop()
                         .error(R.drawable.ic_custom_error)
                         .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
@@ -240,58 +261,54 @@ class TheatersFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageView: ImageView,theaterName: String, callback: (String) -> Unit) {
+    fun uploadImageToFirebaseStorage(
+        imageView: ImageView,
+        theaterName: String,
+        callback: (String) -> Unit
+    ) {
         val theaterCollection = db.collection("Theaters")
         theaterCollection.whereEqualTo("name", theaterName.trim())
             .get()
             .addOnCompleteListener { task ->
                 val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
                 if (task.isSuccessful) {
-                    val querySnapshot = task.result
-                    if (querySnapshot != null && !querySnapshot.isEmpty) {
-                        frameLayout.visibility = View.GONE
-                        videoView.stopPlayback()
-                        theaterGridView?.visibility = View.VISIBLE
-                        showToast("A theater with the same name already exists.")
-                    } else {
-                        val storageRef = FirebaseStorage.getInstance().reference
-                        val imagesRef = storageRef.child("theater_images/${UUID.randomUUID()}.jpg")
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val imagesRef = storageRef.child("theater_images/${UUID.randomUUID()}.jpg")
 
-                        // Get the bitmap from the ImageView
-                        val drawable = imageView.drawable
-                        val bitmap = Bitmap.createBitmap(
-                            drawable.intrinsicWidth,
-                            drawable.intrinsicHeight,
-                            Bitmap.Config.ARGB_8888
-                        )
-                        val canvas = Canvas(bitmap)
-                        drawable.setBounds(0, 0, canvas.width, canvas.height)
-                        drawable.draw(canvas)
+                    // Get the bitmap from the ImageView
+                    val drawable = imageView.drawable
+                    val bitmap = Bitmap.createBitmap(
+                        drawable.intrinsicWidth,
+                        drawable.intrinsicHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
 
-                        val baos = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                        val data = baos.toByteArray()
+                    val baos = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    val data = baos.toByteArray()
 
-                        val uploadTask = imagesRef.putBytes(data)
-                        uploadTask.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
-                                    if (urlTask.isSuccessful) {
-                                        frameLayout.visibility = View.GONE
-                                        videoView.stopPlayback()
-                                        val imageUrl = urlTask.result.toString()
-                                        callback(imageUrl)
-                                    } else {
-                                        frameLayout.visibility = View.GONE
-                                        videoView.stopPlayback()
-                                        theaterGridView?.visibility = View.VISIBLE
-                                    }
+                    val uploadTask = imagesRef.putBytes(data)
+                    uploadTask.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
+                                if (urlTask.isSuccessful) {
+                                    frameLayout.visibility = View.GONE
+                                    videoView.stopPlayback()
+                                    val imageUrl = urlTask.result.toString()
+                                    callback(imageUrl)
+                                } else {
+                                    frameLayout.visibility = View.GONE
+                                    videoView.stopPlayback()
+                                    theaterGridView?.visibility = View.VISIBLE
                                 }
-                            } else {
-                                frameLayout.visibility = View.GONE
-                                videoView.stopPlayback()
-                                theaterGridView?.visibility = View.VISIBLE
                             }
+                        } else {
+                            frameLayout.visibility = View.GONE
+                            videoView.stopPlayback()
+                            theaterGridView?.visibility = View.VISIBLE
                         }
                     }
                 } else {
@@ -302,7 +319,11 @@ class TheatersFragment : Fragment() {
             }
     }
 
-    private fun addTheaterToFirestore(theaterName: String, imageUri: String, theaterLocation: String,seatColLength: String,seatRowLength: String) {
+    private fun addTheaterToFirestore(
+        theaterName: String, imageUri: String,
+        theaterLocation: String, seatColLength: String,
+        seatRowLength: String
+    ) {
         val theaterCollection = db.collection("Theaters")
         val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
         val colLength = seatColLength.toInt()
@@ -322,10 +343,10 @@ class TheatersFragment : Fragment() {
                         val initialSeatState = MutableList(colLength * rowLength) { false }
                         val theaterData = hashMapOf(
                             "name" to theaterName.trim(),
-                            "imageUri" to imageUri,
-                            "location" to theaterLocation,
-                            "seatColnum" to seatColLength,
-                            "seatRownum" to seatRowLength,
+                            "imageUri" to imageUri.trim(),
+                            "location" to theaterLocation.trim(),
+                            "seatColnum" to seatColLength.trim(),
+                            "seatRownum" to seatRowLength.trim(),
                             "seats" to initialSeatState
                         )
 
@@ -355,7 +376,8 @@ class TheatersFragment : Fragment() {
     fun loadTheaterData() {
         if (isAdded) {
             val theaterCollection = db.collection("Theaters")
-            val noTheaterTextView = requireActivity().findViewById<RelativeLayout>(R.id.noTheaterTextView)
+            val noTheaterTextView =
+                requireActivity().findViewById<RelativeLayout>(R.id.noTheaterTextView)
             val theaterGridView = view?.findViewById<GridView>(R.id.theaterGridView)
 
             theaterCollection.get()
@@ -377,7 +399,14 @@ class TheatersFragment : Fragment() {
                             val seatRowNum = document.getString("seatRownum")?.toIntOrNull() ?: 0
                             val seatStates = document.get("seats") as? List<Boolean> ?: emptyList()
                             if (name != null && location != null && imageUri != null && seatRowNum > 0 && seatColNum > 0) {
-                                val theater = Theater(name, Uri.parse(imageUri).toString(), location, seatColNum, seatRowNum, seatStates)
+                                val theater = Theater(
+                                    name,
+                                    Uri.parse(imageUri).toString(),
+                                    location,
+                                    seatColNum,
+                                    seatRowNum,
+                                    seatStates
+                                )
                                 theaterList.add(theater)
                             }
                         }
@@ -394,12 +423,15 @@ class TheatersFragment : Fragment() {
         }
     }
 
-    data class Theater(val name: String, val imageUri: String, val theaterLocation: String,
-                       val seatColLength: Int, val seatRowLength: Int, val seatStates: List<Boolean>)
+    data class Theater(
+        val name: String, val imageUri: String, val theaterLocation: String,
+        val seatColLength: Int, val seatRowLength: Int, val seatStates: List<Boolean>
+    )
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         instance = null
