@@ -20,4 +20,33 @@
         android:textColor="#1E83D1"
         android:textSize="15dp"
         android:textStyle="bold"/>
+
+    <LinearLayout
+        android:id="@+id/admin_actions_cast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textSize="0dp"
+            android:paddingTop="5dp"
+            android:backgroundTint="#FF6961"
+            android:paddingBottom="0dp"
+            android:drawableTop="@drawable/ic_delete"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="0dp"
+            android:textSize="0dp"
+            android:backgroundTint="#FDFD96"
+            android:drawableTop="@drawable/ic_edit"/>
+    </LinearLayout>
+
 </LinearLayout>

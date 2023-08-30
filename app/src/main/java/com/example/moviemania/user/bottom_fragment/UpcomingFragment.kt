@@ -6,12 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.example.moviemania.R
-import com.example.moviemania.admin.MovieAdapter
-import com.example.moviemania.admin.bottom_fragment.MoviesFragment
+import com.example.moviemania.user.UserMovieAdapter
 import com.google.firebase.firestore.FirebaseFirestore
 
 class UpcomingFragment : Fragment() {
@@ -77,7 +75,7 @@ class UpcomingFragment : Fragment() {
                         }
 
                         if (isAdded) {
-                            val movieAdapter = MovieAdapter(requireContext(), moviesList)
+                            val movieAdapter = UserMovieAdapter(requireContext(), moviesList)
                             upcomingMoviesGridView?.adapter = movieAdapter
                         }
                     }

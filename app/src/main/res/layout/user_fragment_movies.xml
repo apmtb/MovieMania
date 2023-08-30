@@ -47,12 +47,11 @@
         android:id="@+id/userMoviesGridView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
         android:clipToPadding="false"
         android:gravity="center"
         android:numColumns="auto_fit"
         android:paddingTop="30dp"
-        android:paddingBottom="50dp"
+        android:paddingBottom="100dp"
         android:verticalSpacing="16dp"
         android:visibility="gone" />
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
@@ -22,6 +23,8 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val movie = getItem(position) as MoviesFragment.Movie
         val itemView = convertView ?: LayoutInflater.from(context).inflate(R.layout.grid_item_movie, parent, false)
+        val adminActions = itemView.findViewById<LinearLayout>(R.id.admin_actions_movie)
+        adminActions.visibility = View.GONE
         val movieImageView = itemView.findViewById<ImageView>(R.id.movieImageView)
         val movieTitleTextView = itemView.findViewById<TextView>(R.id.movieTitleTextView)
 

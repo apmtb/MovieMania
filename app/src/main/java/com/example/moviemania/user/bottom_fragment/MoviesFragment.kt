@@ -5,14 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.GridView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.example.moviemania.R
-import com.example.moviemania.admin.MovieAdapter
-import com.example.moviemania.admin.bottom_fragment.MoviesFragment
+import com.example.moviemania.user.UserMovieAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -20,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class MoviesFragment : Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var movieAdapter:MovieAdapter
+    private lateinit var movieAdapter:UserMovieAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +57,7 @@ class MoviesFragment : Fragment() {
                         noMoviesText.visibility = View.GONE
                         moviesGridView?.visibility = View.VISIBLE
 
-                        val moviesList = ArrayList<MoviesFragment.Movie>()
+                        val moviesList = ArrayList<Movie>()
 
                         for (document in querySnapshot.documents) {
                             val title = document.getString("title")
@@ -75,7 +72,7 @@ class MoviesFragment : Fragment() {
 
                             if (title != null && photoUri != null && description != null &&
                                 section != null && language != null) {
-                                val movie = MoviesFragment.Movie(
+                                val movie = Movie(
                                     title, photoUri, description, section, ticketPrice,
                                     isUpcoming, language, castList, theaterList
                                 )
@@ -88,7 +85,7 @@ class MoviesFragment : Fragment() {
                         }
 
                         if (isAdded) {
-                            movieAdapter = MovieAdapter(requireContext(), moviesList)
+                            movieAdapter = UserMovieAdapter(requireContext(), moviesList)
                             moviesGridView?.adapter = movieAdapter
                         }
                     }
