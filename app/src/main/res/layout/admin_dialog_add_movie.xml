@@ -275,5 +275,18 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:drawableStartCompat="@drawable/ic_custom_error" />
+
+        <TextView
+            android:drawablePadding="5dp"
+            android:id="@+id/noDataChangedErrorMovie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change atleast one Value!"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="#ff0000"
+            android:layout_gravity="center"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
     </LinearLayout>
 </ScrollView>

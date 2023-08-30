@@ -147,5 +147,18 @@
                     android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:drawablePadding="5dp"
+            android:id="@+id/noDataChangedErrorTheater"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change atleast one Value!"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="#ff0000"
+            android:layout_gravity="center"
+            app:drawableStartCompat="@drawable/ic_custom_error" />
     </LinearLayout>
 </ScrollView>

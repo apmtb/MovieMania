@@ -3,7 +3,6 @@ package com.example.moviemania.admin
 
 import android.content.Context
 import android.net.Uri
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.ImageView
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -102,7 +100,7 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
         val uploadImageButton = dialogView.findViewById<Button>(R.id.uploadImageButton)
         val imageContainer = dialogView.findViewById<RelativeLayout>(R.id.imageContainer)
         val imageError = dialogView.findViewById<TextView>(R.id.imageError)
-        val noDataChangedError = dialogView.findViewById<TextView>(R.id.noDataChangedError)
+        val noDataChangedError = dialogView.findViewById<TextView>(R.id.noDataChangedErrorCast)
 
         val dialog = AlertDialog.Builder(context)
             .setView(dialogView)
