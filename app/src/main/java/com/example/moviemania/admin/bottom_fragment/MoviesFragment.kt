@@ -490,7 +490,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun loadMoviesData() {
+    fun loadMoviesData() {
         if (isAdded) {
             val moviesCollection = db.collection("Movies")
             val noMoviesTextView = requireActivity().findViewById<RelativeLayout>(R.id.noMoviesTextView)

@@ -59,6 +59,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         theaterDeleteButton.setOnClickListener {
             deleteTheater(theater.name)
         }
+
         Glide.with(context)
             .load(theater.imageUri)
             .placeholder(R.drawable.ic_image_placeholder)
