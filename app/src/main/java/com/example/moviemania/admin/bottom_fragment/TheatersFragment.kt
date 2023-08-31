@@ -352,10 +352,10 @@ class TheatersFragment : Fragment() {
 
                         theaterCollection.add(theaterData)
                             .addOnSuccessListener {
-                                showToast("Theater added successfully.")
+                                loadTheaterData()
                                 frameLayout.visibility = View.GONE
                                 videoView.stopPlayback()
-                                loadTheaterData()
+                                showToast("Theater added successfully.")
                             }
                             .addOnFailureListener { exception ->
                                 frameLayout.visibility = View.GONE

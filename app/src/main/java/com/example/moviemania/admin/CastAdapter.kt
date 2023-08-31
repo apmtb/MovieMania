@@ -215,9 +215,9 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
 
                 castRef.update(updateData)
                     .addOnSuccessListener {
+                        cf?.loadCastData()
                         cf?.frameLayout?.visibility = View.GONE
                         cf?.videoView?.stopPlayback()
-                        cf?.loadCastData()
                         showToast("Cast updated successfully")
                     }
                     .addOnFailureListener { e ->

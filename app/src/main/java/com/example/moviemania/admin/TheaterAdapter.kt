@@ -440,9 +440,9 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                 // Update the document
                 theaterRef.update(updateData)
                     .addOnSuccessListener {
+                        tf?.loadTheaterData()
                         tf?.frameLayout?.visibility = View.GONE
                         tf?.videoView?.stopPlayback()
-                        tf?.loadTheaterData()
                         showToast("Theater updated successfully")
                     }
                     .addOnFailureListener { e ->

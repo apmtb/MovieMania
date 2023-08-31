@@ -75,6 +75,24 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                             moviesCollection.document(movieId)
                                 .delete()
                                 .addOnSuccessListener {
+                                    for (document in querySnapshot.documents) {
+                                        val theaters =
+                                            document.get("theaterList") as? List<String> ?: emptyList()
+                                        for (theaterId in theaters ) {
+                                            val theaterRef =
+                                                db.collection("Theaters").document(theaterId)
+                                            val movieSubcollection = theaterRef.collection(movieTitle)
+
+                                            movieSubcollection.get()
+                                                .addOnSuccessListener { querySnapshot ->
+                                                    val batch = db.batch()
+                                                    for (movie in querySnapshot) {
+                                                        batch.delete(movie.reference)
+                                                    }
+                                                    batch.commit()
+                                                }
+                                        }
+                                    }
                                     showToast("$movieTitle deleted successfully!")
                                     mf?.loadMoviesData()
                                 }

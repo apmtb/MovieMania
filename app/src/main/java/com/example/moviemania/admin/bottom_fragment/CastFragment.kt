@@ -345,10 +345,10 @@ class CastFragment : Fragment() {
 
                         castCollection.add(castData)
                             .addOnSuccessListener {
-                                showToast("Cast added successfully.")
+                                loadCastData() // Reload the cast data after adding a new cast
                                 frameLayout.visibility = View.GONE
                                 videoView.stopPlayback()
-                                loadCastData() // Reload the cast data after adding a new cast
+                                showToast("Cast added successfully.")
                             }
                             .addOnFailureListener { exception ->
                                 frameLayout.visibility = View.GONE

@@ -443,10 +443,10 @@ class MoviesFragment : Fragment() {
                                             }
                                         }
                                 }
-                                showToast("Movie added successfully.")
+                                loadMoviesData()
                                 frameLayout.visibility = View.GONE
                                 videoView.stopPlayback()
-                                loadMoviesData()
+                                showToast("Movie added successfully.")
                             }
                             .addOnFailureListener { exception ->
                                 frameLayout.visibility = View.GONE
