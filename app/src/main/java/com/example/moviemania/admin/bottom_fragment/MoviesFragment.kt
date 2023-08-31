@@ -328,6 +328,7 @@ class MoviesFragment : Fragment() {
                 val selectedImageURI = data?.data
                 val selectedImageView = dialogView.findViewById<ImageView>(R.id.movieSelectedImageView)
                 if (selectedImageURI != null) {
+                    val imageError = dialogView.findViewById<TextView>(R.id.movieImageError)
                     imageError.visibility = View.GONE
                     selectedImageView.tag = "1"
                     Glide.with(requireContext()).load(selectedImageURI).centerCrop()
@@ -532,6 +533,8 @@ class MoviesFragment : Fragment() {
     fun loadMoviesData() {
         if (isAdded) {
             val moviesCollection = db.collection("Movies")
+            val castCollection = db.collection("Casts")
+            val theaterCollection = db.collection("Theaters")
             val noMoviesTextView = requireActivity().findViewById<RelativeLayout>(R.id.noMoviesTextView)
             val moviesGridView = view?.findViewById<GridView>(R.id.moviesGridView)
 
@@ -557,11 +560,23 @@ class MoviesFragment : Fragment() {
                             val timesList = document.get("times") as? List<String> ?: emptyList()
                             val castList = document.get("castList") as? List<String> ?: emptyList()
                             val theaterList = document.get("theaterList") as? List<String> ?: emptyList()
+                            val castNames: MutableList<String> = mutableListOf()
+                            val theaterNames: MutableList<String> = mutableListOf()
 
+                            for ( castId in castList ) {
+                                castCollection.document(castId).get().addOnSuccessListener {
+                                    castNames.add(it.getString("name")?:"")
+                                }
+                            }
+                            for ( theaterId in theaterList ) {
+                                theaterCollection.document(theaterId).get().addOnSuccessListener {
+                                    theaterNames.add(it.getString("name")?:"")
+                                }
+                            }
                             if (title != null && photoUri != null && description != null &&
                                 section != null && language != null) {
                                 val movie = Movie(title, photoUri, description, section, ticketPrice,
-                                    isUpcoming, language, timesList, castList, theaterList)
+                                    isUpcoming, language, timesList, castNames, theaterNames, castList, theaterList)
                                 moviesList.add(movie)
                             }
                         }
@@ -616,6 +631,7 @@ class MoviesFragment : Fragment() {
     data class Movie(val title: String, val photoUri: String, val description: String,
                      val section: String, val ticketPrice: Double,
                      val isUpcoming: Boolean, val language: String, val timesList: List<String>,
+                     val castNames: List<String>, val theaterNames: List<String>,
                      val castList: List<String>, val theaterList: List<String>)
 
     private fun showToast(message: String) {

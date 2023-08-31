@@ -64,7 +64,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         movieEditButton.setOnClickListener {
             showUpdateMoviesDialog(movie.title, movie.photoUri, movie.description,
                 movie.section, movie.ticketPrice, movie.isUpcoming, movie.language,
-                movie.timesList, movie.castList, movie.theaterList)
+                movie.timesList, movie.castNames, movie.theaterNames, movie.castList, movie.theaterList)
         }
 
         movieDeleteButton.setOnClickListener {
@@ -194,6 +194,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                                        currentDescription: String, currentSection: String,
                                        currentTicketPrice: Double, currentIsUpcoming: Boolean,
                                        currentLanguage: String, currentTimesList: List<String>,
+                                       castNames:List<String>, theaterNames:List<String>,
                                        currentCastList: List<String>, currentTheaterList: List<String>) {
         val mf = MoviesFragment.newInstance()
         dialogView = LayoutInflater.from(context).inflate(R.layout.admin_dialog_add_movie, null)
@@ -209,9 +210,15 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         val castsListIds: MutableList<String> = mutableListOf()
         val theatersListIds: MutableList<String> = mutableListOf()
 
+        timesList.addAll(currentTimesList)
+        languagesList.addAll(currentLanguage.split(", "))
+        castsListIds.addAll(currentCastList)
+        theatersListIds.addAll(currentTheaterList)
+
         mf.retrieveDocumentNames("Casts") { list ->
             setupMultiSelectTextView(
                 R.id.castsSpinnerTextView,
+                castNames,
                 list.toTypedArray(),
                 "Select Casts"
             ) { castList ->
@@ -224,6 +231,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         mf.retrieveDocumentNames("Theaters") { list ->
             setupMultiSelectTextView(
                 R.id.theatersSpinnerTextView,
+                theaterNames,
                 list.toTypedArray(),
                 "Select Theaters"
             ) { theaterList ->
@@ -236,6 +244,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
 
         setupMultiSelectTextView(
             R.id.languagesSpinnerTextView,
+            currentLanguage.split(", "),
             mf.resources.getStringArray(R.array.languages_array),
             "Select Languages"
         ) { list ->
@@ -245,6 +254,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
 
         setupMultiSelectTextView(
             R.id.timesSpinnerTextView,
+            currentTimesList,
             mf.resources.getStringArray(R.array.times_array),
             "Select Times"
         ) { list ->
@@ -284,18 +294,27 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         val isUpcomingchecked = isUpcomingCheckBox.isChecked
         movieTitleEditText.setText(currentTitle)
         movieImageUri.setText(currentPhotoUri)
-        Glide.with(context).load(currentPhotoUri).centerCrop().error(R.drawable.ic_custom_error)
-            .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
         movieDescriptionEditText.setText(currentDescription)
         ticketPriceEditText.setText(currentTicketPrice.toString())
         isUpcomingCheckBox.isChecked = currentIsUpcoming
-
+        val radioTrending = dialogView.findViewById<RadioButton>(R.id.trendingRadioButton)
+        val radioPopular = dialogView.findViewById<RadioButton>(R.id.popularRadioButton)
+        val radioAll = dialogView.findViewById<RadioButton>(R.id.radioAll)
+        when (currentSection) {
+            radioTrending.text.toString() -> radioTrending.isChecked = true
+            radioPopular.text.toString() -> radioPopular.isChecked = true
+            radioAll.text.toString() -> radioAll.isChecked = true
+        }
         val imageViewLayoutParams = selectedImageView.layoutParams
         val displaymetrics = context.resources.displayMetrics
         val screenHeight = displaymetrics.heightPixels
         val screenWidth = displaymetrics.widthPixels
         imageViewLayoutParams.width = (screenWidth * 0.3).toInt()
         imageViewLayoutParams.height = (screenHeight * 0.20).toInt()
+
+
+        Glide.with(context).load(currentPhotoUri).centerCrop().error(R.drawable.ic_custom_error)
+            .placeholder(R.drawable.ic_image_placeholder).into(selectedImageView)
 
         val imageOptionRadioGroup =
             dialogView.findViewById<RadioGroup>(R.id.movieImageOptionRadioGroup)
@@ -317,7 +336,6 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                 movieImageUri.visibility = View.GONE
             } else {
                 imageError.text = "image URL is Required!"
-                selectedImageView.setImageResource(0)
                 imageContainer.visibility = View.GONE
                 movieImageUri.visibility = View.VISIBLE
             }
@@ -436,10 +454,29 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
             }
     }
 
-    private fun setupMultiSelectTextView(textViewId: Int, itemsArray: Array<String>,title: String,callback: (ArrayList<String>) -> Unit) {
+    private fun setupMultiSelectTextView(textViewId: Int, selectedList: List<String>, itemsArray: Array<String>,title: String,callback: (ArrayList<String>) -> Unit) {
         val textView = dialogView.findViewById<TextView>(textViewId)
         val selectedItems = ArrayList<String>()
+        selectedItems.addAll(selectedList)
         val checkedItems = BooleanArray(itemsArray.size) { false }
+        for (i in itemsArray.indices) {
+            if (selectedList.contains(itemsArray[i])) {
+                checkedItems[i] = true
+            }
+        }
+        val selectedText = selectedItems.joinToString(", ")
+        if (selectedText.isNullOrEmpty()){
+            textView.text = title
+            textView.setTextColor(Color.GRAY)
+            selectedItems.clear()
+        } else {
+            if(selectedItems.size>1) {
+                textView.text = "${selectedItems.size} Selected"
+            } else {
+                textView.text = selectedItems.joinToString("")
+            }
+            textView.setTextColor(Color.BLACK)
+        }
         textView.setOnClickListener {
             showMultiSelectDialog(textView, itemsArray, title, selectedItems, checkedItems) { list->
                 callback(list)
