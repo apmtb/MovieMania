@@ -86,8 +86,8 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                                             movieSubcollection.get()
                                                 .addOnSuccessListener { querySnapshot ->
                                                     val batch = db.batch()
-                                                    for (movie in querySnapshot) {
-                                                        batch.delete(movie.reference)
+                                                    for (times in querySnapshot) {
+                                                        batch.delete(times.reference)
                                                     }
                                                     batch.commit()
                                                 }

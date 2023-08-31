@@ -378,8 +378,6 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
 
                 val theaterName = theaterNameEditText.text.toString()
                 val theaterLocation = theaterLocationEditText.text.toString()
-                val imageOptionRadioGroup =
-                    dialogView.findViewById<RadioGroup>(R.id.imageOptionRadioGroupTheater)
                 val selectedRadioButtonId = imageOptionRadioGroup.checkedRadioButtonId
                 val isUploadImage = selectedRadioButtonId == R.id.uploadImageRadioButtonTheater
                 val seatColLength = colLengthPicker.value.toString()
@@ -419,7 +417,7 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val tf = TheatersFragment.newInstance()
         val theaterCollection = db.collection("Theaters")
 
-        // Query the theater document with the current name
+
         theaterCollection.whereEqualTo("name", currentName)
             .get()
             .addOnSuccessListener { querySnapshot ->
@@ -440,6 +438,19 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                 // Update the document
                 theaterRef.update(updateData)
                     .addOnSuccessListener {
+                        retrieveMovieTitles("Movies") { movies ->
+                            for ( movie in movies ) {
+                                theaterRef.collection(movie).get()
+                                    .addOnSuccessListener { querySnapshot ->
+                                        val batch = db.batch()
+                                        for (timeDocument in querySnapshot.documents) {
+                                            val seatLayoutData = mapOf("seats" to initialSeatState)
+                                            batch.update( timeDocument.reference, seatLayoutData )
+                                        }
+                                        batch.commit()
+                                    }
+                            }
+                        }
                         tf?.loadTheaterData()
                         tf?.frameLayout?.visibility = View.GONE
                         tf?.videoView?.stopPlayback()
@@ -470,11 +481,39 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
                     .addOnSuccessListener { querySnapshot ->
                         if (!querySnapshot.isEmpty) {
                             val documentSnapshot = querySnapshot.documents[0]
+                            val documentRef = documentSnapshot.reference
                             val theaterId = documentSnapshot.id
+
+                            retrieveMovieTitles("Movies") { movies ->
+                                for ( movie in movies ) {
+                                    documentRef.collection(movie).get()
+                                        .addOnSuccessListener { querySnapshot ->
+                                            val batch = db.batch()
+                                            for (timeDocument in querySnapshot.documents) {
+                                                batch.delete( timeDocument.reference )
+                                            }
+                                            batch.commit()
+                                        }
+                                }
+                            }
 
                             theatersCollection.document(theaterId)
                                 .delete()
                                 .addOnSuccessListener {
+                                    val moviesCollectionRef = db.collection("Movies")
+
+                                    moviesCollectionRef.whereArrayContains("theaterList", theaterId)
+                                        .get()
+                                        .addOnSuccessListener { querySnapshot ->
+                                            val batch = db.batch()
+                                            for (movieDocument in querySnapshot.documents) {
+                                                val movieRef = moviesCollectionRef.document(movieDocument.id)
+                                                val updatedTheaterList = movieDocument.get("theaterList") as? MutableList<String>
+                                                updatedTheaterList?.remove(theaterId)
+                                                batch.update(movieRef, "theaterList", updatedTheaterList)
+                                            }
+                                            batch.commit()
+                                        }
                                     showToast("$theaterName deleted successfully!")
                                     tf?.loadTheaterData()
                                 }
@@ -491,6 +530,22 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
             .create()
 
         alertDialog.show()
+    }
+
+    private fun retrieveMovieTitles(collectionPath: String, callback: (List<String>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection(collectionPath)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val names = querySnapshot.documents.map { document ->
+                    document.getString("title") ?: ""
+                }
+                callback(names)
+            }
+            .addOnFailureListener { e ->
+                showToast("Error Retrieving Document Names!")
+            }
     }
 
     private fun showToast(msg: String) {

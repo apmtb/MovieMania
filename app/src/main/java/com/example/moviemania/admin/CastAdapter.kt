@@ -248,6 +248,20 @@ class CastAdapter(private val context: Context, private val castList: List<CastF
                             castCollection.document(castId)
                                 .delete()
                                 .addOnSuccessListener {
+                                    val moviesCollectionRef = db.collection("Movies")
+
+                                    moviesCollectionRef.whereArrayContains("castList", castId)
+                                        .get()
+                                        .addOnSuccessListener { querySnapshot ->
+                                            val batch = db.batch()
+                                            for (movieDocument in querySnapshot.documents) {
+                                                val movieRef = moviesCollectionRef.document(movieDocument.id)
+                                                val updatedCastList = movieDocument.get("castList") as? MutableList<String>
+                                                updatedCastList?.remove(castId)
+                                                batch.update(movieRef, "castList", updatedCastList)
+                                            }
+                                            batch.commit()
+                                        }
                                     showToast("$castName deleted successfully!")
                                     cf?.loadCastData()
                                 }
