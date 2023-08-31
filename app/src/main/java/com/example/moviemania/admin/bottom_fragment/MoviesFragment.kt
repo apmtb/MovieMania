@@ -37,9 +37,9 @@ import java.util.UUID
 class MoviesFragment : Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var dialogView: View
-    private lateinit var videoView: VideoView
-    private lateinit var frameLayout: View
+    lateinit var dialogView: View
+    lateinit var videoView: VideoView
+    lateinit var frameLayout: View
     private lateinit var imageError: TextView
     private lateinit var selectSectionError: TextView
     private lateinit var selectLanguageError: TextView
@@ -167,17 +167,17 @@ class MoviesFragment : Fragment() {
             val theatersListIds:MutableList<String> = mutableListOf()
 
             retrieveDocumentNames("Casts"){ list->
-                setupMultiSelectTextView(R.id.castsSpinnerTextView, list.toTypedArray(),"Select Casts"){ list ->
+                setupMultiSelectTextView(R.id.castsSpinnerTextView, list.toTypedArray(),"Select Casts"){ castList ->
                     castsListIds.clear()
-                    getDocumentIdsFromNames("Casts",list){ ids ->
+                    getDocumentIdsFromNames("Casts",castList){ ids ->
                         castsListIds.addAll(ids)
                     }
                 }
             }
             retrieveDocumentNames("Theaters"){ list->
-                setupMultiSelectTextView(R.id.theatersSpinnerTextView, list.toTypedArray(),"Select Theaters"){ list ->
+                setupMultiSelectTextView(R.id.theatersSpinnerTextView, list.toTypedArray(),"Select Theaters"){ theaterList ->
                     theatersListIds.clear()
-                    getDocumentIdsFromNames("Theaters",list){ ids ->
+                    getDocumentIdsFromNames("Theaters",theaterList){ ids ->
                         theatersListIds.addAll(ids)
                     }
                 }
@@ -338,7 +338,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageView: ImageView, movieTitle: String, callback: (String) -> Unit) {
+    fun uploadImageToFirebaseStorage(imageView: ImageView, movieTitle: String, callback: (String) -> Unit) {
         val movieCollection = db.collection("Movies")
         movieCollection.whereEqualTo("title", movieTitle.trim())
             .get()
@@ -554,13 +554,14 @@ class MoviesFragment : Fragment() {
                             val ticketPrice = document.getDouble("ticketPrice") ?: 0.0
                             val isUpcoming = document.getBoolean("isUpcoming") ?: false
                             val language = document.getString("language")
+                            val timesList = document.get("times") as? List<String> ?: emptyList()
                             val castList = document.get("castList") as? List<String> ?: emptyList()
                             val theaterList = document.get("theaterList") as? List<String> ?: emptyList()
 
                             if (title != null && photoUri != null && description != null &&
                                 section != null && language != null) {
                                 val movie = Movie(title, photoUri, description, section, ticketPrice,
-                                    isUpcoming, language, castList, theaterList)
+                                    isUpcoming, language, timesList, castList, theaterList)
                                 moviesList.add(movie)
                             }
                         }
@@ -577,7 +578,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun getDocumentIdsFromNames(collectionPath: String, names: List<String>, callback: (List<String>) -> Unit) {
+    fun getDocumentIdsFromNames(collectionPath: String, names: List<String>, callback: (List<String>) -> Unit) {
         val collection = db.collection(collectionPath)
 
         collection.whereIn("name", names)
@@ -594,7 +595,7 @@ class MoviesFragment : Fragment() {
                 showToast("Error : $e")
             }
     }
-    private fun retrieveDocumentNames(collectionPath: String, callback: (List<String>) -> Unit) {
+    fun retrieveDocumentNames(collectionPath: String, callback: (List<String>) -> Unit) {
         val db = FirebaseFirestore.getInstance()
 
         db.collection(collectionPath)
@@ -614,7 +615,7 @@ class MoviesFragment : Fragment() {
 
     data class Movie(val title: String, val photoUri: String, val description: String,
                      val section: String, val ticketPrice: Double,
-                     val isUpcoming: Boolean, val language: String,
+                     val isUpcoming: Boolean, val language: String, val timesList: List<String>,
                      val castList: List<String>, val theaterList: List<String>)
 
     private fun showToast(message: String) {

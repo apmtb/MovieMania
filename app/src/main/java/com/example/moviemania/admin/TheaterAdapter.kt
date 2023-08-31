@@ -417,7 +417,6 @@ class TheaterAdapter(private val context: Context, private val theaters: List<Th
         val tf = TheatersFragment.newInstance()
         val theaterCollection = db.collection("Theaters")
 
-
         theaterCollection.whereEqualTo("name", currentName)
             .get()
             .addOnSuccessListener { querySnapshot ->
