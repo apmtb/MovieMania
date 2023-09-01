@@ -594,9 +594,8 @@ class MoviesFragment : Fragment() {
     }
 
     fun getDocumentIdsFromNames(collectionPath: String, names: List<String>, callback: (List<String>) -> Unit) {
-        val collection = db.collection(collectionPath)
-
         if (names.isNotEmpty()) {
+            val collection = db.collection(collectionPath)
             collection.whereIn("name", names)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
