@@ -235,6 +235,8 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                 list.toTypedArray(),
                 "Select Theaters"
             ) { theaterList ->
+//      removed list          showToast(theaterNames.subtract(theaterList.toSet()).toString())
+//      new added theater list          showToast(theaterList.subtract(theaterNames.toSet()).toString())
                 theatersListIds.clear()
                 mf.getDocumentIdsFromNames("Theaters", theaterList) { ids ->
                     theatersListIds.addAll(ids)

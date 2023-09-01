@@ -596,19 +596,21 @@ class MoviesFragment : Fragment() {
     fun getDocumentIdsFromNames(collectionPath: String, names: List<String>, callback: (List<String>) -> Unit) {
         val collection = db.collection(collectionPath)
 
-        collection.whereIn("name", names)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val documentIds = mutableListOf<String>()
-                for (document in querySnapshot.documents) {
-                    val documentId = document.id
-                    documentIds.add(documentId)
+        if (names.isNotEmpty()) {
+            collection.whereIn("name", names)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    val documentIds = mutableListOf<String>()
+                    for (document in querySnapshot.documents) {
+                        val documentId = document.id
+                        documentIds.add(documentId)
+                    }
+                    callback(documentIds)
                 }
-                callback(documentIds)
-            }
-            .addOnFailureListener { e ->
-                showToast("Error : $e")
-            }
+                .addOnFailureListener { e ->
+                    showToast("Error : $e")
+                }
+        }
     }
     fun retrieveDocumentNames(collectionPath: String, callback: (List<String>) -> Unit) {
         val db = FirebaseFirestore.getInstance()
