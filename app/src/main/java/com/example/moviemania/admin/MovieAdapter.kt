@@ -260,6 +260,8 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
             mf.resources.getStringArray(R.array.times_array),
             "Select Times"
         ) { list ->
+//      removed times      showToast(currentTimesList.subtract(list.toSet()).toString())
+//      new added times      showToast(list.subtract(currentTimesList.toSet()).toString())
             timesList.clear()
             timesList.addAll(list)
         }
