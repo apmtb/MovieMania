@@ -323,7 +323,6 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         selectTheaterError = dialogView.findViewById(R.id.movieSelectTheaterError)
         val isUpcomingCheckBox =
             dialogView.findViewById<CheckBox>(R.id.movieUpcomingCheckBox)
-        val isUpcomingchecked = isUpcomingCheckBox.isChecked
         movieTitleEditText.setText(currentTitle)
         movieImageUri.setText(currentPhotoUri)
         movieDescriptionEditText.setText(currentDescription)
@@ -384,6 +383,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
             if (selectedImageView.tag == "1") {
                 imageChanged = true
             }
+            val isUpcomingchecked = isUpcomingCheckBox.isChecked
             if (validateForm(currentTitle, currentPhotoUri, currentDescription,
                     currentSection, currentTicketPrice, currentIsUpcoming, currentLanguage,
                     currentTimesList,currentCastList, currentTheaterList, movieTitleEditText, movieImageUri,
