@@ -5,14 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.moviemania.R
-import com.example.moviemania.user.bottom_fragment.CartFragment
 import com.example.moviemania.user.bottom_fragment.MoviesFragment
+import com.example.moviemania.user.bottom_fragment.HistoryFragment
 import com.example.moviemania.user.bottom_fragment.UpcomingFragment
-import com.example.moviemania.user.bottom_fragment.NotificationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class HomeFragment : Fragment() {
@@ -35,13 +32,9 @@ class HomeFragment : Fragment() {
                     replaceFragment(UpcomingFragment())
                     activity?.title = "Upcoming Movies"
                 }
-                R.id.user_bottom_notification -> {
-                    replaceFragment(NotificationFragment())
-                    activity?.title = "Notification"
-                }
-                R.id.user_bottom_cart -> {
-                    replaceFragment(CartFragment())
-                    activity?.title = "Cart"
+                R.id.user_bottom_history -> {
+                    replaceFragment(HistoryFragment())
+                    activity?.title = "Booking History"
                 }
             }
             true

@@ -7,7 +7,7 @@
         android:checkableBehavior="single">
 
         <item android:id="@+id/user_nav_home"
-            android:title="Home User"
+            android:title="Home"
             android:icon="@drawable/ic_home_24"/>
         <item android:id="@+id/user_nav_profile"
             android:title="Profile"

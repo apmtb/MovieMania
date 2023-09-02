@@ -12,12 +12,7 @@
         android:title="Upcoming" />
 
     <item
-        android:id="@+id/user_bottom_notification"
-        android:icon="@drawable/ic_notifications_24"
-        android:title="Notification" />
-
-    <item
-        android:id="@+id/user_bottom_cart"
-        android:icon="@drawable/ic_cart_24"
-        android:title="Cart" />
+        android:id="@+id/user_bottom_history"
+        android:icon="@drawable/ic_history_24"
+        android:title="History" />
 </menu>
