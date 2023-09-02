@@ -1,6 +1,7 @@
 package com.example.moviemania.user
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.user.bottom_fragment.MoviesFragment
@@ -41,6 +43,25 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
             .placeholder(R.drawable.ic_image_placeholder)
             .into(movieImageView)
 
+        itemView.setOnClickListener {
+            if (movie.isUpcoming) {
+                showToast("Upcoming clicked")
+            } else {
+                val intent = Intent(context, MovieDetailsActivity::class.java)
+                intent.putExtra("movieTitle", movie.title)
+                intent.putExtra("imageUri", movie.photoUri)
+                intent.putExtra("description", movie.description)
+                intent.putExtra("ticketPrice", movie.ticketPrice)
+                val castListArray = ArrayList<String>()
+                castListArray.addAll(movie.castList)
+                intent.putStringArrayListExtra("castList",castListArray)
+                context.startActivity(intent)
+            }
+        }
+
         return itemView
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
     }
 }
