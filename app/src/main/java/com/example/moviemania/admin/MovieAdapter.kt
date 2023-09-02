@@ -37,6 +37,8 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
     private lateinit var selectCastError: TextView
     private lateinit var selectTheaterError: TextView
     private var imageChanged = false
+    private var timesChanged = false
+    private var theatersChanged = false
 
     override fun getCount(): Int = movieList.size
 
@@ -209,6 +211,10 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
         val languagesList: MutableList<String> = mutableListOf()
         val castsListIds: MutableList<String> = mutableListOf()
         val theatersListIds: MutableList<String> = mutableListOf()
+        val removedTheaterList: MutableList<String> = mutableListOf()
+        val addedTheaterList: MutableList<String> = mutableListOf()
+        val removedTimesList: MutableList<String> = mutableListOf()
+        val addedTimesList: MutableList<String> = mutableListOf()
 
         timesList.addAll(currentTimesList)
         languagesList.addAll(currentLanguage.split(", "))
@@ -235,8 +241,19 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                 list.toTypedArray(),
                 "Select Theaters"
             ) { theaterList ->
-//      removed list          showToast(theaterNames.subtract(theaterList.toSet()).toString())
-//      new added theater list          showToast(theaterList.subtract(theaterNames.toSet()).toString())
+                val removedList = theaterNames.subtract(theaterList.toSet())
+                val addedList  = theaterList.subtract(theaterNames.toSet())
+                theatersChanged = removedList.isNotEmpty() || addedList.isNotEmpty()
+                removedTheaterList.clear()
+                addedTheaterList.clear()
+                if(theatersChanged){
+                    if (removedList.isNotEmpty()){
+                        removedTheaterList.addAll(removedList)
+                    }
+                    if (addedList.isNotEmpty()){
+                        addedTheaterList.addAll(addedList)
+                    }
+                }
                 theatersListIds.clear()
                 mf.getDocumentIdsFromNames("Theaters", theaterList) { ids ->
                     theatersListIds.addAll(ids)
@@ -260,8 +277,19 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
             mf.resources.getStringArray(R.array.times_array),
             "Select Times"
         ) { list ->
-//      removed times      showToast(currentTimesList.subtract(list.toSet()).toString())
-//      new added times      showToast(list.subtract(currentTimesList.toSet()).toString())
+            val removedList = currentTimesList.subtract(list.toSet())
+            val addedList = list.subtract(currentTimesList.toSet())
+            timesChanged = removedList.isNotEmpty() || addedList.isNotEmpty()
+            removedTimesList.clear()
+            addedTimesList.clear()
+            if(timesChanged){
+                if (removedList.isNotEmpty()){
+                    removedTimesList.addAll(removedList)
+                }
+                if (addedList.isNotEmpty()){
+                    addedTimesList.addAll(addedList)
+                }
+            }
             timesList.clear()
             timesList.addAll(list)
         }
@@ -392,6 +420,78 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
                 if (isUploadImage) {
                     imageContainer.visibility = View.VISIBLE
                     movieImageUri.visibility = View.GONE
+
+                    if (theatersChanged) {
+                        if (removedTheaterList.isNotEmpty()) {
+                            mf.getDocumentIdsFromNames("Theaters",removedTheaterList) { ids ->
+                                for (theaterId in ids ) {
+                                    val theaterRef =
+                                        db.collection("Theaters").document(theaterId)
+                                    val movieSubcollection = theaterRef.collection(movieTitle)
+
+                                    movieSubcollection.get()
+                                        .addOnSuccessListener { querySnapshot ->
+                                            val batch = db.batch()
+                                            for (times in querySnapshot) {
+                                                batch.delete(times.reference)
+                                            }
+                                            batch.commit()
+                                        }
+                                }
+                            }
+                        }
+                        if ( addedTheaterList.isNotEmpty() ) {
+                            mf.getDocumentIdsFromNames("Theaters",addedTheaterList) { ids ->
+                                for (theaterId in ids ) {
+                                    val theaterRef = db.collection("Theaters").document(theaterId)
+                                    theaterRef.get().addOnSuccessListener {
+                                        val colLength = it.getString("seatColnum")!!.toInt()
+                                        val rowLength = it.getString("seatRownum")!!.toInt()
+                                        val initialSeatState = MutableList(colLength * rowLength) { false }
+                                        val moviesSubCollectionRef = theaterRef.collection(movieTitle)
+                                        for (time in timesList) {
+                                            val timesDocument = moviesSubCollectionRef.document(time)
+                                            val seatData = hashMapOf(
+                                                "seats" to initialSeatState
+                                            )
+                                            timesDocument.set(seatData)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (timesChanged) {
+                        if ( addedTimesList.isNotEmpty() ) {
+                            for (theaterId in theatersListIds) {
+                                val theaterRef = db.collection("Theaters").document(theaterId)
+
+                                theaterRef.get().addOnSuccessListener {
+                                    val colLength = it.getString("seatColnum")!!.toInt()
+                                    val rowLength = it.getString("seatRownum")!!.toInt()
+                                    val initialSeatState = MutableList(colLength * rowLength) { false }
+                                    val moviesSubCollectionRef = theaterRef.collection(movieTitle)
+                                    for (time in addedTimesList) {
+                                        val timesDocument = moviesSubCollectionRef.document(time)
+                                        val seatData = hashMapOf(
+                                            "seats" to initialSeatState
+                                        )
+                                        timesDocument.set(seatData)
+                                    }
+                                }
+                            }
+                        }
+                        if ( removedTimesList.isNotEmpty() ) {
+                            for ( theaterId in theatersListIds ) {
+                                val theaterRef = db.collection("Theaters").document(theaterId)
+                                val movieSubcollection = theaterRef.collection(movieTitle)
+
+                                for ( times in removedTimesList ) {
+                                    movieSubcollection.document(times).delete()
+                                }
+                            }
+                        }
+                    }
                     mf.uploadImageToFirebaseStorage(selectedImageView, movieTitle) {
                         updateMovieData(
                             currentTitle, movieTitle, it, movieDescription, section,
