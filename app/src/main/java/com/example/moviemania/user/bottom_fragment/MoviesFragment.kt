@@ -67,6 +67,7 @@ class MoviesFragment : Fragment() {
                             val ticketPrice = document.getDouble("ticketPrice") ?: 0.0
                             val isUpcoming = document.getBoolean("isUpcoming") ?: false
                             val language = document.getString("language")
+                            val timesList = document.get("times") as? List<String> ?: emptyList()
                             val castList = document.get("castList") as? List<String> ?: emptyList()
                             val theaterList = document.get("theaterList") as? List<String> ?: emptyList()
 
@@ -74,7 +75,7 @@ class MoviesFragment : Fragment() {
                                 section != null && language != null) {
                                 val movie = Movie(
                                     title, photoUri, description, section, ticketPrice,
-                                    isUpcoming, language, castList, theaterList
+                                    isUpcoming, language, timesList, castList, theaterList
                                 )
                                 if ((section == "Trending" && tabPosition == 1) ||
                                     (section == "Popular" && tabPosition == 2) ||
@@ -98,7 +99,7 @@ class MoviesFragment : Fragment() {
 
     data class Movie(val title: String, val photoUri: String, val description: String,
                      val section: String, val ticketPrice: Double,
-                     val isUpcoming: Boolean, val language: String,
+                     val isUpcoming: Boolean, val language: String, val timesList: List<String>,
                      val castList: List<String>, val theaterList: List<String>)
 
     private fun showToast(message: String) {

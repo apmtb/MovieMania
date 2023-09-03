@@ -52,6 +52,15 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
                 intent.putExtra("imageUri", movie.photoUri)
                 intent.putExtra("description", movie.description)
                 intent.putExtra("ticketPrice", movie.ticketPrice)
+
+                val timesListArray = ArrayList<String>()
+                timesListArray.addAll(movie.timesList)
+                intent.putStringArrayListExtra("timesList",timesListArray)
+
+                val languagesListArray = ArrayList<String>()
+                languagesListArray.addAll(movie.language.split(", "))
+                intent.putStringArrayListExtra("languagesListArray",languagesListArray)
+
                 val castListArray = ArrayList<String>()
                 castListArray.addAll(movie.castList)
                 intent.putStringArrayListExtra("castList",castListArray)

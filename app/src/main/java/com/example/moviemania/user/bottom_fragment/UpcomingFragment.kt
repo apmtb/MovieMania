@@ -59,6 +59,7 @@ class UpcomingFragment : Fragment() {
                             val ticketPrice = document.getDouble("ticketPrice") ?: 0.0
                             val isUpcoming = document.getBoolean("isUpcoming") ?: false
                             val language = document.getString("language")
+                            val timesList = document.get("times") as? List<String> ?: emptyList()
                             val castList = document.get("castList") as? List<String> ?: emptyList()
                             val theaterList = document.get("theaterList") as? List<String> ?: emptyList()
 
@@ -66,7 +67,7 @@ class UpcomingFragment : Fragment() {
                                 section != null && language != null) {
                                 val movie = MoviesFragment.Movie(
                                     title, photoUri, description, section, ticketPrice,
-                                    isUpcoming, language, castList, theaterList
+                                    isUpcoming, language, timesList, castList, theaterList
                                 )
                                 if(isUpcoming){
                                     moviesList.add(movie)

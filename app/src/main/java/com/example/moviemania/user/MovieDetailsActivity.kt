@@ -53,6 +53,9 @@ class MovieDetailsActivity : AppCompatActivity() {
         ticketPriceTextView.text = "$ticketPrice Rs"
 
 
+        val timesList = intent.getStringArrayListExtra("timesList")
+        val languagesListArray = intent.getStringArrayListExtra("languagesListArray")
+
         val castList = intent.getStringArrayListExtra("castList")
         val linearLayout = findViewById<LinearLayout>(R.id.linearCastView)
         if (castList!!.isNotEmpty()) {
@@ -94,6 +97,8 @@ class MovieDetailsActivity : AppCompatActivity() {
         bookMovieBtn.setOnClickListener {
             val intent = Intent(this, MovieBookingActivity::class.java)
             intent.putExtra("movieTitle", movieTitle)
+            intent.putStringArrayListExtra("times",timesList)
+            intent.putStringArrayListExtra("languages",languagesListArray)
             startActivity(intent)
         }
     }

@@ -29,7 +29,49 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/timesLabel"
+                    android:id="@+id/dateLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="25dp"
+                    android:text="Date : "
+                    android:textColor="#052BFA"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dateSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="28dp"
+                    android:layout_marginRight="25dp"
+                    android:background="@drawable/style_spinner"
+                    android:padding="5dp"
+                    android:text="Select Date"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/movieSelectDateError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:drawablePadding="5dp"
+                android:text="Select Date!"
+                android:textColor="#ff0000"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:drawableStartCompat="@drawable/ic_custom_error" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/timeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="25dp"
@@ -38,18 +80,34 @@
                     android:textSize="15dp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/timesSpinnerTextView"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="28dp"
-                    android:layout_marginRight="25dp"
-                    android:background="@drawable/black_border"
-                    android:paddingEnd="3dp"
-                    android:text="Select Time"
-                    android:textAlignment="center"
-                    android:textSize="15sp"
-                    app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+                    android:layout_height="wrap_content">
+
+                    <com.example.moviemania.user.MySpinner
+                        android:id="@+id/timesSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="28dp"
+                        android:layout_marginRight="25dp"
+                        android:background="@drawable/style_spinner"
+                        android:padding="5dp"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/timesTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="28dp"
+                        android:layout_marginRight="25dp"
+                        android:background="@drawable/style_spinner"
+                        android:padding="5dp"
+                        android:text="Select time"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+                </RelativeLayout>
             </LinearLayout>
 
             <TextView
@@ -80,17 +138,34 @@
                     android:textSize="15dp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/languagesSpinnerTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="25dp"
-                    android:background="@drawable/black_border"
-                    android:paddingEnd="3dp"
-                    android:text="Select Language"
-                    android:textAlignment="center"
-                    android:textSize="15sp"
-                    app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.example.moviemania.user.MySpinner
+                        android:id="@+id/languagesSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="25dp"
+                        android:background="@drawable/style_spinner"
+                        android:entries="@array/languages_array"
+                        android:padding="5dp"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/languagesTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="25dp"
+                        android:background="@drawable/style_spinner"
+                        android:entries="@array/languages_array"
+                        android:padding="5dp"
+                        android:text="Select Language"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+                </RelativeLayout>
             </LinearLayout>
 
             <TextView
@@ -127,12 +202,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="25dp"
-                    android:background="@drawable/black_border"
-                    android:paddingEnd="3dp"
-                    android:text="Select Theaters"
+                    android:background="@drawable/style_spinner"
+                    android:padding="5dp"
+                    android:text="Select Theater"
                     android:textAlignment="center"
-                    android:textSize="15sp"
-                    app:drawableEndCompat="@drawable/ic_arrow_drop_down" />
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
