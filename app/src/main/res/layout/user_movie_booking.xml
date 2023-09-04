@@ -62,7 +62,7 @@
                 android:text="Select Date!"
                 android:textColor="#ff0000"
                 android:textStyle="bold"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_custom_error" />
 
             <LinearLayout
@@ -120,7 +120,7 @@
                 android:text="Select Time!"
                 android:textColor="#ff0000"
                 android:textStyle="bold"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_custom_error" />
 
             <LinearLayout
@@ -178,7 +178,7 @@
                 android:text="Select Language!"
                 android:textColor="#ff0000"
                 android:textStyle="bold"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_custom_error" />
 
             <LinearLayout
@@ -220,7 +220,7 @@
                 android:text="Select Theater!"
                 android:textColor="#ff0000"
                 android:textStyle="bold"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_custom_error" />
         </LinearLayout>
     </ScrollView>

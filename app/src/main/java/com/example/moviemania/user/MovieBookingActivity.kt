@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Adapter
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -21,12 +22,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.SimpleTimeZone
 
 class MovieBookingActivity : AppCompatActivity() {
     private lateinit var textSelectedDate: TextView
     private var selectedLanguage: String? = null
     private var selectedTime: String? = null
     private var selectedDate: String? = null
+    private var isToday = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_movie_booking)
@@ -44,7 +47,6 @@ class MovieBookingActivity : AppCompatActivity() {
             showDatePickerDialog()
         }
 
-        val currentTime = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
         val times = intent.getStringArrayListExtra("times")
         val languages = intent.getStringArrayListExtra("languages")
 
@@ -57,6 +59,7 @@ class MovieBookingActivity : AppCompatActivity() {
             override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
                 val languagesTextView = findViewById<TextView>(R.id.languagesTextView)
                 languagesTextView.visibility = View.GONE
+                showToast("$selectedTime")
                 selectedLanguage = parentView.getItemAtPosition(position).toString()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -65,8 +68,65 @@ class MovieBookingActivity : AppCompatActivity() {
         }
         languagesSpinner.setOnItemSelectedEvenIfUnchangedListener(languagesSpinner.onItemSelectedListener)
 
+        val currentTime = Calendar.getInstance()
+        val currentHour = currentTime.get(Calendar.HOUR_OF_DAY) // Current hour in 24-hour format
+        val currentMinute = currentTime.get(Calendar.MINUTE)
         val timesSpinner = findViewById<MySpinner>(R.id.timesSpinner)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, times!!)
+
+        val timesTextView = findViewById<TextView>(R.id.timesTextView)
+        timesTextView.setOnClickListener {
+            val selectDateError = findViewById<TextView>(R.id.movieSelectDateError)
+            if (selectedDate==null){
+                selectDateError.visibility = View.VISIBLE
+            } else {
+                selectDateError.visibility = View.GONE
+                timesSpinner.performClick()
+            }
+        }
+
+        val adapter = object: ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, times!!){
+            // Disable click for past Times ( time < current time )
+            override fun isEnabled(position: Int): Boolean {
+                val itemTime = times!![position]
+                val itemHour = itemTime.substringBefore(":").trim().toInt()
+                val itemMinute = itemTime.substringAfter(":").substringBefore(" ").trim().toInt()
+                val amPm = itemTime.substringAfterLast(" ").trim()
+                val itemHour24 = if (amPm.equals("AM", ignoreCase = true)) {
+                    if (itemHour == 12) 0 else itemHour
+                } else {
+                    if (itemHour == 12) itemHour else itemHour + 12
+                }
+                return !(itemHour24 < currentHour || (itemHour24 == currentHour && itemMinute < currentMinute)) || !isToday
+            }
+
+            // Change color item
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+                val mView = super.getDropDownView(position, convertView, parent)
+                val mTextView = mView as? TextView
+
+                val itemTime = times!![position]
+                val itemHour = itemTime.substringBefore(":").trim().toInt()
+                val itemMinute = itemTime.substringAfter(":").substringBefore(" ").trim().toInt()
+                val amPm = itemTime.substringAfterLast(" ").trim()
+                val itemHour24 = if (amPm.equals("AM", ignoreCase = true)) {
+                    if (itemHour == 12) 0 else itemHour
+                } else {
+                    if (itemHour == 12) itemHour else itemHour + 12
+                }
+
+                if (!(itemHour24 < currentHour || (itemHour24 == currentHour && itemMinute < currentMinute)) || !isToday) {
+                    mTextView?.setTextColor(Color.BLACK)
+                } else {
+                    mTextView?.setTextColor(Color.GRAY)
+                }
+                return mView
+            }
+        }
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         timesSpinner.adapter = adapter
         timesSpinner.setSelection(Adapter.NO_SELECTION, true)
@@ -103,7 +163,10 @@ class MovieBookingActivity : AppCompatActivity() {
             DatePickerDialog.OnDateSetListener { view: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
                 val formattedDay = String.format("%02d", selectedDay)
                 val formattedMonth = String.format("%02d", selectedMonth + 1)
-
+                isToday = day==selectedDay
+                val timesTextView = findViewById<TextView>(R.id.timesTextView)
+                timesTextView.visibility = View.VISIBLE
+                selectedTime = null
                 textSelectedDate.text = "$formattedDay/$formattedMonth/$selectedYear"
                 selectedDate = "$formattedDay/$formattedMonth/$selectedYear"
             },
