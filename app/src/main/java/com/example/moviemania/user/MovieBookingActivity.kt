@@ -223,7 +223,8 @@ class MovieBookingActivity : AppCompatActivity() {
                             val seatsDocument = movieSubcollection.document(selectedTime!!)
                             seatsDocument.get().addOnSuccessListener {
                                 val seats = it.get("seats")
-                                showSeatSelectionDialog(selectedTheaterName,selectedTheater.seatRowLength,selectedTheater.seatColLength)
+                                showSeatSelectionDialog(selectedTheater.id,movieTitle,selectedTime!!,
+                                    selectedTheater.seatRowLength,selectedTheater.seatColLength)
                             }
                         }
                     }
@@ -278,7 +279,7 @@ class MovieBookingActivity : AppCompatActivity() {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
     }
 
-    private fun showSeatSelectionDialog(theaterName: String, seatRowLength: Int, seatColLength: Int) {
+    private fun showSeatSelectionDialog(theaterId: String, movieTitle: String, movieTime: String, seatRowLength: Int, seatColLength: Int) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_seat_selection, null)
         val seatGridView: GridView = dialogView.findViewById(R.id.seatGridView)
         val mutableSeatList: MutableList<Int> = mutableListOf()
@@ -293,7 +294,7 @@ class MovieBookingActivity : AppCompatActivity() {
             }
             .create()
 
-        loadSeatData(theaterName, seatColLength) { seatList ->
+        loadSeatData(theaterId,movieTitle,movieTime, seatColLength) { seatList ->
             val seatAdapter = SeatAdapter(this, seatList, seatRowLength, seatColLength + 1) { list ->
                 mutableSeatList.clear()
                 mutableSeatList.addAll(list)
@@ -305,7 +306,7 @@ class MovieBookingActivity : AppCompatActivity() {
         val bookButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         bookButton.setOnClickListener {
             if (mutableSeatList.isNotEmpty()) {
-                updateSeatStatus(theaterName, mutableSeatList, true) { status ->
+                updateSeatStatus(theaterId, movieTitle, movieTime, mutableSeatList, true) { status ->
                     if (status) {
                         Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
                     } else {
@@ -323,63 +324,52 @@ class MovieBookingActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSeatData(theaterName: String, numColumns: Int, callback: (List<Seat>) -> Unit) {
-        val theaterCollection = db.collection("Theaters")
+    private fun loadSeatData(theaterId: String, movieTitle: String, movieTime: String, numColumns: Int, callback: (List<Seat>) -> Unit) {
 
-        theaterCollection.whereEqualTo("name", theaterName)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val documentSnapshot = querySnapshot.documents[0]
-                    val seatGrid = documentSnapshot.get("seats") as? List<Boolean>
-                    val seatList = mutableListOf<Seat>()
-                    seatGrid?.forEachIndexed { index, isSelected ->
-                        val seatId = "Seat_${index + 1}" // Adjust the seat ID creation if needed
-                        val row = index / numColumns + 1
-                        val column = index % numColumns + 1
-                        seatList.add(Seat(seatId, column, row, isSelected))
-                        if (numColumns/2 == column){
-                            seatList.add(Seat("", column, row, isSelected))
-                        }
-                    }
-                    callback(seatList)
+        val theaterRef = db.collection("Theaters").document(theaterId)
+        val movieSubCollection = theaterRef.collection(movieTitle)
+        val seatsDocument = movieSubCollection.document(movieTime)
+        seatsDocument.get().addOnSuccessListener {
+            val seats = it.get("seats") as? List<Boolean>
+            val seatList = mutableListOf<Seat>()
+            seats?.forEachIndexed { index, isSelected ->
+                val seatId = "Seat_${index + 1}" // Adjust the seat ID creation if needed
+                val row = index / numColumns + 1
+                val column = index % numColumns + 1
+                seatList.add(Seat(seatId, column, row, isSelected))
+                if (numColumns / 2 == column) {
+                    seatList.add(Seat("", column, row, isSelected))
                 }
             }
-            .addOnFailureListener { e ->
-                // Handle error
-            }
+            callback(seatList)
+        }
     }
 
 
-    private fun updateSeatStatus(theaterName: String, seatPositions: List<Int>, isSelected: Boolean, callback: (Boolean) -> Unit) {
-        val theaterCollection = db.collection("Theaters")
-        theaterCollection.whereEqualTo("name", theaterName)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val document = querySnapshot.documents[0]
-                    val theaterRef = document.reference
-
-                    val seatGrid = document.get("seats") as? MutableList<Boolean>
-                    seatGrid?.let {
-                        for (seatPosition in seatPositions) {
-                            if (seatPosition >= 0 && seatPosition < it.size) {
-                                it[seatPosition] = isSelected
-                            }
-                        }
-
-                        theaterRef.update("seats", seatGrid)
-                            .addOnSuccessListener {
-                                // Successfully updated
-                                callback(true)
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle error
-                                callback(false)
-                            }
+    private fun updateSeatStatus(theaterId: String, movieTitle: String, movieTime: String, seatPositions: List<Int>, isSelected: Boolean, callback: (Boolean) -> Unit) {
+        val theaterRef = db.collection("Theaters").document(theaterId)
+        val movieSubCollection = theaterRef.collection(movieTitle)
+        val seatsDocument = movieSubCollection.document(movieTime)
+        seatsDocument.get().addOnSuccessListener {
+            val seats = it.get("seats") as? MutableList<Boolean>
+            seats?.let { seatsList ->
+                for (seatPosition in seatPositions) {
+                    if (seatPosition >= 0 && seatPosition < seatsList.size) {
+                        seatsList[seatPosition] = isSelected
                     }
                 }
+
+                seatsDocument.update("seats", seatsList)
+                    .addOnSuccessListener {
+                        // Successfully updated
+                        callback(true)
+                    }
+                    .addOnFailureListener { e ->
+                        // Handle error
+                        callback(false)
+                    }
             }
+        }
     }
 
     data class Seat(
