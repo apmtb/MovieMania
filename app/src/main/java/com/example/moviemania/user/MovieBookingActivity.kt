@@ -30,9 +30,12 @@ class MovieBookingActivity : AppCompatActivity() {
     private var selectedTime: String? = null
     private var selectedDate: String? = null
     private var isToday = true
+    private lateinit var selectDateError: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_movie_booking)
+
+        selectDateError = findViewById(R.id.movieSelectDateError)
 
         val movieTitle = intent.getStringExtra("movieTitle")
 
@@ -59,7 +62,6 @@ class MovieBookingActivity : AppCompatActivity() {
             override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
                 val languagesTextView = findViewById<TextView>(R.id.languagesTextView)
                 languagesTextView.visibility = View.GONE
-                showToast("$selectedTime")
                 selectedLanguage = parentView.getItemAtPosition(position).toString()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -75,11 +77,9 @@ class MovieBookingActivity : AppCompatActivity() {
 
         val timesTextView = findViewById<TextView>(R.id.timesTextView)
         timesTextView.setOnClickListener {
-            val selectDateError = findViewById<TextView>(R.id.movieSelectDateError)
             if (selectedDate==null){
                 selectDateError.visibility = View.VISIBLE
             } else {
-                selectDateError.visibility = View.GONE
                 timesSpinner.performClick()
             }
         }
@@ -163,6 +163,7 @@ class MovieBookingActivity : AppCompatActivity() {
             DatePickerDialog.OnDateSetListener { view: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
                 val formattedDay = String.format("%02d", selectedDay)
                 val formattedMonth = String.format("%02d", selectedMonth + 1)
+                selectDateError.visibility = View.GONE
                 isToday = day==selectedDay
                 val timesTextView = findViewById<TextView>(R.id.timesTextView)
                 timesTextView.visibility = View.VISIBLE
