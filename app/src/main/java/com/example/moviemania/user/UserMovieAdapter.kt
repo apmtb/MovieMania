@@ -32,9 +32,9 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
 
         movieTitleTextView.text = movie.title
         val imageViewLayoutParams = movieImageView.layoutParams
-        val displaymetrics = context.resources.displayMetrics
-        val screenHeight = displaymetrics.heightPixels
-        val screenWidth = displaymetrics.widthPixels
+        val displayMetrics = context.resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+        val screenWidth = displayMetrics.widthPixels
         imageViewLayoutParams.width = (screenWidth*0.45).toInt()
         imageViewLayoutParams.height = (screenHeight*0.30).toInt()
 
@@ -64,6 +64,11 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
                 val castListArray = ArrayList<String>()
                 castListArray.addAll(movie.castList)
                 intent.putStringArrayListExtra("castList",castListArray)
+
+                val theatersListArray = ArrayList<String>()
+                theatersListArray.addAll(movie.theaterList)
+                intent.putStringArrayListExtra("theatersListArray",theatersListArray)
+
                 context.startActivity(intent)
             }
         }

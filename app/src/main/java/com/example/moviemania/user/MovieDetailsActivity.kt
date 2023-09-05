@@ -55,6 +55,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         val timesList = intent.getStringArrayListExtra("timesList")
         val languagesListArray = intent.getStringArrayListExtra("languagesListArray")
+        val theatersListArray = intent.getStringArrayListExtra("theatersListArray")
 
         val castList = intent.getStringArrayListExtra("castList")
         val linearLayout = findViewById<LinearLayout>(R.id.linearCastView)
@@ -72,9 +73,6 @@ class MovieDetailsActivity : AppCompatActivity() {
                     val castImageView = item.findViewById<ImageView>(R.id.castImageView)
 
                     val castImageViewLayoutParams = castImageView.layoutParams
-                    val displaymetrics = this.resources.displayMetrics
-                    val screenHeight = displaymetrics.heightPixels
-                    val screenWidth = displaymetrics.widthPixels
                     castImageViewLayoutParams.width = (screenWidth * 0.3).toInt()
                     castImageViewLayoutParams.height = (screenHeight * 0.20).toInt()
                     Glide.with(this).load(imageUrl).centerCrop().error(R.drawable.ic_custom_error)
@@ -99,6 +97,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             intent.putExtra("movieTitle", movieTitle)
             intent.putStringArrayListExtra("times",timesList)
             intent.putStringArrayListExtra("languages",languagesListArray)
+            intent.putStringArrayListExtra("theaters",theatersListArray)
             startActivity(intent)
         }
     }

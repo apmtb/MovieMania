@@ -3,28 +3,33 @@ package com.example.moviemania.user
 import android.app.DatePickerDialog
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Adapter
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.DatePicker
-import android.widget.Spinner
+import android.widget.GridView
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import com.bumptech.glide.Glide
 import com.example.moviemania.R
-import java.text.SimpleDateFormat
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.SimpleTimeZone
 
 class MovieBookingActivity : AppCompatActivity() {
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var textSelectedDate: TextView
     private var selectedLanguage: String? = null
     private var selectedTime: String? = null
@@ -34,6 +39,36 @@ class MovieBookingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_movie_booking)
+
+        val theaterList = ArrayList<Theater>()
+
+        val theaters = intent.getStringArrayListExtra("theaters")
+
+        if (theaters!=null){
+            for (theaterId in theaters){
+                val theaterRef = db.collection("Theaters").document(theaterId)
+                theaterRef.get().addOnSuccessListener {
+                    val theaterName = it.getString("name")
+                    val imageUrl = it.getString("imageUri")
+                    val location = it.getString("location")
+                    val seatColNum = it.getString("seatColnum")?.toIntOrNull() ?: 0
+                    val seatRowNum = it.getString("seatRownum")?.toIntOrNull() ?: 0
+                    val initialSeatState = MutableList(seatColNum * seatRowNum) { false }
+                    if (theaterName != null && location != null && imageUrl != null) {
+                        val theater = Theater(
+                            theaterId,
+                            theaterName,
+                            Uri.parse(imageUrl).toString(),
+                            location,
+                            seatColNum,
+                            seatRowNum,
+                            initialSeatState
+                        )
+                        theaterList.add(theater)
+                    }
+                }
+            }
+        }
 
         selectDateError = findViewById(R.id.movieSelectDateError)
 
@@ -141,6 +176,64 @@ class MovieBookingActivity : AppCompatActivity() {
             }
         }
         timesSpinner.setOnItemSelectedEvenIfUnchangedListener(timesSpinner.onItemSelectedListener)
+
+        val theatersTextView = findViewById<TextView>(R.id.theatersSpinnerTextView)
+        theatersTextView.setOnClickListener {
+            val adapter = TheaterAdapter(this, theaterList)
+
+            val dialog = AlertDialog.Builder(this)
+                .setTitle("Select a Theater")
+                .setSingleChoiceItems(adapter, -1) { dialog, which ->
+                    val selectedTheater = theaterList[which]
+                    val selectedTheaterName = selectedTheater.name
+                    theatersTextView.text = selectedTheaterName
+
+                    val theaterImageView = findViewById<ImageView>(R.id.theaterImageView)
+
+                    val theaterNameTextView = findViewById<TextView>(R.id.theaterNameTextView)
+                    theaterNameTextView.text = selectedTheaterName
+
+                    val theaterLocationTextView = findViewById<TextView>(R.id.theaterLocationTextView)
+                    theaterLocationTextView.text = selectedTheater.theaterLocation
+
+                    val imageViewLayoutParams = theaterImageView.layoutParams
+                    val displayMetrics = this.resources.displayMetrics
+
+                    val screenHeight = displayMetrics.heightPixels
+                    val screenWidth = displayMetrics.widthPixels
+                    imageViewLayoutParams.width = (screenWidth*0.85).toInt()
+                    imageViewLayoutParams.height = (screenHeight*0.20).toInt()
+
+                    Glide.with(this)
+                        .load(selectedTheater.imageUri)
+                        .placeholder(R.drawable.ic_image_placeholder)
+                        .error(R.drawable.ic_custom_error)
+                        .centerCrop()
+                        .into(theaterImageView)
+
+                    val selectedTheaterLayout = findViewById<LinearLayout>(R.id.selectedTheaterView)
+                    selectedTheaterLayout.visibility = View.VISIBLE
+
+
+                    val selectSeatButton = findViewById<Button>(R.id.selectSeatBTN)
+                    selectSeatButton.setOnClickListener {
+                        val theaterRef = db.collection("Theaters").document(selectedTheater.id)
+                        if (movieTitle!=null) {
+                            val movieSubcollection = theaterRef.collection(movieTitle)
+                            val seatsDocument = movieSubcollection.document(selectedTime!!)
+                            seatsDocument.get().addOnSuccessListener {
+                                val seats = it.get("seats")
+                                showSeatSelectionDialog(selectedTheaterName,selectedTheater.seatRowLength,selectedTheater.seatColLength)
+                            }
+                        }
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -184,6 +277,122 @@ class MovieBookingActivity : AppCompatActivity() {
     private fun showToast(message: String){
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
     }
+
+    private fun showSeatSelectionDialog(theaterName: String, seatRowLength: Int, seatColLength: Int) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_seat_selection, null)
+        val seatGridView: GridView = dialogView.findViewById(R.id.seatGridView)
+        val mutableSeatList: MutableList<Int> = mutableListOf()
+
+        seatGridView.numColumns = seatColLength + 1
+        val seatDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setTitle("Select Seats")
+            .setPositiveButton("Book", null)
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        loadSeatData(theaterName, seatColLength) { seatList ->
+            val seatAdapter = SeatAdapter(this, seatList, seatRowLength, seatColLength + 1) { list ->
+                mutableSeatList.clear()
+                mutableSeatList.addAll(list)
+            }
+            seatGridView.adapter = seatAdapter
+        }
+
+        seatDialog.show()
+        val bookButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        bookButton.setOnClickListener {
+            if (mutableSeatList.isNotEmpty()) {
+                updateSeatStatus(theaterName, mutableSeatList, true) { status ->
+                    if (status) {
+                        Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Booking failed, Please try again later!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Select atleast one seat to book!", Toast.LENGTH_SHORT).show()
+            }
+            seatDialog.dismiss()
+        }
+    }
+
+    private fun loadSeatData(theaterName: String, numColumns: Int, callback: (List<Seat>) -> Unit) {
+        val theaterCollection = db.collection("Theaters")
+
+        theaterCollection.whereEqualTo("name", theaterName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val documentSnapshot = querySnapshot.documents[0]
+                    val seatGrid = documentSnapshot.get("seats") as? List<Boolean>
+                    val seatList = mutableListOf<Seat>()
+                    seatGrid?.forEachIndexed { index, isSelected ->
+                        val seatId = "Seat_${index + 1}" // Adjust the seat ID creation if needed
+                        val row = index / numColumns + 1
+                        val column = index % numColumns + 1
+                        seatList.add(Seat(seatId, column, row, isSelected))
+                        if (numColumns/2 == column){
+                            seatList.add(Seat("", column, row, isSelected))
+                        }
+                    }
+                    callback(seatList)
+                }
+            }
+            .addOnFailureListener { e ->
+                // Handle error
+            }
+    }
+
+
+    private fun updateSeatStatus(theaterName: String, seatPositions: List<Int>, isSelected: Boolean, callback: (Boolean) -> Unit) {
+        val theaterCollection = db.collection("Theaters")
+        theaterCollection.whereEqualTo("name", theaterName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val document = querySnapshot.documents[0]
+                    val theaterRef = document.reference
+
+                    val seatGrid = document.get("seats") as? MutableList<Boolean>
+                    seatGrid?.let {
+                        for (seatPosition in seatPositions) {
+                            if (seatPosition >= 0 && seatPosition < it.size) {
+                                it[seatPosition] = isSelected
+                            }
+                        }
+
+                        theaterRef.update("seats", seatGrid)
+                            .addOnSuccessListener {
+                                // Successfully updated
+                                callback(true)
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle error
+                                callback(false)
+                            }
+                    }
+                }
+            }
+    }
+
+    data class Seat(
+        val id: String,
+        val column: Int,
+        val row: Int,
+        val isSelected: Boolean,
+    )
+
+    data class Theater(
+        val id:String, val name: String, val imageUri: String, val theaterLocation: String,
+        val seatColLength: Int, val seatRowLength: Int, val seatStates: List<Boolean>
+    )
 }
 
 class MySpinner : androidx.appcompat.widget.AppCompatSpinner {

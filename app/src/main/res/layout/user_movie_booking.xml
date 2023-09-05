@@ -222,6 +222,79 @@
                 android:textStyle="bold"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_custom_error" />
+
+            <LinearLayout
+                android:id="@+id/selectedTheaterView"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/selectedTheaterLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Selected Theater : "
+                    android:textColor="#052BFA"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/theaterImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/image_border"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/theaterNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="15dp"
+                    android:textColor="#052BFA"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/theaterLocationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location : "
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="25dp"
+                    android:textColor="#4056D1"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/theaterLocationTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E83D1"
+                    android:paddingLeft="35dp"
+                    android:paddingBottom="10dp"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/selectSeatBTN"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="#2A54EC"
+                    android:text="Select Seats"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
