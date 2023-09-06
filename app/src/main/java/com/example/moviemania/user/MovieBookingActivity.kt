@@ -218,6 +218,10 @@ class MovieBookingActivity : AppCompatActivity() {
                     val selectedTheaterLayout = findViewById<LinearLayout>(R.id.selectedTheaterView)
                     selectedTheaterLayout.visibility = View.VISIBLE
 
+                    selectedSeatPositionsList.clear()
+                    storageSeatPositionsList.clear()
+                    tempSeatPositionsList.clear()
+                    tempStorageSeatPositionsList.clear()
 
                     val selectSeatButton = findViewById<Button>(R.id.selectSeatBTN)
                     selectSeatButton.setOnClickListener {
@@ -288,15 +292,22 @@ class MovieBookingActivity : AppCompatActivity() {
         val seatGridView: GridView = dialogView.findViewById(R.id.seatGridView)
 
         seatGridView.numColumns = seatColLength + 1
+
+        val initialSeatPositions = ArrayList(selectedSeatPositionsList)
+        val initialStorageSeatPositions = ArrayList(storageSeatPositionsList)
+
         val seatDialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setTitle("Select Seats")
+            .setCancelable(false)
             .setPositiveButton("Select", null)
             .setNegativeButton("Cancel") { dialog, _ ->
-                showToast("$tempSeatPositionsList $selectedSeatPositionsList")
-                selectedSeatPositionsList.removeAll(selectedSeatPositionsList.subtract(
-                    tempSeatPositionsList.toSet()
-                ))
+                tempSeatPositionsList.clear()
+                tempStorageSeatPositionsList.clear()
+                selectedSeatPositionsList.clear()
+                selectedSeatPositionsList.addAll(initialSeatPositions)
+                tempSeatPositionsList.addAll(initialSeatPositions)
+                tempStorageSeatPositionsList.addAll(initialStorageSeatPositions)
                 dialog.dismiss()
             }
             .create()
@@ -333,8 +344,6 @@ class MovieBookingActivity : AppCompatActivity() {
 //                    }
 //                }
             } else {
-                selectedSeatPositionsList.clear()
-                storageSeatPositionsList.clear()
                 Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
             }
             seatDialog.dismiss()
