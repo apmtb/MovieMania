@@ -39,6 +39,7 @@ class MovieBookingActivity : AppCompatActivity() {
     private val selectedSeatPositionsList: MutableList<Int> = mutableListOf()
     private val storageSeatPositionsList: MutableList<Int> = mutableListOf()
     private val tempSeatPositionsList: MutableList<Int> = mutableListOf()
+    private val tempStorageSeatPositionsList: MutableList<Int> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_movie_booking)
@@ -301,11 +302,11 @@ class MovieBookingActivity : AppCompatActivity() {
             .create()
 
         loadSeatData(theaterId,movieTitle,movieTime, seatColLength) { seatList ->
-            val seatAdapter = SeatAdapter(this, selectedSeatPositionsList, seatList, seatRowLength, seatColLength + 1) { list,gridPositions ->
+            val seatAdapter = SeatAdapter(this, selectedSeatPositionsList, storageSeatPositionsList, seatList, seatRowLength, seatColLength + 1) { list,gridPositions ->
                 tempSeatPositionsList.clear()
                 tempSeatPositionsList.addAll(gridPositions)
-                storageSeatPositionsList.clear()
-                storageSeatPositionsList.addAll(list)
+                tempStorageSeatPositionsList.clear()
+                tempStorageSeatPositionsList.addAll(list)
             }
             seatGridView.adapter = seatAdapter
         }
@@ -316,6 +317,8 @@ class MovieBookingActivity : AppCompatActivity() {
             if (tempSeatPositionsList.isNotEmpty()) {
                 selectedSeatPositionsList.clear()
                 selectedSeatPositionsList.addAll(tempSeatPositionsList)
+                storageSeatPositionsList.clear()
+                storageSeatPositionsList.addAll(tempStorageSeatPositionsList)
                 showToast(selectedSeatPositionsList.toString())
                 showToast(storageSeatPositionsList.toString())
 //                updateSeatStatus(theaterId, movieTitle, movieTime, selectedSeatPositionsList, true) { status ->
@@ -331,6 +334,7 @@ class MovieBookingActivity : AppCompatActivity() {
 //                }
             } else {
                 selectedSeatPositionsList.clear()
+                storageSeatPositionsList.clear()
                 Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
             }
             seatDialog.dismiss()

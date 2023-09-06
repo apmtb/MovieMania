@@ -13,13 +13,14 @@ import com.example.moviemania.R
 class SeatAdapter(
     private val context: Context,
     private val selectedSeats: MutableList<Int>,
+    private val selectedStorageSeats: MutableList<Int>,
     private val seats: List<MovieBookingActivity.Seat>,
     private val numRows: Int,
     private val numColumns: Int,
     private val positions: (storagePositions: MutableList<Int>, gridPositions: MutableList<Int>) -> Unit
 ) : BaseAdapter() {
 
-    private val selectedSeatPositions: MutableList<Int> = mutableListOf()
+    private val selectedSeatPositions: MutableList<Int> = selectedStorageSeats
     private val seatPositions: MutableList<Int> = selectedSeats
 
     override fun getCount(): Int {
