@@ -6,19 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.moviemania.R
 
 class SeatAdapter(
     private val context: Context,
+    private val selectedSeats: MutableList<Int>,
     private val seats: List<MovieBookingActivity.Seat>,
     private val numRows: Int,
     private val numColumns: Int,
-    private val onSeatClick: (MutableList<Int>) -> Unit
+    private val positions: (storagePositions: MutableList<Int>, gridPositions: MutableList<Int>) -> Unit
 ) : BaseAdapter() {
 
     private val selectedSeatPositions: MutableList<Int> = mutableListOf()
-    private val seatPositions: MutableList<Int> = mutableListOf()
+    private val seatPositions: MutableList<Int> = selectedSeats
 
     override fun getCount(): Int {
         return numRows * numColumns
@@ -47,7 +49,10 @@ class SeatAdapter(
         imageViewLayoutParams.width = (screenWidth*tmp).toInt()
         imageViewLayoutParams.height = imageViewLayoutParams.width
 
-        if (seat.isSelected) {
+        if (seatPositions.contains(position)){
+            seatImageView.setImageResource(R.drawable.ic_seat_selected)
+            seatImageView.background = ContextCompat.getDrawable(context, R.drawable.image_border)
+        } else if (seat.isBooked) {
             seatImageView.setImageResource(R.drawable.ic_seat_booked)
         } else {
             seatImageView.setImageResource(R.drawable.ic_seat_available)
@@ -60,7 +65,7 @@ class SeatAdapter(
             view.isClickable = true
         } else {
             view.setOnClickListener {
-                if (seat.isSelected) {
+                if (seat.isBooked) {
                     seatImageView.setImageResource(R.drawable.ic_seat_booked)
                 } else if (!seatPositions.contains(position)) {
                     if((numColumns+1)/2 > column){
@@ -71,8 +76,7 @@ class SeatAdapter(
                         seatPositions.add(position)
                     }
                     seatImageView.setImageResource(R.drawable.ic_seat_selected)
-                    seatImageView.background =
-                        ContextCompat.getDrawable(context, R.drawable.image_border)
+                    seatImageView.background = ContextCompat.getDrawable(context, R.drawable.image_border)
                 } else {
                     if((numColumns+1)/2 > column){
                         selectedSeatPositions.remove((position-seat.row+1))
@@ -88,7 +92,7 @@ class SeatAdapter(
                     seatImageView.setPadding(dpToPx,dpToPx,dpToPx,dpToPx)
                     seatImageView.setImageResource(R.drawable.ic_seat_available)
                 }
-                onSeatClick(selectedSeatPositions)
+                positions(selectedSeatPositions,seatPositions)
             }
         }
         return view

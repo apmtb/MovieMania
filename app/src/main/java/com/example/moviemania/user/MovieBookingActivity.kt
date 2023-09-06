@@ -36,6 +36,9 @@ class MovieBookingActivity : AppCompatActivity() {
     private var selectedDate: String? = null
     private var isToday = true
     private lateinit var selectDateError: TextView
+    private val selectedSeatPositionsList: MutableList<Int> = mutableListOf()
+    private val storageSeatPositionsList: MutableList<Int> = mutableListOf()
+    private val tempSeatPositionsList: MutableList<Int> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_movie_booking)
@@ -282,43 +285,53 @@ class MovieBookingActivity : AppCompatActivity() {
     private fun showSeatSelectionDialog(theaterId: String, movieTitle: String, movieTime: String, seatRowLength: Int, seatColLength: Int) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_seat_selection, null)
         val seatGridView: GridView = dialogView.findViewById(R.id.seatGridView)
-        val mutableSeatList: MutableList<Int> = mutableListOf()
 
         seatGridView.numColumns = seatColLength + 1
         val seatDialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setTitle("Select Seats")
-            .setPositiveButton("Book", null)
+            .setPositiveButton("Select", null)
             .setNegativeButton("Cancel") { dialog, _ ->
+                showToast("$tempSeatPositionsList $selectedSeatPositionsList")
+                selectedSeatPositionsList.removeAll(selectedSeatPositionsList.subtract(
+                    tempSeatPositionsList.toSet()
+                ))
                 dialog.dismiss()
             }
             .create()
 
         loadSeatData(theaterId,movieTitle,movieTime, seatColLength) { seatList ->
-            val seatAdapter = SeatAdapter(this, seatList, seatRowLength, seatColLength + 1) { list ->
-                mutableSeatList.clear()
-                mutableSeatList.addAll(list)
+            val seatAdapter = SeatAdapter(this, selectedSeatPositionsList, seatList, seatRowLength, seatColLength + 1) { list,gridPositions ->
+                tempSeatPositionsList.clear()
+                tempSeatPositionsList.addAll(gridPositions)
+                storageSeatPositionsList.clear()
+                storageSeatPositionsList.addAll(list)
             }
             seatGridView.adapter = seatAdapter
         }
 
         seatDialog.show()
-        val bookButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        bookButton.setOnClickListener {
-            if (mutableSeatList.isNotEmpty()) {
-                updateSeatStatus(theaterId, movieTitle, movieTime, mutableSeatList, true) { status ->
-                    if (status) {
-                        Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(
-                            this,
-                            "Booking failed, Please try again later!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+        val selectButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        selectButton.setOnClickListener {
+            if (tempSeatPositionsList.isNotEmpty()) {
+                selectedSeatPositionsList.clear()
+                selectedSeatPositionsList.addAll(tempSeatPositionsList)
+                showToast(selectedSeatPositionsList.toString())
+                showToast(storageSeatPositionsList.toString())
+//                updateSeatStatus(theaterId, movieTitle, movieTime, selectedSeatPositionsList, true) { status ->
+//                    if (status) {
+//                        Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        Toast.makeText(
+//                            this,
+//                            "Booking failed, Please try again later!",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                }
             } else {
-                Toast.makeText(this, "Select atleast one seat to book!", Toast.LENGTH_SHORT).show()
+                selectedSeatPositionsList.clear()
+                Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
             }
             seatDialog.dismiss()
         }
@@ -376,7 +389,7 @@ class MovieBookingActivity : AppCompatActivity() {
         val id: String,
         val column: Int,
         val row: Int,
-        val isSelected: Boolean,
+        val isBooked: Boolean,
     )
 
     data class Theater(
