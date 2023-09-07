@@ -19,6 +19,7 @@ import android.widget.DatePicker
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -26,6 +27,7 @@ import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.DecimalFormat
 import java.util.Calendar
 
 class MovieBookingActivity : AppCompatActivity() {
@@ -36,6 +38,8 @@ class MovieBookingActivity : AppCompatActivity() {
     private var selectedDate: String? = null
     private var isToday = true
     private lateinit var selectDateError: TextView
+    private lateinit var selectTimeError: TextView
+    private lateinit var selectLanguageError: TextView
     private val selectedSeatPositionsList: MutableList<Int> = mutableListOf()
     private val storageSeatPositionsList: MutableList<Int> = mutableListOf()
     private val tempSeatPositionsList: MutableList<Int> = mutableListOf()
@@ -75,6 +79,8 @@ class MovieBookingActivity : AppCompatActivity() {
         }
 
         selectDateError = findViewById(R.id.movieSelectDateError)
+        selectTimeError = findViewById(R.id.movieSelectTimesError)
+        selectLanguageError = findViewById(R.id.movieSelectLanguageError)
 
         val movieTitle = intent.getStringExtra("movieTitle")
 
@@ -101,6 +107,7 @@ class MovieBookingActivity : AppCompatActivity() {
             override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
                 val languagesTextView = findViewById<TextView>(R.id.languagesTextView)
                 languagesTextView.visibility = View.GONE
+                selectLanguageError.visibility = View.GONE
                 selectedLanguage = parentView.getItemAtPosition(position).toString()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -116,9 +123,7 @@ class MovieBookingActivity : AppCompatActivity() {
 
         val timesTextView = findViewById<TextView>(R.id.timesTextView)
         timesTextView.setOnClickListener {
-            if (selectedDate==null){
-                selectDateError.visibility = View.VISIBLE
-            } else {
+            if (validateDate()){
                 timesSpinner.performClick()
             }
         }
@@ -173,6 +178,7 @@ class MovieBookingActivity : AppCompatActivity() {
             override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
                 val timesTextView = findViewById<TextView>(R.id.timesTextView)
                 timesTextView.visibility = View.GONE
+                selectTimeError.visibility = View.GONE
                 selectedTime = parentView.getItemAtPosition(position).toString()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -183,65 +189,71 @@ class MovieBookingActivity : AppCompatActivity() {
 
         val theatersTextView = findViewById<TextView>(R.id.theatersSpinnerTextView)
         theatersTextView.setOnClickListener {
-            val adapter = TheaterAdapter(this, theaterList)
+            if (validateDate() && validateTime()) {
+                val adapter = TheaterAdapter(this, theaterList)
 
-            val dialog = AlertDialog.Builder(this)
-                .setTitle("Select a Theater")
-                .setSingleChoiceItems(adapter, -1) { dialog, which ->
-                    val selectedTheater = theaterList[which]
-                    val selectedTheaterName = selectedTheater.name
-                    theatersTextView.text = selectedTheaterName
+                val dialog = AlertDialog.Builder(this)
+                    .setTitle("Select a Theater")
+                    .setSingleChoiceItems(adapter, -1) { dialog, which ->
+                        val selectedTheater = theaterList[which]
+                        val selectedTheaterName = selectedTheater.name
+                        theatersTextView.text = selectedTheaterName
 
-                    val theaterImageView = findViewById<ImageView>(R.id.theaterImageView)
+                        val theaterImageView = findViewById<ImageView>(R.id.theaterImageView)
 
-                    val theaterNameTextView = findViewById<TextView>(R.id.theaterNameTextView)
-                    theaterNameTextView.text = selectedTheaterName
+                        val theaterNameTextView = findViewById<TextView>(R.id.theaterNameTextView)
+                        theaterNameTextView.text = selectedTheaterName
 
-                    val theaterLocationTextView = findViewById<TextView>(R.id.theaterLocationTextView)
-                    theaterLocationTextView.text = selectedTheater.theaterLocation
+                        val theaterLocationTextView =
+                            findViewById<TextView>(R.id.theaterLocationTextView)
+                        theaterLocationTextView.text = selectedTheater.theaterLocation
 
-                    val imageViewLayoutParams = theaterImageView.layoutParams
-                    val displayMetrics = this.resources.displayMetrics
+                        val imageViewLayoutParams = theaterImageView.layoutParams
+                        val displayMetrics = this.resources.displayMetrics
 
-                    val screenHeight = displayMetrics.heightPixels
-                    val screenWidth = displayMetrics.widthPixels
-                    imageViewLayoutParams.width = (screenWidth*0.85).toInt()
-                    imageViewLayoutParams.height = (screenHeight*0.20).toInt()
+                        val screenHeight = displayMetrics.heightPixels
+                        val screenWidth = displayMetrics.widthPixels
+                        imageViewLayoutParams.width = (screenWidth * 0.85).toInt()
+                        imageViewLayoutParams.height = (screenHeight * 0.20).toInt()
 
-                    Glide.with(this)
-                        .load(selectedTheater.imageUri)
-                        .placeholder(R.drawable.ic_image_placeholder)
-                        .error(R.drawable.ic_custom_error)
-                        .centerCrop()
-                        .into(theaterImageView)
+                        Glide.with(this)
+                            .load(selectedTheater.imageUri)
+                            .placeholder(R.drawable.ic_image_placeholder)
+                            .error(R.drawable.ic_custom_error)
+                            .centerCrop()
+                            .into(theaterImageView)
 
-                    val selectedTheaterLayout = findViewById<LinearLayout>(R.id.selectedTheaterView)
-                    selectedTheaterLayout.visibility = View.VISIBLE
+                        val selectedTheaterLayout =
+                            findViewById<LinearLayout>(R.id.selectedTheaterView)
+                        selectedTheaterLayout.visibility = View.VISIBLE
 
-                    selectedSeatPositionsList.clear()
-                    storageSeatPositionsList.clear()
-                    tempSeatPositionsList.clear()
-                    tempStorageSeatPositionsList.clear()
+                        selectedSeatPositionsList.clear()
+                        storageSeatPositionsList.clear()
+                        tempSeatPositionsList.clear()
+                        tempStorageSeatPositionsList.clear()
 
-                    val selectSeatButton = findViewById<Button>(R.id.selectSeatBTN)
-                    selectSeatButton.setOnClickListener {
-                        val theaterRef = db.collection("Theaters").document(selectedTheater.id)
-                        if (movieTitle!=null) {
-                            val movieSubcollection = theaterRef.collection(movieTitle)
-                            val seatsDocument = movieSubcollection.document(selectedTime!!)
-                            seatsDocument.get().addOnSuccessListener {
-                                val seats = it.get("seats")
-                                showSeatSelectionDialog(selectedTheater.id,movieTitle,selectedTime!!,
-                                    selectedTheater.seatRowLength,selectedTheater.seatColLength)
+                        val selectSeatButton = findViewById<Button>(R.id.selectSeatBTN)
+                        selectSeatButton.setOnClickListener {
+                            val theaterRef = db.collection("Theaters").document(selectedTheater.id)
+                            if (movieTitle != null) {
+                                val movieSubcollection = theaterRef.collection(movieTitle)
+                                val seatsDocument = movieSubcollection.document(selectedTime!!)
+                                seatsDocument.get().addOnSuccessListener {
+                                    val seats = it.get("seats")
+                                    showSeatSelectionDialog(
+                                        selectedTheater.id, movieTitle, selectedTime!!,
+                                        selectedTheater.seatRowLength, selectedTheater.seatColLength
+                                    )
+                                }
                             }
                         }
+                        dialog.dismiss()
                     }
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+                    .setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            }
         }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -253,6 +265,30 @@ class MovieBookingActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun validateDate(): Boolean {
+        if (selectedDate==null){
+            selectDateError.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
+    private fun validateTime(): Boolean {
+        if (selectedTime == null) {
+            selectTimeError.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
+
+    private fun validateLanguage(): Boolean {
+        if (selectedLanguage == null) {
+            selectLanguageError.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
+
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -293,6 +329,9 @@ class MovieBookingActivity : AppCompatActivity() {
 
         seatGridView.numColumns = seatColLength + 1
 
+        val ticketPriceString = intent.getStringExtra("ticketPrice")
+        val ticketPrice = ticketPriceString!!.toDouble()
+
         val initialSeatPositions = ArrayList(selectedSeatPositionsList)
         val initialStorageSeatPositions = ArrayList(storageSeatPositionsList)
 
@@ -308,6 +347,8 @@ class MovieBookingActivity : AppCompatActivity() {
                 selectedSeatPositionsList.addAll(initialSeatPositions)
                 tempSeatPositionsList.addAll(initialSeatPositions)
                 tempStorageSeatPositionsList.addAll(initialStorageSeatPositions)
+                storageSeatPositionsList.clear()
+                storageSeatPositionsList.addAll(initialStorageSeatPositions)
                 dialog.dismiss()
             }
             .create()
@@ -325,13 +366,37 @@ class MovieBookingActivity : AppCompatActivity() {
         seatDialog.show()
         val selectButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         selectButton.setOnClickListener {
+            val receiptView = findViewById<RelativeLayout>(R.id.receiptView)
             if (tempSeatPositionsList.isNotEmpty()) {
                 selectedSeatPositionsList.clear()
                 selectedSeatPositionsList.addAll(tempSeatPositionsList)
                 storageSeatPositionsList.clear()
                 storageSeatPositionsList.addAll(tempStorageSeatPositionsList)
-                showToast(selectedSeatPositionsList.toString())
-                showToast(storageSeatPositionsList.toString())
+                receiptView.visibility = View.VISIBLE
+                val decimalFormat = DecimalFormat("0.#")
+                val selectedSeatsCount = tempSeatPositionsList.size
+                val seatCount = findViewById<TextView>(R.id.seatCount)
+                seatCount.text = "$selectedSeatsCount x Seats :"
+                val seatCountPrice = findViewById<TextView>(R.id.priceSeatCount)
+                val price = decimalFormat.format(ticketPrice*selectedSeatsCount)
+                seatCountPrice.text = "Rs. $price"
+                val taxesCharge = findViewById<TextView>(R.id.taxesCharge)
+                val tax = selectedSeatsCount * ticketPrice * 0.05
+                val formattedTax = decimalFormat.format(tax)
+                taxesCharge.text = "Rs. $formattedTax"
+
+                val total = ticketPrice*selectedSeatsCount+tax
+                val formattedTotal = decimalFormat.format(total)
+                val totalAmount = findViewById<TextView>(R.id.totalAmount)
+                totalAmount.text ="Rs. $formattedTotal"
+
+                val payBtn = findViewById<Button>(R.id.paymentBTN)
+                payBtn.text = "Pay Rs. $formattedTotal"
+
+                payBtn.setOnClickListener {
+
+                }
+
 //                updateSeatStatus(theaterId, movieTitle, movieTime, selectedSeatPositionsList, true) { status ->
 //                    if (status) {
 //                        Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
@@ -344,6 +409,7 @@ class MovieBookingActivity : AppCompatActivity() {
 //                    }
 //                }
             } else {
+                receiptView.visibility = View.GONE
                 Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
             }
             seatDialog.dismiss()

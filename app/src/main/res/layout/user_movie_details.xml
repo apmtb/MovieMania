@@ -107,7 +107,7 @@
                 android:backgroundTint="#2A54EC"
                 android:text="BOOk MOVIE"
                 android:textColor="@color/white"
-                android:textSize="20dp" />
+                android:textSize="12dp" />
 
         </LinearLayout>
     </ScrollView>

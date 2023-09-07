@@ -210,18 +210,18 @@
                     android:textSize="15sp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/movieSelectTheaterError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:drawablePadding="5dp"
-                android:text="Select Theater!"
-                android:textColor="#ff0000"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_custom_error" />
+<!--            <TextView-->
+<!--                android:id="@+id/movieSelectTheaterError"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:drawablePadding="5dp"-->
+<!--                android:text="Select Theater!"-->
+<!--                android:textColor="#ff0000"-->
+<!--                android:textStyle="bold"-->
+<!--                android:visibility="gone"-->
+<!--                app:drawableStartCompat="@drawable/ic_custom_error" />-->
 
             <LinearLayout
                 android:id="@+id/selectedTheaterView"
@@ -286,14 +286,102 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:backgroundTint="#2A54EC"
                     android:text="Select Seats"
                     android:textColor="@color/white"
-                    android:textSize="20dp" />
+                    android:textSize="12dp" />
+                <RelativeLayout
+                    android:id="@+id/receiptView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/seatCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#052BFA"
+                        android:textSize="15dp"
+                        android:textStyle="bold"
+                        android:text="Seats : "/>
+
+                    <TextView
+                        android:id="@+id/priceSeatCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#1E83D1"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="15dp"
+                        android:layout_toRightOf="@id/seatCount"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/taxesLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#052BFA"
+                        android:layout_marginTop="20dp"
+                        android:textSize="15dp"
+                        android:layout_below="@id/seatCount"
+                        android:textStyle="bold"
+                        android:text="Taxes : "/>
+
+                    <TextView
+                        android:id="@+id/taxesCharge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#1E83D1"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_below="@id/priceSeatCount"
+                        android:layout_toRightOf="@id/seatCount"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/totalAmountLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#052BFA"
+                        android:layout_marginTop="20dp"
+                        android:textSize="15dp"
+                        android:layout_below="@id/taxesLabel"
+                        android:textStyle="bold"
+                        android:text="Total : "/>
+
+                    <TextView
+                        android:id="@+id/totalAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#1E83D1"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_below="@id/taxesCharge"
+                        android:layout_toRightOf="@id/seatCount"
+                        android:textStyle="bold"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/paymentBTN"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="27dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_below="@id/totalAmountLabel"
+                        android:backgroundTint="#2A54EC"
+                        android:text="Pay"
+                        android:textColor="@color/white"
+                        android:textSize="12dp" />
+
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

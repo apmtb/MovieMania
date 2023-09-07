@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.DecimalFormat
 
 class MovieDetailsActivity : AppCompatActivity() {
 
@@ -48,7 +49,8 @@ class MovieDetailsActivity : AppCompatActivity() {
         val descriptionTextView = findViewById<TextView>(R.id.movieDescriptionTextView)
         descriptionTextView.text = description
 
-        val ticketPrice = intent.getDoubleExtra("ticketPrice",0.0).toInt()
+        val decimalFormat = DecimalFormat("0.#")
+        val ticketPrice = decimalFormat.format(intent.getDoubleExtra("ticketPrice",0.0))
         val ticketPriceTextView = findViewById<TextView>(R.id.movieTicketPriceTextView)
         ticketPriceTextView.text = "$ticketPrice Rs"
 
@@ -98,6 +100,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             intent.putStringArrayListExtra("times",timesList)
             intent.putStringArrayListExtra("languages",languagesListArray)
             intent.putStringArrayListExtra("theaters",theatersListArray)
+            intent.putExtra("ticketPrice",ticketPrice)
             startActivity(intent)
         }
     }
