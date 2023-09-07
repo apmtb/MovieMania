@@ -37,7 +37,7 @@ class PaymentActivity : AppCompatActivity() {
         val paymentBTN = findViewById<Button>(R.id.paymentBTN)
         paymentBTN.text = "Pay $formattedTotal"
         paymentBTN.setOnClickListener {
-            val intent = Intent(this, ReceiptActivity::class.java)
+            val intent = Intent(this, PaymentSuccessActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             intent.putExtra("movieTitle", movieTitle)
             intent.putExtra("movieImageUrl", movieImageUrl)

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".user.PaymentSuccessActivity">
+
+    <include
+        android:id="@+id/appBarMain"
+        layout="@layout/user_appbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/payment_success_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="Payment Success"
+            android:src="@drawable/ic_payment_success" />
+
+        <TextView
+            android:id="@+id/payment_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/payment_success_image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:text="0 Rs"
+            android:textStyle="bold"
+            android:textColor="@color/mainColor"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/payment_success_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/payment_amount"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:text="Payment Successful!"
+            android:textColor="#1E83D1"
+            android:textStyle="bold"
+            android:textSize="24sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/payment_success_message"
+            android:orientation="horizontal"
+            android:layout_marginTop="25dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/payment_transaction_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transaction id : "
+                android:textColor="#1E83D1"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/payment_transaction_id_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transaction"
+                android:textColor="#1E83D1"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </RelativeLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/viewReceiptBTN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="#2A54EC"
+        android:text="View Booking Details"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+</RelativeLayout>
