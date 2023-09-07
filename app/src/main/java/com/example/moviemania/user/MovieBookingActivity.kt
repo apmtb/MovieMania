@@ -406,7 +406,7 @@ class MovieBookingActivity : AppCompatActivity() {
                 val totalAmount = findViewById<TextView>(R.id.totalAmount)
                 totalAmount.text = "Rs. $formattedTotal"
 
-                val payBtn = findViewById<Button>(R.id.paymentBTN)
+                val payBtn = findViewById<Button>(R.id.makePaymentBTN)
 
                 payBtn.setOnClickListener {
                     if (validateLanguage()) {

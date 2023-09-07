@@ -1,8 +1,11 @@
 package com.example.moviemania.user
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.moviemania.R
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,7 +23,33 @@ class PaymentActivity : AppCompatActivity() {
         actionBar?.title = "Secure Payment"
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
+        val movieTitle = intent.getStringExtra("movieTitle")
+        val movieImageUrl = intent.getStringExtra("movieImageUrl")
+        val theaterId = intent.getStringExtra("theaterId")
+        val selectedDate = intent.getStringExtra("date")
+        val movieTime = intent.getStringExtra("movieTime")
+        val selectedSeatsArray = intent.getIntegerArrayListExtra("selectedSeatsList")
+        val price = intent.getStringExtra("price")
+        val formattedTax = intent.getStringExtra("taxes")
+        val formattedTotal = intent.getStringExtra("total")
 
+        val paymentBTN = findViewById<Button>(R.id.paymentBTN)
+        paymentBTN.text = "Pay $formattedTotal"
+        paymentBTN.setOnClickListener {
+            val intent = Intent(this, ReceiptActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra("movieTitle", movieTitle)
+            intent.putExtra("movieImageUrl", movieImageUrl)
+            intent.putExtra("theaterId", theaterId)
+            intent.putExtra("date", selectedDate)
+            intent.putExtra("movieTime", movieTime)
+            intent.putIntegerArrayListExtra("selectedSeatsList", selectedSeatsArray)
+            intent.putExtra("price", "Rs. $price")
+            intent.putExtra("taxes", "Rs. $formattedTax")
+            intent.putExtra("total", "Rs. $formattedTotal")
+            startActivity(intent)
+            finish()
+        }
 //                    updateSeatStatus(theaterId, movieTitle, movieTime, storageSeatPositionsList,
 //                        true
 //                    ) { status ->
@@ -62,6 +91,11 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun showToast(message: String){
+        Toast.makeText(this,message, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
