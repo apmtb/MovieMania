@@ -24,6 +24,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".user.PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".user.MovieBookingActivity"
             android:exported="false" />
         <activity

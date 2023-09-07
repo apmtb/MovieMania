@@ -2,6 +2,7 @@ package com.example.moviemania.user
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -63,15 +64,8 @@ class MovieBookingActivity : AppCompatActivity() {
                     val seatRowNum = it.getString("seatRownum")?.toIntOrNull() ?: 0
                     val initialSeatState = MutableList(seatColNum * seatRowNum) { false }
                     if (theaterName != null && location != null && imageUrl != null) {
-                        val theater = Theater(
-                            theaterId,
-                            theaterName,
-                            Uri.parse(imageUrl).toString(),
-                            location,
-                            seatColNum,
-                            seatRowNum,
-                            initialSeatState
-                        )
+                        val theater = Theater(theaterId, theaterName, Uri.parse(imageUrl).toString(),
+                            location, seatColNum, seatRowNum, initialSeatState)
                         theaterList.add(theater)
                     }
                 }
@@ -179,6 +173,7 @@ class MovieBookingActivity : AppCompatActivity() {
                 val timesTextView = findViewById<TextView>(R.id.timesTextView)
                 timesTextView.visibility = View.GONE
                 selectTimeError.visibility = View.GONE
+                clearSeatSelection()
                 selectedTime = parentView.getItemAtPosition(position).toString()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -227,23 +222,26 @@ class MovieBookingActivity : AppCompatActivity() {
                             findViewById<LinearLayout>(R.id.selectedTheaterView)
                         selectedTheaterLayout.visibility = View.VISIBLE
 
-                        selectedSeatPositionsList.clear()
-                        storageSeatPositionsList.clear()
-                        tempSeatPositionsList.clear()
-                        tempStorageSeatPositionsList.clear()
+                        clearSeatSelection()
 
                         val selectSeatButton = findViewById<Button>(R.id.selectSeatBTN)
                         selectSeatButton.setOnClickListener {
-                            val theaterRef = db.collection("Theaters").document(selectedTheater.id)
-                            if (movieTitle != null) {
-                                val movieSubcollection = theaterRef.collection(movieTitle)
-                                val seatsDocument = movieSubcollection.document(selectedTime!!)
-                                seatsDocument.get().addOnSuccessListener {
-                                    val seats = it.get("seats")
-                                    showSeatSelectionDialog(
-                                        selectedTheater.id, movieTitle, selectedTime!!,
-                                        selectedTheater.seatRowLength, selectedTheater.seatColLength
-                                    )
+                            if (validateTime()) {
+                                val theaterRef =
+                                    db.collection("Theaters").document(selectedTheater.id)
+                                if (movieTitle != null) {
+                                    val movieSubcollection = theaterRef.collection(movieTitle)
+                                    val seatsDocument = movieSubcollection.document(selectedTime!!)
+                                    seatsDocument.get().addOnSuccessListener {
+                                        val seats = it.get("seats")
+                                        showSeatSelectionDialog(
+                                            selectedTheater.id,
+                                            movieTitle,
+                                            selectedTime!!,
+                                            selectedTheater.seatRowLength,
+                                            selectedTheater.seatColLength
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -264,6 +262,15 @@ class MovieBookingActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun clearSeatSelection(){
+        selectedSeatPositionsList.clear()
+        storageSeatPositionsList.clear()
+        tempSeatPositionsList.clear()
+        tempStorageSeatPositionsList.clear()
+        val receiptView = findViewById<RelativeLayout>(R.id.receiptView)
+        receiptView.visibility = View.GONE
     }
 
     private fun validateDate(): Boolean {
@@ -306,6 +313,7 @@ class MovieBookingActivity : AppCompatActivity() {
                 val timesTextView = findViewById<TextView>(R.id.timesTextView)
                 timesTextView.visibility = View.VISIBLE
                 selectedTime = null
+                clearSeatSelection()
                 textSelectedDate.text = "$formattedDay/$formattedMonth/$selectedYear"
                 selectedDate = "$formattedDay/$formattedMonth/$selectedYear"
             },
@@ -329,6 +337,7 @@ class MovieBookingActivity : AppCompatActivity() {
 
         seatGridView.numColumns = seatColLength + 1
 
+        val movieImageUrl = intent.getStringExtra("movieImageUrl")
         val ticketPriceString = intent.getStringExtra("ticketPrice")
         val ticketPrice = ticketPriceString!!.toDouble()
 
@@ -353,8 +362,15 @@ class MovieBookingActivity : AppCompatActivity() {
             }
             .create()
 
-        loadSeatData(theaterId,movieTitle,movieTime, seatColLength) { seatList ->
-            val seatAdapter = SeatAdapter(this, selectedSeatPositionsList, storageSeatPositionsList, seatList, seatRowLength, seatColLength + 1) { list,gridPositions ->
+        loadSeatData(theaterId, movieTitle, movieTime, seatColLength) { seatList ->
+            val seatAdapter = SeatAdapter(
+                this,
+                selectedSeatPositionsList,
+                storageSeatPositionsList,
+                seatList,
+                seatRowLength,
+                seatColLength + 1
+            ) { list, gridPositions ->
                 tempSeatPositionsList.clear()
                 tempSeatPositionsList.addAll(gridPositions)
                 tempStorageSeatPositionsList.clear()
@@ -378,36 +394,37 @@ class MovieBookingActivity : AppCompatActivity() {
                 val seatCount = findViewById<TextView>(R.id.seatCount)
                 seatCount.text = "$selectedSeatsCount x Seats :"
                 val seatCountPrice = findViewById<TextView>(R.id.priceSeatCount)
-                val price = decimalFormat.format(ticketPrice*selectedSeatsCount)
+                val price = decimalFormat.format(ticketPrice * selectedSeatsCount)
                 seatCountPrice.text = "Rs. $price"
                 val taxesCharge = findViewById<TextView>(R.id.taxesCharge)
                 val tax = selectedSeatsCount * ticketPrice * 0.05
                 val formattedTax = decimalFormat.format(tax)
                 taxesCharge.text = "Rs. $formattedTax"
 
-                val total = ticketPrice*selectedSeatsCount+tax
+                val total = ticketPrice * selectedSeatsCount + tax
                 val formattedTotal = decimalFormat.format(total)
                 val totalAmount = findViewById<TextView>(R.id.totalAmount)
-                totalAmount.text ="Rs. $formattedTotal"
+                totalAmount.text = "Rs. $formattedTotal"
 
                 val payBtn = findViewById<Button>(R.id.paymentBTN)
-                payBtn.text = "Pay Rs. $formattedTotal"
 
                 payBtn.setOnClickListener {
-
+                    if (validateLanguage()) {
+                        val intent = Intent(this, PaymentActivity::class.java)
+                        intent.putExtra("movieTitle", movieTitle)
+                        intent.putExtra("movieImageUrl", movieImageUrl)
+                        intent.putExtra("theaterId", theaterId)
+                        intent.putExtra("date", selectedDate)
+                        intent.putExtra("movieTime", movieTime)
+                        val selectedSeatsArray = ArrayList<Int>()
+                        selectedSeatsArray.addAll(storageSeatPositionsList)
+                        intent.putIntegerArrayListExtra("selectedSeatsList", selectedSeatsArray)
+                        intent.putExtra("price", "Rs. $price")
+                        intent.putExtra("taxes", "Rs. $formattedTax")
+                        intent.putExtra("total", "Rs. $formattedTotal")
+                        startActivity(intent)
+                    }
                 }
-
-//                updateSeatStatus(theaterId, movieTitle, movieTime, selectedSeatPositionsList, true) { status ->
-//                    if (status) {
-//                        Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        Toast.makeText(
-//                            this,
-//                            "Booking failed, Please try again later!",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
             } else {
                 receiptView.visibility = View.GONE
                 Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
@@ -434,33 +451,6 @@ class MovieBookingActivity : AppCompatActivity() {
                 }
             }
             callback(seatList)
-        }
-    }
-
-
-    private fun updateSeatStatus(theaterId: String, movieTitle: String, movieTime: String, seatPositions: List<Int>, isSelected: Boolean, callback: (Boolean) -> Unit) {
-        val theaterRef = db.collection("Theaters").document(theaterId)
-        val movieSubCollection = theaterRef.collection(movieTitle)
-        val seatsDocument = movieSubCollection.document(movieTime)
-        seatsDocument.get().addOnSuccessListener {
-            val seats = it.get("seats") as? MutableList<Boolean>
-            seats?.let { seatsList ->
-                for (seatPosition in seatPositions) {
-                    if (seatPosition >= 0 && seatPosition < seatsList.size) {
-                        seatsList[seatPosition] = isSelected
-                    }
-                }
-
-                seatsDocument.update("seats", seatsList)
-                    .addOnSuccessListener {
-                        // Successfully updated
-                        callback(true)
-                    }
-                    .addOnFailureListener { e ->
-                        // Handle error
-                        callback(false)
-                    }
-            }
         }
     }
 

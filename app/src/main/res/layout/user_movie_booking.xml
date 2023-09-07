@@ -377,7 +377,7 @@
                         android:layout_marginBottom="10dp"
                         android:layout_below="@id/totalAmountLabel"
                         android:backgroundTint="#2A54EC"
-                        android:text="Pay"
+                        android:text="Make Payment"
                         android:textColor="@color/white"
                         android:textSize="12dp" />
 

@@ -97,6 +97,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         bookMovieBtn.setOnClickListener {
             val intent = Intent(this, MovieBookingActivity::class.java)
             intent.putExtra("movieTitle", movieTitle)
+            intent.putExtra("movieImageUrl", imageUri)
             intent.putStringArrayListExtra("times",timesList)
             intent.putStringArrayListExtra("languages",languagesListArray)
             intent.putStringArrayListExtra("theaters",theatersListArray)
