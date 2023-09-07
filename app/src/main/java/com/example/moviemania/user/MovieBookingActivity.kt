@@ -269,7 +269,7 @@ class MovieBookingActivity : AppCompatActivity() {
         storageSeatPositionsList.clear()
         tempSeatPositionsList.clear()
         tempStorageSeatPositionsList.clear()
-        val receiptView = findViewById<RelativeLayout>(R.id.receiptView)
+        val receiptView = findViewById<RelativeLayout>(R.id.receiptViewBooking)
         receiptView.visibility = View.GONE
     }
 
@@ -382,7 +382,7 @@ class MovieBookingActivity : AppCompatActivity() {
         seatDialog.show()
         val selectButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         selectButton.setOnClickListener {
-            val receiptView = findViewById<RelativeLayout>(R.id.receiptView)
+            val receiptView = findViewById<RelativeLayout>(R.id.receiptViewBooking)
             if (tempSeatPositionsList.isNotEmpty()) {
                 selectedSeatPositionsList.clear()
                 selectedSeatPositionsList.addAll(tempSeatPositionsList)
@@ -415,6 +415,7 @@ class MovieBookingActivity : AppCompatActivity() {
                         intent.putExtra("movieImageUrl", movieImageUrl)
                         intent.putExtra("theaterId", theaterId)
                         intent.putExtra("date", selectedDate)
+                        intent.putExtra("language", selectedLanguage)
                         intent.putExtra("movieTime", movieTime)
                         val selectedSeatsArray = ArrayList<Int>()
                         selectedSeatsArray.addAll(storageSeatPositionsList)

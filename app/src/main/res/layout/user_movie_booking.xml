@@ -295,7 +295,7 @@
                     android:textColor="@color/white"
                     android:textSize="12dp" />
                 <RelativeLayout
-                    android:id="@+id/receiptView"
+                    android:id="@+id/receiptViewBooking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
