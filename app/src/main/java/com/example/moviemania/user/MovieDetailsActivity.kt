@@ -52,7 +52,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         val decimalFormat = DecimalFormat("0.#")
         val ticketPrice = decimalFormat.format(intent.getDoubleExtra("ticketPrice",0.0))
         val ticketPriceTextView = findViewById<TextView>(R.id.movieTicketPriceTextView)
-        ticketPriceTextView.text = "$ticketPrice Rs"
+        ticketPriceTextView.text = "Rs. $ticketPrice"
 
 
         val timesList = intent.getStringArrayListExtra("timesList")

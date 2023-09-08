@@ -270,7 +270,9 @@ class MovieBookingActivity : AppCompatActivity() {
         tempSeatPositionsList.clear()
         tempStorageSeatPositionsList.clear()
         val receiptView = findViewById<RelativeLayout>(R.id.receiptViewBooking)
+        val payBtn = findViewById<Button>(R.id.makePaymentBTN)
         receiptView.visibility = View.GONE
+        payBtn.visibility = View.GONE
     }
 
     private fun validateDate(): Boolean {
@@ -383,12 +385,14 @@ class MovieBookingActivity : AppCompatActivity() {
         val selectButton = seatDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         selectButton.setOnClickListener {
             val receiptView = findViewById<RelativeLayout>(R.id.receiptViewBooking)
+            val payBtn = findViewById<Button>(R.id.makePaymentBTN)
             if (tempSeatPositionsList.isNotEmpty()) {
                 selectedSeatPositionsList.clear()
                 selectedSeatPositionsList.addAll(tempSeatPositionsList)
                 storageSeatPositionsList.clear()
                 storageSeatPositionsList.addAll(tempStorageSeatPositionsList)
                 receiptView.visibility = View.VISIBLE
+                payBtn.visibility = View.VISIBLE
                 val decimalFormat = DecimalFormat("0.#")
                 val selectedSeatsCount = tempSeatPositionsList.size
                 val seatCount = findViewById<TextView>(R.id.seatCount)
@@ -405,8 +409,6 @@ class MovieBookingActivity : AppCompatActivity() {
                 val formattedTotal = decimalFormat.format(total)
                 val totalAmount = findViewById<TextView>(R.id.totalAmount)
                 totalAmount.text = "Rs. $formattedTotal"
-
-                val payBtn = findViewById<Button>(R.id.makePaymentBTN)
 
                 payBtn.setOnClickListener {
                     if (validateLanguage()) {
@@ -428,6 +430,7 @@ class MovieBookingActivity : AppCompatActivity() {
                 }
             } else {
                 receiptView.visibility = View.GONE
+                payBtn.visibility = View.GONE
                 Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
             }
             seatDialog.dismiss()
