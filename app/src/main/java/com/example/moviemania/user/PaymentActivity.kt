@@ -3,18 +3,25 @@ package com.example.moviemania.user
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Toast
+import android.widget.VideoView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.example.moviemania.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.santalu.maskara.widget.MaskEditText
 
 class PaymentActivity : AppCompatActivity() {
 
@@ -30,6 +37,10 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var payOption4: CardView
     private lateinit var payOption5: CardView
     private var paymentOption: String? = null
+    private lateinit var creditCardText: MaskEditText
+    private lateinit var upiEditText: EditText
+    private lateinit var videoView: VideoView
+    private lateinit var frameLayout: View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_payment)
@@ -50,6 +61,10 @@ class PaymentActivity : AppCompatActivity() {
         val price = intent.getStringExtra("price")
         val formattedTax = intent.getStringExtra("taxes")
         val formattedTotal = intent.getStringExtra("total")
+
+
+        videoView = findViewById(R.id.videoViewLoadingCirclePayment)
+        frameLayout = findViewById(R.id.frameLayoutPayment)
 
         radio1 = findViewById(R.id.btn_radio1)
         radio2 = findViewById(R.id.btn_radio2)
@@ -75,43 +90,134 @@ class PaymentActivity : AppCompatActivity() {
         payOption4.setOnClickListener(cardClickListener)
         payOption5.setOnClickListener(cardClickListener)
 
+        creditCardText = findViewById(R.id.creditCardNumber)
+
+        upiEditText = findViewById(R.id.upiIdEditText)
+
         val paymentBTN = findViewById<Button>(R.id.paymentBTN)
         paymentBTN.text = "Pay $formattedTotal"
         paymentBTN.setOnClickListener {
-            val intent = Intent(this, PaymentSuccessActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            intent.putExtra("movieTitle", movieTitle)
-            intent.putExtra("movieImageUrl", movieImageUrl)
-            intent.putExtra("theaterId", theaterId)
-            intent.putExtra("date", selectedDate)
-            intent.putExtra("movieTime", movieTime)
-            intent.putExtra("language", movieLanguage)
-            intent.putIntegerArrayListExtra("selectedSeatsList", selectedSeatsArray)
-            intent.putExtra("price", price)
-            intent.putExtra("taxes",formattedTax)
-            intent.putExtra("total", formattedTotal)
-            startActivity(intent)
-            finish()
-        }
-//                    updateSeatStatus(theaterId, movieTitle, movieTime, storageSeatPositionsList,
-//                        true
-//                    ) { status ->
-//                        if (status) {
-//                            Toast.makeText(this, "Booked Successfully!", Toast.LENGTH_SHORT).show()
-//                        } else {
-//                            Toast.makeText(
-//                                this,
-//                                "Booking failed, Please try again later!",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//                        }
-//                    }
+            val icon = ContextCompat.getDrawable(this, R.drawable.ic_custom_error)
+            icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+            if (paymentOption.equals("UPI Id")) {
+                val upiText = upiEditText.text.toString()
+                if (upiText.isEmpty()) {
+                    upiEditText.setError("UPI Id is Required!",icon)
+                    return@setOnClickListener
+                } else {
+                    if(!isValidUpiId(upiText)){
+                        upiEditText.setError("Invalid UPI Id!",icon)
+                        return@setOnClickListener
+                    }
+                }
+            }
+            if (paymentOption.equals("Credit Card")) {
+                val expiry = findViewById<MaskEditText>(R.id.expiryDate)
+                val cvv = findViewById<MaskEditText>(R.id.credidCardCvv)
+                val name = findViewById<EditText>(R.id.holderName)
+                if (!creditCardText.isDone) {
+                    creditCardText.setError("Enter valid Credit Card Number!",icon)
+                    return@setOnClickListener
+                } else if (name.text.toString().trim().isEmpty() || name.text.toString().trim().length < 3) {
+                    name.setError("Enter valid Name!",icon)
+                    return@setOnClickListener
+                } else if (!expiry.isDone) {
+                    expiry.setError("Enter valid Expiry Date!",icon)
+                    return@setOnClickListener
+                } else if (!cvv.isDone){
+                    cvv.setError("Enter valid CVV!",icon)
+                    return@setOnClickListener
+                }
+            }
+            showCircleLoading()
+            val auth = FirebaseAuth.getInstance()
+            val currentUserEmail = auth.currentUser?.email
 
+            updateSeatStatus(theaterId!!, movieTitle!!, movieTime!!, selectedSeatsArray!!.toList(),
+                true
+            ) { status ->
+                if (status) {
+                    val db = Firebase.firestore
+                    val bookingsCollection = db.collection("Bookings")
+
+                    val selectedSeats = mutableListOf<String>()
+                    selectedSeatsArray.sort()
+
+                    for (seat in selectedSeatsArray) {
+                        val formattedNumber = String.format("%02d", (seat + 1))
+                        selectedSeats.add("S$formattedNumber")
+                    }
+
+                    val newBookingDoc = bookingsCollection.document()
+
+                    val theaterRef = db.collection("Theaters").document(theaterId)
+                    theaterRef.get()
+                        .addOnSuccessListener {
+                            newBookingDoc.set(
+                                mapOf(
+                                    "transactionId" to newBookingDoc.id,
+                                    "currentUserEmail" to currentUserEmail,
+                                    "movieTitle" to movieTitle,
+                                    "movieImageUrl" to movieImageUrl,
+                                    "date" to selectedDate,
+                                    "time" to movieTime,
+                                    "language" to movieLanguage,
+                                    "theaterName" to it.getString("name"),
+                                    "location" to it.getString("location"),
+                                    "bookedSeats" to selectedSeats.joinToString(", "),
+                                    "method" to paymentOption,
+                                    "price" to price,
+                                    "tax" to formattedTax,
+                                    "totalPrice" to formattedTotal
+                                )
+                            ).addOnSuccessListener {
+                                showToast("Payment Successful!")
+                            }.addOnFailureListener { ex ->
+                                showToast("Error : $ex")
+                            }
+                        }
+                        .addOnFailureListener {
+                            showToast("Error : $it")
+                        }
+                    val intent = Intent(this, PaymentSuccessActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.putExtra("transactionId", newBookingDoc.id)
+                    intent.putExtra("movieTitle", movieTitle)
+                    intent.putExtra("movieImageUrl", movieImageUrl)
+                    intent.putExtra("theaterId", theaterId)
+                    intent.putExtra("date", selectedDate)
+                    intent.putExtra("movieTime", movieTime)
+                    intent.putExtra("language", movieLanguage)
+                    intent.putExtra("method", paymentOption)
+                    intent.putExtra("selectedSeats", selectedSeats.joinToString(", "))
+                    intent.putExtra("price", price)
+                    intent.putExtra("taxes",formattedTax)
+                    intent.putExtra("total", formattedTotal)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    showToast("Payment failed, Please try again Later!")
+                }
+                stopCircleLoading()
+            }
+        }
+    }
+
+    private fun isValidUpiId(upiId: String): Boolean {
+        val regexPattern = "^[0-9A-Za-z.-]{2,256}@[A-Za-z]{2,64}\$"
+        val regex = Regex(regexPattern)
+        return regex.matches(upiId)
     }
 
     private val cardClickListener = View.OnClickListener { view ->
 
         unselectAllCardViews()
+
+        val creditCardView = findViewById<CardView>(R.id.creditCardView)
+        creditCardView.visibility = View.GONE
+
+        val upiIdView = findViewById<CardView>(R.id.upiIdView)
+        upiIdView.visibility = View.GONE
 
         view.isSelected = true
 
@@ -145,11 +251,13 @@ class PaymentActivity : AppCompatActivity() {
                 radio4.isChecked = true
                 radio4.buttonTintList = checkColor
                 paymentOption = "UPI Id"
+                upiIdView.visibility = View.VISIBLE
             }
             payOption5 -> {
                 radio5.isChecked = true
                 radio5.buttonTintList = checkColor
                 paymentOption = "Credit Card"
+                creditCardView.visibility = View.VISIBLE
             }
         }
     }
@@ -221,5 +329,22 @@ class PaymentActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showCircleLoading(){
+        frameLayout.visibility = View.VISIBLE
+        videoView.setOnPreparedListener {
+            it.isLooping = true
+        }
+        val videoPath = "android.resource://" + packageName + "/" + R.raw.circle_loading
+
+        videoView.setVideoURI(Uri.parse(videoPath))
+        videoView.setZOrderOnTop(true)
+
+        videoView.start()
+    }
+    private fun stopCircleLoading(){
+        frameLayout.visibility = View.GONE
+        videoView.stopPlayback()
     }
 }

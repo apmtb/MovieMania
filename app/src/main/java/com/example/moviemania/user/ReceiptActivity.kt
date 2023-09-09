@@ -1,22 +1,18 @@
 package com.example.moviemania.user
 
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
-import com.google.firebase.firestore.FirebaseFirestore
 
 class ReceiptActivity : AppCompatActivity() {
-
-    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +27,13 @@ class ReceiptActivity : AppCompatActivity() {
         val movieTitle = intent.getStringExtra("movieTitle")
         val movieImageUrl = intent.getStringExtra("movieImageUrl")
         val movieLanguage = intent.getStringExtra("language")
-        val theaterId = intent.getStringExtra("theaterId")
+        val theaterName = intent.getStringExtra("theaterName")
+        val theaterLocation = intent.getStringExtra("theaterLocation")
         val selectedDate = intent.getStringExtra("date")
+        val transactionId = intent.getStringExtra("transactionId")
+        val method = intent.getStringExtra("method")
         val movieTime = intent.getStringExtra("movieTime")
-        val selectedSeatsArray = intent.getIntegerArrayListExtra("selectedSeatsList")
-        selectedSeatsArray?.sort()
+        val selectedSeats = intent.getStringExtra("selectedSeats")
         val price = intent.getStringExtra("price")
         val formattedTax = intent.getStringExtra("taxes")
         val formattedTotal = intent.getStringExtra("total")
@@ -48,8 +46,8 @@ class ReceiptActivity : AppCompatActivity() {
         val displayMetrics = this.resources.displayMetrics
         val screenHeight = displayMetrics.heightPixels
         val screenWidth = displayMetrics.widthPixels
-        imageViewLayoutParams.width = (screenWidth*0.45).toInt()
-        imageViewLayoutParams.height = (screenHeight*0.30).toInt()
+        imageViewLayoutParams.width = (screenWidth * 0.45).toInt()
+        imageViewLayoutParams.height = (screenHeight * 0.30).toInt()
         Glide.with(this).load(movieImageUrl).centerCrop().error(R.drawable.ic_custom_error)
             .placeholder(R.drawable.ic_image_placeholder)
             .into(movieImageView)
@@ -63,31 +61,22 @@ class ReceiptActivity : AppCompatActivity() {
         val language = findViewById<TextView>(R.id.receiptLanguageTextView)
         language.text = movieLanguage
 
-        if (theaterId!=null) {
-            val theaterRef = db.collection("Theaters").document(theaterId)
-            theaterRef.get().addOnSuccessListener {
-                val theaterName = it.getString("name")
-                val theaterImageUrl = it.getString("imageUri")
-                val theaterLocation = it.getString("location")
+        val tName = findViewById<TextView>(R.id.receiptTheaterNameTextView)
+        tName.text = theaterName
 
-                val tName = findViewById<TextView>(R.id.receiptTheaterNameTextView)
-                tName.text = theaterName
-
-                val tLocation = findViewById<TextView>(R.id.receiptTheaterLocationTextView)
-                tLocation.text = theaterLocation
-            }
-        }
-
-        val selectedSeats = mutableListOf<String>()
-        for ( seat in selectedSeatsArray!!) {
-            val formattedNumber = String.format("%02d", (seat+1))
-            selectedSeats.add("S$formattedNumber")
-        }
+        val tLocation = findViewById<TextView>(R.id.receiptTheaterLocationTextView)
+        tLocation.text = theaterLocation
 
         val booked = findViewById<TextView>(R.id.receiptBookedSeatsTextView)
-        booked.text = selectedSeats.joinToString(", ")
+        booked.text = selectedSeats
 
-        val selectedSeatsCount = selectedSeatsArray?.size
+        val methodText = findViewById<TextView>(R.id.receiptPaymentMethodTextView)
+        methodText.text = method
+
+        val id = findViewById<TextView>(R.id.receiptPaymentIdTextView)
+        id.text = transactionId
+
+        val selectedSeatsCount = selectedSeats?.split(", ")?.size
         val seatCount = findViewById<TextView>(R.id.receiptSeatCount)
         seatCount.text = "$selectedSeatsCount x Seats :"
         val seatCountPrice = findViewById<TextView>(R.id.receiptPriceSeatCount)
@@ -107,17 +96,19 @@ class ReceiptActivity : AppCompatActivity() {
             finish()
         }
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showToast(message: String){
-        Toast.makeText(this,message, Toast.LENGTH_SHORT).show()
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

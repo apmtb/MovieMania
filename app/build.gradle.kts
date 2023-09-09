@@ -55,4 +55,5 @@ dependencies {
     implementation("com.facebook.android:facebook-login:13.0.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.santalu:maskara:1.0.0")
 }

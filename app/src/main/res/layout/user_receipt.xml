@@ -227,12 +227,34 @@
                 android:layout_marginTop="20dp">
 
                 <TextView
-                    android:id="@+id/receiptPaymentMethodLabel"
+                    android:id="@+id/receiptPaymentIdLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#4056D1"
                     android:textSize="15dp"
                     android:textStyle="bold"
+                    android:text="Transaction Id : "/>
+
+                <TextView
+                    android:id="@+id/receiptPaymentIdTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E83D1"
+                    android:text="id"
+                    android:layout_marginLeft="30dp"
+                    android:textSize="15dp"
+                    android:layout_toRightOf="@id/receiptPaymentIdLabel"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/receiptPaymentMethodLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#4056D1"
+                    android:textSize="15dp"
+                    android:layout_marginTop="20dp"
+                    android:textStyle="bold"
+                    android:layout_below="@id/receiptPaymentIdLabel"
                     android:text="Method : "/>
 
                 <TextView
@@ -240,9 +262,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#1E83D1"
-                    android:text="gpay"
+                    android:text="method"
                     android:layout_marginLeft="30dp"
                     android:textSize="15dp"
+                    android:layout_alignBaseline="@id/receiptPaymentMethodLabel"
+                    android:layout_below="@id/receiptPaymentIdLabel"
                     android:layout_toRightOf="@id/receiptSeatCount"
                     android:textStyle="bold"/>
 
