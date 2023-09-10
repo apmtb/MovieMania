@@ -27,7 +27,7 @@
             android:name=".user.PaymentSuccessActivity"
             android:exported="false" />
         <activity
-            android:name=".user.ReceiptActivity"
+            android:name=".user.BookingDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".user.PaymentActivity"

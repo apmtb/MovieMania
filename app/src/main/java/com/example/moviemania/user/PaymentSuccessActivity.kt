@@ -52,7 +52,7 @@ class PaymentSuccessActivity : AppCompatActivity() {
                     val theaterImageUrl = it.getString("imageUri")
                     val theaterLocation = it.getString("location")
 
-                    val intent = Intent(this, ReceiptActivity::class.java)
+                    val intent = Intent(this, BookingDetailsActivity::class.java)
                     intent.putExtra("transactionId", transactionId)
                     intent.putExtra("movieTitle", movieTitle)
                     intent.putExtra("movieImageUrl", movieImageUrl)
@@ -94,7 +94,6 @@ class PaymentSuccessActivity : AppCompatActivity() {
 
 data class Booking(
     val transactionId: String,
-    val currentUserEmail: String,
     val movieTitle: String,
     val movieImageUrl: String,
     val date: String,
@@ -104,7 +103,7 @@ data class Booking(
     val location: String,
     val bookedSeats: String,
     val method: String,
-    val price: Double,
-    val tax: Double,
-    val totalPrice: Double
+    val price: String,
+    val tax: String,
+    val totalPrice: String
 )

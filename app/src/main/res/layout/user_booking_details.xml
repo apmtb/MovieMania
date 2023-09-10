@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".user.ReceiptActivity">
+    tools:context=".user.BookingDetailsActivity">
 
     <include
         android:id="@+id/appBarMain"
@@ -335,24 +335,10 @@
                     android:layout_marginLeft="30dp"
                     android:textSize="15dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_below="@id/receiptTaxesCharge"
                     android:layout_toRightOf="@id/receiptSeatCount"
                     android:textStyle="bold"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/goBackToHomeBTN"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_below="@id/receiptTotalAmount"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="30dp"
-                    android:backgroundTint="#2A54EC"
-                    android:text="Return to\n homepage"
-                    android:textColor="@color/white"
-                    android:textSize="12dp" />
 
             </RelativeLayout>
         </LinearLayout>

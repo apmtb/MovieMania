@@ -1,9 +1,7 @@
 package com.example.moviemania.user
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -12,16 +10,16 @@ import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 
-class ReceiptActivity : AppCompatActivity() {
+class BookingDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.user_receipt)
+        setContentView(R.layout.user_booking_details)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
-        actionBar?.title = "Receipt"
+        actionBar?.title = "Booking Details"
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         val movieTitle = intent.getStringExtra("movieTitle")
@@ -87,14 +85,6 @@ class ReceiptActivity : AppCompatActivity() {
 
         val totalAmount = findViewById<TextView>(R.id.receiptTotalAmount)
         totalAmount.text = formattedTotal
-
-        val home = findViewById<Button>(R.id.goBackToHomeBTN)
-        home.setOnClickListener {
-            val intent = Intent(this, UserActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
