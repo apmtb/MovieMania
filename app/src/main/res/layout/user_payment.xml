@@ -662,9 +662,21 @@
 
             </androidx.cardview.widget.CardView>
 
+            <TextView
+                android:id="@+id/errorPaymentOption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:drawablePadding="5dp"
+                android:text="Select Payment Option!"
+                android:textColor="#ff0000"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:drawableLeftCompat="@drawable/ic_custom_error" />
+
         </LinearLayout>
     </ScrollView>
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/paymentBTN"

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
@@ -99,6 +100,11 @@ class PaymentActivity : AppCompatActivity() {
         val paymentBTN = findViewById<Button>(R.id.paymentBTN)
         paymentBTN.text = "Pay $formattedTotal"
         paymentBTN.setOnClickListener {
+            if (paymentOption.isNullOrEmpty()) {
+                val paymentOptionError = findViewById<TextView>(R.id.errorPaymentOption)
+                paymentOptionError.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
             val icon = ContextCompat.getDrawable(this, R.drawable.ic_custom_error)
             icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
             if (paymentOption.equals("UPI Id")) {
@@ -219,6 +225,10 @@ class PaymentActivity : AppCompatActivity() {
     private val cardClickListener = View.OnClickListener { view ->
 
         unselectAllCardViews()
+
+
+        val paymentOptionError = findViewById<TextView>(R.id.errorPaymentOption)
+        paymentOptionError.visibility = View.GONE
 
         val creditCardView = findViewById<CardView>(R.id.creditCardView)
         creditCardView.visibility = View.GONE
