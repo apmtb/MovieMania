@@ -1,7 +1,6 @@
 package com.example.moviemania.user
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -9,6 +8,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
@@ -93,7 +94,23 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
 
+        val isUpcoming = intent.getBooleanExtra("upcoming",false)
+        val ticketLinearView = findViewById<LinearLayout>(R.id.ticketLinearLayout)
+
         val bookMovieBtn = findViewById<Button>(R.id.bookMovieBTN)
+        val setReminderBTN = findViewById<Button>(R.id.setReminderBTN)
+
+        if (isUpcoming) {
+            ticketLinearView.visibility = View.GONE
+            bookMovieBtn.visibility = View.GONE
+            setReminderBTN.visibility = View.VISIBLE
+
+            setReminderBTN.setOnClickListener {
+                showToast("Reminder Set Successfully!")
+            }
+        } else {
+            setReminderBTN.visibility = View.GONE
+        }
         bookMovieBtn.setOnClickListener {
             val intent = Intent(this, MovieBookingActivity::class.java)
             intent.putExtra("movieTitle", movieTitle)
@@ -113,5 +130,8 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

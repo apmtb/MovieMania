@@ -51,48 +51,51 @@
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/ticketLinearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-            <TextView
-                android:id="@+id/movieTicketPriceLabelTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#052BFA"
-                android:textSize="15dp"
-                android:textStyle="bold"
-                android:padding="25dp"
-                android:text="Ticket Price : "/>
 
-            <TextView
-                android:id="@+id/movieTicketPriceTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#1E83D1"
-                android:textSize="15dp"
-                android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/movieTicketPriceLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="25dp"
+                    android:text="Ticket Price : "
+                    android:textColor="#052BFA"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/movieTicketPriceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E83D1"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/castLabelMovieDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="25dp"
+                android:text="Top Cast"
                 android:textColor="#052BFA"
                 android:textSize="15dp"
-                android:textStyle="bold"
-                android:padding="25dp"
-                android:text="Top Cast"/>
+                android:textStyle="bold" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none">
+
                 <LinearLayout
                     android:id="@+id/linearCastView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingEnd="25dp"
-                    android:orientation="horizontal"/>
+                    android:orientation="horizontal"
+                    android:paddingEnd="25dp" />
             </HorizontalScrollView>
 
             <com.google.android.material.button.MaterialButton
@@ -106,6 +109,20 @@
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="#2A54EC"
                 android:text="BOOk MOVIE"
+                android:textColor="@color/white"
+                android:textSize="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/setReminderBTN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="#2A54EC"
+                android:text="Set reminder"
                 android:textColor="@color/white"
                 android:textSize="12dp" />
 

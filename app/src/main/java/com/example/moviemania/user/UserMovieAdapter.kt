@@ -14,7 +14,10 @@ import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.user.bottom_fragment.MoviesFragment
 
-class UserMovieAdapter(private val context: Context, private val movieList: List<MoviesFragment.Movie>) : BaseAdapter() {
+class UserMovieAdapter(
+    private val context: Context,
+    private val movieList: List<MoviesFragment.Movie>
+) : BaseAdapter() {
 
     override fun getCount(): Int = movieList.size
 
@@ -24,7 +27,8 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val movie = getItem(position) as MoviesFragment.Movie
-        val itemView = convertView ?: LayoutInflater.from(context).inflate(R.layout.grid_item_movie, parent, false)
+        val itemView = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.grid_item_movie, parent, false)
         val adminActions = itemView.findViewById<LinearLayout>(R.id.admin_actions_movie)
         adminActions.visibility = View.GONE
         val movieImageView = itemView.findViewById<ImageView>(R.id.movieImageView)
@@ -35,8 +39,8 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
         val displayMetrics = context.resources.displayMetrics
         val screenHeight = displayMetrics.heightPixels
         val screenWidth = displayMetrics.widthPixels
-        imageViewLayoutParams.width = (screenWidth*0.45).toInt()
-        imageViewLayoutParams.height = (screenHeight*0.30).toInt()
+        imageViewLayoutParams.width = (screenWidth * 0.45).toInt()
+        imageViewLayoutParams.height = (screenHeight * 0.30).toInt()
 
         val uri = movie.photoUri
         Glide.with(context).load(uri).centerCrop().error(R.drawable.ic_custom_error)
@@ -44,38 +48,36 @@ class UserMovieAdapter(private val context: Context, private val movieList: List
             .into(movieImageView)
 
         itemView.setOnClickListener {
-            if (movie.isUpcoming) {
-                showToast("Upcoming clicked")
-            } else {
-                val intent = Intent(context, MovieDetailsActivity::class.java)
-                intent.putExtra("movieTitle", movie.title)
-                intent.putExtra("imageUri", movie.photoUri)
-                intent.putExtra("description", movie.description)
-                intent.putExtra("ticketPrice", movie.ticketPrice)
+            val intent = Intent(context, MovieDetailsActivity::class.java)
+            intent.putExtra("movieTitle", movie.title)
+            intent.putExtra("imageUri", movie.photoUri)
+            intent.putExtra("description", movie.description)
+            intent.putExtra("ticketPrice", movie.ticketPrice)
+            intent.putExtra("upcoming", movie.isUpcoming)
 
-                val timesListArray = ArrayList<String>()
-                timesListArray.addAll(movie.timesList)
-                intent.putStringArrayListExtra("timesList",timesListArray)
+            val timesListArray = ArrayList<String>()
+            timesListArray.addAll(movie.timesList)
+            intent.putStringArrayListExtra("timesList", timesListArray)
 
-                val languagesListArray = ArrayList<String>()
-                languagesListArray.addAll(movie.language.split(", "))
-                intent.putStringArrayListExtra("languagesListArray",languagesListArray)
+            val languagesListArray = ArrayList<String>()
+            languagesListArray.addAll(movie.language.split(", "))
+            intent.putStringArrayListExtra("languagesListArray", languagesListArray)
 
-                val castListArray = ArrayList<String>()
-                castListArray.addAll(movie.castList)
-                intent.putStringArrayListExtra("castList",castListArray)
+            val castListArray = ArrayList<String>()
+            castListArray.addAll(movie.castList)
+            intent.putStringArrayListExtra("castList", castListArray)
 
-                val theatersListArray = ArrayList<String>()
-                theatersListArray.addAll(movie.theaterList)
-                intent.putStringArrayListExtra("theatersListArray",theatersListArray)
+            val theatersListArray = ArrayList<String>()
+            theatersListArray.addAll(movie.theaterList)
+            intent.putStringArrayListExtra("theatersListArray", theatersListArray)
 
-                context.startActivity(intent)
-            }
+            context.startActivity(intent)
         }
 
         return itemView
     }
+
     private fun showToast(message: String) {
-        Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
