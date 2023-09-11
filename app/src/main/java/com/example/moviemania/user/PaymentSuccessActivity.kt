@@ -96,6 +96,7 @@ data class Booking(
     val transactionId: String,
     val movieTitle: String,
     val movieImageUrl: String,
+    val bookedOn: String,
     val date: String,
     val time: String,
     val language: String,

@@ -56,6 +56,7 @@ class HistoryFragment : Fragment() {
                             val transactionId = document.getString("transactionId") ?: ""
                            val movieTitle = document.getString("movieTitle") ?: ""
                            val movieImageUrl = document.getString("movieImageUrl") ?: ""
+                           val bookedOn = document.getString("bookedOn") ?: ""
                            val date = document.getString("date") ?: ""
                            val time = document.getString("time") ?: ""
                            val language = document.getString("language") ?: ""
@@ -70,7 +71,7 @@ class HistoryFragment : Fragment() {
                             if (totalPrice!=null) {
                                 val booking =
                                     Booking(
-                                        transactionId, movieTitle, movieImageUrl,
+                                        transactionId, movieTitle, movieImageUrl, bookedOn,
                                         date, time, language, theaterName, location, bookedSeats,
                                         method, price, tax, totalPrice
                                     )

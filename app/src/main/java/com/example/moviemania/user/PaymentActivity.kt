@@ -22,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.santalu.maskara.widget.MaskEditText
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class PaymentActivity : AppCompatActivity() {
 
@@ -148,6 +150,10 @@ class PaymentActivity : AppCompatActivity() {
                         selectedSeats.add("S$formattedNumber")
                     }
 
+                    val formatter = SimpleDateFormat("dd/MM/yyyy")
+                    val date = Date()
+                    val currentDate = formatter.format(date)
+
                     val newBookingDoc = bookingsCollection.document()
 
                     val theaterRef = db.collection("Theaters").document(theaterId)
@@ -159,6 +165,7 @@ class PaymentActivity : AppCompatActivity() {
                                     "currentUserEmail" to currentUserEmail,
                                     "movieTitle" to movieTitle,
                                     "movieImageUrl" to movieImageUrl,
+                                    "bookedOn" to currentDate,
                                     "date" to selectedDate,
                                     "time" to movieTime,
                                     "language" to movieLanguage,

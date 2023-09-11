@@ -18,7 +18,7 @@
             android:id="@+id/noBookingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Booking History!  "
+            android:text="No Booking History!"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textSize="20dp" />
@@ -36,18 +36,18 @@
         android:verticalSpacing="16dp"
         android:visibility="gone" />
 
-    <FrameLayout
-        android:id="@+id/frameLayoutHistory"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#99000000"
-        android:clickable="true"
-        android:visibility="gone">
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frameLayoutHistory"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#99000000"-->
+<!--        android:clickable="true"-->
+<!--        android:visibility="gone">-->
 
-        <VideoView
-            android:id="@+id/videoViewLoadingCircleHistory"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center" />
-    </FrameLayout>
+<!--        <VideoView-->
+<!--            android:id="@+id/videoViewLoadingCircleHistory"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_gravity="center" />-->
+<!--    </FrameLayout>-->
 </LinearLayout>
