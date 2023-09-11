@@ -6,11 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
@@ -18,13 +16,13 @@ import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.RadioGroup
 import android.widget.RelativeLayout
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
 import com.example.moviemania.admin.TheaterAdapter
@@ -397,15 +395,13 @@ class TheatersFragment : Fragment() {
                             val location = document.getString("location")
                             val seatColNum = document.getString("seatColnum")?.toIntOrNull() ?: 0
                             val seatRowNum = document.getString("seatRownum")?.toIntOrNull() ?: 0
-                            val seatStates = document.get("seats") as? List<Boolean> ?: emptyList()
                             if (name != null && location != null && imageUri != null && seatRowNum > 0 && seatColNum > 0) {
                                 val theater = Theater(
                                     name,
                                     Uri.parse(imageUri).toString(),
                                     location,
                                     seatColNum,
-                                    seatRowNum,
-                                    seatStates
+                                    seatRowNum
                                 )
                                 theaterList.add(theater)
                             }
@@ -425,7 +421,7 @@ class TheatersFragment : Fragment() {
 
     data class Theater(
         val name: String, val imageUri: String, val theaterLocation: String,
-        val seatColLength: Int, val seatRowLength: Int, val seatStates: List<Boolean>
+        val seatColLength: Int, val seatRowLength: Int
     )
 
     private fun showToast(message: String) {
