@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -24,6 +23,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.example.moviemania.R
@@ -345,6 +345,7 @@ class MovieBookingActivity : AppCompatActivity() {
 
         val initialSeatPositions = ArrayList(selectedSeatPositionsList)
         val initialStorageSeatPositions = ArrayList(storageSeatPositionsList)
+        val seatSelectionError = dialogView.findViewById<TextView>(R.id.seatSelectionError)
 
         val seatDialog = AlertDialog.Builder(this)
             .setView(dialogView)
@@ -373,6 +374,7 @@ class MovieBookingActivity : AppCompatActivity() {
                 seatRowLength,
                 seatColLength + 1
             ) { list, gridPositions ->
+                seatSelectionError.visibility = View.GONE
                 tempSeatPositionsList.clear()
                 tempSeatPositionsList.addAll(gridPositions)
                 tempStorageSeatPositionsList.clear()
@@ -428,12 +430,12 @@ class MovieBookingActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
                 }
+                seatDialog.dismiss()
             } else {
                 receiptView.visibility = View.GONE
                 payBtn.visibility = View.GONE
-                Toast.makeText(this, "Select atleast one seat!", Toast.LENGTH_SHORT).show()
+                seatSelectionError?.visibility = View.VISIBLE
             }
-            seatDialog.dismiss()
         }
     }
 
