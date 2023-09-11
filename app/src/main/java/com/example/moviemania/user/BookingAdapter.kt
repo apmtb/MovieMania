@@ -26,20 +26,37 @@ class BookingAdapter(private val context: Context, private val castList: List<Bo
             .inflate(R.layout.grid_item_booking_history, parent, false)
         val bookingImageView = itemView.findViewById<ImageView>(R.id.bookingImage)
         val bookingTitleTextView = itemView.findViewById<TextView>(R.id.bookingTitle)
+        val theaterTextView = itemView.findViewById<TextView>(R.id.bookedTheater)
         val bookingDateTextView = itemView.findViewById<TextView>(R.id.bookingDate)
         val bookingAmountTextView = itemView.findViewById<TextView>(R.id.bookingAmount)
+
         bookingTitleTextView.text = booking.movieTitle
         bookingDateTextView.text = booking.date
+        theaterTextView.text = booking.theaterName
         bookingAmountTextView.text = booking.totalPrice
-        val imageViewLayoutParams = bookingImageView.layoutParams
-        val displayMetrics = context.resources.displayMetrics
-        val screenHeight = displayMetrics.heightPixels
-        val screenWidth = displayMetrics.widthPixels
-        imageViewLayoutParams.width = (screenWidth * 0.3).toInt()
-        imageViewLayoutParams.height = (screenHeight * 0.20).toInt()
+
         val url = booking.movieImageUrl
         Glide.with(context).load(url).centerCrop().error(R.drawable.ic_custom_error)
             .placeholder(R.drawable.ic_image_placeholder).into(bookingImageView)
+
+        val methodImageView = itemView.findViewById<ImageView>(R.id.paymentMethodImage)
+        when(booking.method){
+            "PhonePe" ->
+                Glide.with(context).load(R.drawable.logo_phonepe).error(R.drawable.ic_custom_error)
+                    .placeholder(R.drawable.ic_image_placeholder).into(methodImageView)
+            "Google Pay" ->
+                Glide.with(context).load(R.drawable.logo_google_pay).error(R.drawable.ic_custom_error)
+                    .placeholder(R.drawable.ic_image_placeholder).into(methodImageView)
+            "Credit Card" ->
+                Glide.with(context).load(R.drawable.logo_credit_card).error(R.drawable.ic_custom_error)
+                    .placeholder(R.drawable.ic_image_placeholder).into(methodImageView)
+            "Paytm" ->
+                Glide.with(context).load(R.drawable.logo_paytm).error(R.drawable.ic_custom_error)
+                    .placeholder(R.drawable.ic_image_placeholder).into(methodImageView)
+            "UPI Id" ->
+                Glide.with(context).load(R.drawable.logo_upi).error(R.drawable.ic_custom_error)
+                    .placeholder(R.drawable.ic_image_placeholder).into(methodImageView)
+        }
 
         itemView.setOnClickListener {
             val intent = Intent(context, BookingDetailsActivity::class.java)
