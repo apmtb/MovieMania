@@ -531,7 +531,7 @@ class MovieAdapter(private val context: Context, private val movieList: List<Mov
 
                 val updateData = mutableMapOf<String, Any>()
                 updateData["title"] = newTitle
-                updateData["imageUri"] = newImageUrl
+                updateData["photoUri"] = newImageUrl
                 updateData["description"] = newDescription
                 updateData["section"] = newSection
                 updateData["ticketPrice"] = newTicketPrice
