@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.example.moviemania.LoginActivity
 import com.example.moviemania.R
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -43,7 +44,10 @@ class ProfileFragment : Fragment() {
     private lateinit var fireStore: FirebaseFirestore
     private lateinit var textUsername: TextView
     private lateinit var imageView: ImageView
+    private lateinit var textUsernameHeader: TextView
+    private lateinit var imageViewHeader: ImageView
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var navigationView: NavigationView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -57,6 +61,12 @@ class ProfileFragment : Fragment() {
         imageView = view.findViewById(R.id.img_profile_pic)
         textUsername = view.findViewById(R.id.userNameTxt)
         val textEmail = view.findViewById<TextView>(R.id.emailTxt)
+
+        navigationView = requireActivity().findViewById(R.id.navigationView)
+        val header = navigationView.getHeaderView(0)
+        textUsernameHeader = header.findViewById(R.id.userNameTxt)
+        imageViewHeader = header.findViewById(R.id.profileImg)
+
         val cameraIcon = view.findViewById<CardView>(R.id.cameraProfile)
         cameraIcon.setOnClickListener{
             ImagePicker.with(this)
@@ -67,7 +77,16 @@ class ProfileFragment : Fragment() {
         }
         val editName = view.findViewById<RelativeLayout>(R.id.editName)
         editName.setOnClickListener {
-            showUpdateNameDialog()
+            if (userId!="") {
+                val userData = fireStore.collection("Users").document(userId)
+                userData.get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            displayName = document.getString("displayName") ?: ""
+                            showUpdateNameDialog()
+                        }
+                    }
+            }
         }
         if (userId!="") {
             val userData = fireStore.collection("Users").document(userId)
@@ -123,11 +142,17 @@ class ProfileFragment : Fragment() {
         when (resultCode) {
             Activity.RESULT_OK -> {
                 val uri: Uri = data?.data!!
-                Glide.with(this)
+                Glide.with(requireContext())
                     .load(uri)
                     .error(R.drawable.default_logo)
                     .placeholder(R.drawable.ic_image_placeholder)
                     .into(imageView)
+
+                Glide.with(requireActivity())
+                    .load(uri)
+                    .error(R.drawable.default_logo)
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .into(imageViewHeader)
 
                 Timer().schedule(timerTask {
                     uploadImageToFirebaseStorage(imageView){
@@ -144,7 +169,7 @@ class ProfileFragment : Fragment() {
                                     .show()
                             }
                     }
-                },500)
+                },100)
             }
             ImagePicker.RESULT_ERROR -> {
                 Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
@@ -224,6 +249,7 @@ class ProfileFragment : Fragment() {
             .addOnSuccessListener {
                 Toast.makeText(requireContext(),"Name Updated Successfully!",Toast.LENGTH_SHORT).show()
                 textUsername.text = newName
+                textUsernameHeader.text = newName
             }
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(),"Error : $e",Toast.LENGTH_SHORT).show()
