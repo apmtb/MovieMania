@@ -1,7 +1,11 @@
 package com.example.moviemania.admin.nav_fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +23,14 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.moviemania.LoginActivity
 import com.example.moviemania.R
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
+import java.util.Timer
+import java.util.UUID
+import kotlin.concurrent.timerTask
 
 class ProfileFragment : Fragment() {
 
@@ -33,6 +43,8 @@ class ProfileFragment : Fragment() {
     private lateinit var photoUrl: String
     private lateinit var fireStore: FirebaseFirestore
     private lateinit var textUsername: TextView
+    private lateinit var imageView: ImageView
+    private val db = FirebaseFirestore.getInstance()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -43,12 +55,16 @@ class ProfileFragment : Fragment() {
         userId = preferences.getString("userUid", null) ?: ""
         auth = FirebaseAuth.getInstance()
         fireStore = FirebaseFirestore.getInstance()
-        val imageView = view.findViewById<ImageView>(R.id.img_profile_pic)
+        imageView = view.findViewById<ImageView>(R.id.img_profile_pic)
         textUsername = view.findViewById(R.id.userNameTxt)
         val textEmail = view.findViewById<TextView>(R.id.emailTxt)
         val cameraIcon = view.findViewById<CardView>(R.id.cameraProfile)
         cameraIcon.setOnClickListener{
-            Toast.makeText(requireContext(),"Baaki chhe",Toast.LENGTH_SHORT).show()
+            ImagePicker.with(this)
+                .cropSquare()
+                .compress(1024)
+                .maxResultSize(1080, 1080)
+                .start()
         }
         val editName = view.findViewById<RelativeLayout>(R.id.editName)
         editName.setOnClickListener {
@@ -101,6 +117,73 @@ class ProfileFragment : Fragment() {
             signOut()
         }
         return view
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            val uri: Uri = data?.data!!
+            Glide.with(this)
+                .load(uri)
+                .error(R.drawable.default_logo)
+                .placeholder(R.drawable.ic_image_placeholder)
+                .into(imageView)
+
+            Timer().schedule(timerTask {
+                uploadImageToFirebaseStorage(imageView){
+                    val userRef = db.collection("Users").document(userId)
+                    val updateData = mutableMapOf<String, Any>()
+                    updateData["profileImageUrl"] = it
+                    userRef.update(updateData)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Image Updated!", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Error Updating Image!", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                }
+            },500)
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun uploadImageToFirebaseStorage(
+        imageView: ImageView,
+        callback: (String) -> Unit
+    ) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imagesRef = storageRef.child("user_images/${UUID.randomUUID()}.jpg")
+
+        val drawable = imageView.drawable
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        val uploadTask = imagesRef.putBytes(data)
+        uploadTask.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                imagesRef.downloadUrl.addOnCompleteListener { urlTask ->
+                    if (urlTask.isSuccessful) {
+                        val imageUrl = urlTask.result.toString()
+                        callback(imageUrl)
+                    }
+                }
+            }
+        }
     }
 
     private fun showUpdateNameDialog() {
