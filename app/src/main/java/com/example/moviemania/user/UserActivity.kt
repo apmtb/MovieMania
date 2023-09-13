@@ -3,7 +3,6 @@ package com.example.moviemania.user
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
@@ -12,6 +11,7 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -51,8 +51,13 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun onBackPressedMethod() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START)
-        }else{
-            finish()
+        } else {
+            if (navigationView.checkedItem?.itemId == R.id.user_nav_home) {
+                finish()
+            } else {
+                replaceFragment(HomeFragment())
+                navigationView.setCheckedItem(R.id.user_nav_home)
+            }
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {

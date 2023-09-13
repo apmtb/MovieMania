@@ -53,8 +53,13 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     private fun onBackPressedMethod() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START)
-        }else{
-            finish()
+        } else {
+            if (navigationView.checkedItem?.itemId == R.id.admin_nav_home) {
+                finish()
+            } else {
+                replaceFragment(com.example.moviemania.user.nav_fragment.HomeFragment())
+                navigationView.setCheckedItem(R.id.admin_nav_home)
+            }
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
