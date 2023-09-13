@@ -120,38 +120,42 @@ class ProfileFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            val uri: Uri = data?.data!!
-            Glide.with(this)
-                .load(uri)
-                .error(R.drawable.default_logo)
-                .placeholder(R.drawable.ic_image_placeholder)
-                .into(imageView)
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                val uri: Uri = data?.data!!
+                Glide.with(this)
+                    .load(uri)
+                    .error(R.drawable.default_logo)
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .into(imageView)
 
-            Timer().schedule(timerTask {
-                uploadImageToFirebaseStorage(imageView){
-                    val userRef = db.collection("Users").document(userId)
-                    val updateData = mutableMapOf<String, Any>()
-                    updateData["profileImageUrl"] = it
-                    userRef.update(updateData)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "Image Updated!", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(requireContext(), "Error Updating Image!", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                }
-            },500)
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
-            Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+                Timer().schedule(timerTask {
+                    uploadImageToFirebaseStorage(imageView){
+                        val userRef = db.collection("Users").document(userId)
+                        val updateData = mutableMapOf<String, Any>()
+                        updateData["profileImageUrl"] = it
+                        userRef.update(updateData)
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Image Updated!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), "Error Updating Image!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                    }
+                },500)
+            }
+            ImagePicker.RESULT_ERROR -> {
+                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    fun uploadImageToFirebaseStorage(
+    private fun uploadImageToFirebaseStorage(
         imageView: ImageView,
         callback: (String) -> Unit
     ) {
