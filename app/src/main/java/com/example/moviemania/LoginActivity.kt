@@ -15,23 +15,23 @@ import android.widget.VideoView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.facebook.AccessToken
 import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.facebook.AccessToken
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.OAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity() {
@@ -218,19 +218,29 @@ class LoginActivity : AppCompatActivity() {
                 "profileImageUrl" to it.photoUrl.toString()
             )
 
-            fireStore.collection("Users").document(userId)
-                .set(userData)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
+            val userDocRef = fireStore.collection("Users").document(userId)
+            userDocRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null && document.exists()) {
+                        Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        fireStore.collection("Users").document(userId)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Google Login successful!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                stopCircleLoading()
+                                Toast.makeText(
+                                    this,
+                                    "Google Sign-in failed. Please try again.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
                 }
-                .addOnFailureListener {
-                    stopCircleLoading()
-                    Toast.makeText(
-                        this,
-                        "Google Sign-in failed. Please try again.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            }
         }
     }
 
@@ -263,26 +273,40 @@ class LoginActivity : AppCompatActivity() {
                             "profileImageUrl" to profileImageUrl
                         )
 
-                        fireStore.collection("Users").document(userId)
-                            .set(userData)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                    this,
-                                    "Facebook login successful!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                preferences.edit().putBoolean("isLoggedIn", true).apply()
-                                preferences.edit().putString("userUid", userId).apply()
-                                userTypeChecker.checkUserTypeAndNavigate(email)
+                        val userDocRef = fireStore.collection("Users").document(userId)
+                        userDocRef.get().addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val document = task.result
+                                if ( document != null && document.exists()) {
+                                    Toast.makeText(this, "Facebook login successful!",
+                                        Toast.LENGTH_SHORT).show()
+                                    preferences.edit().putBoolean("isLoggedIn", true).apply()
+                                    preferences.edit().putString("userUid", userId).apply()
+                                    userTypeChecker.checkUserTypeAndNavigate(email)
+                                } else {
+                                    fireStore.collection("Users").document(userId)
+                                        .set(userData)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(
+                                                this,
+                                                "Facebook login successful!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            preferences.edit().putBoolean("isLoggedIn", true).apply()
+                                            preferences.edit().putString("userUid", userId).apply()
+                                            userTypeChecker.checkUserTypeAndNavigate(email)
+                                        }
+                                        .addOnFailureListener {
+                                            stopCircleLoading()
+                                            Toast.makeText(
+                                                this,
+                                                "Facebook Sign-in failed. Please try again.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
                             }
-                            .addOnFailureListener {
-                                stopCircleLoading()
-                                Toast.makeText(
-                                    this,
-                                    "Facebook Sign-in failed. Please try again.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        }
                     }
 
                 } else {
@@ -318,22 +342,35 @@ class LoginActivity : AppCompatActivity() {
                     "profileImageUrl" to profileImageUrl
                 )
 
-                fireStore.collection("Users").document(userId)
-                    .set(userData)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
-                        preferences.edit().putString("userUid", userId).apply()
-                        preferences.edit().putBoolean("isLoggedIn", true).apply()
-                        userTypeChecker.checkUserTypeAndNavigate(email)
+                val userDocRef = fireStore.collection("Users").document(userId)
+                userDocRef.get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val document = task.result
+                        if (document != null && document.exists()) {
+                            Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
+                            preferences.edit().putString("userUid", userId).apply()
+                            preferences.edit().putBoolean("isLoggedIn", true).apply()
+                            userTypeChecker.checkUserTypeAndNavigate(email)
+                        } else {
+                            fireStore.collection("Users").document(userId)
+                                .set(userData)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Twitter login successful!", Toast.LENGTH_SHORT).show()
+                                    preferences.edit().putString("userUid", userId).apply()
+                                    preferences.edit().putBoolean("isLoggedIn", true).apply()
+                                    userTypeChecker.checkUserTypeAndNavigate(email)
+                                }
+                                .addOnFailureListener {
+                                    stopCircleLoading()
+                                    Toast.makeText(
+                                        this,
+                                        "Twitter sign-in failed. Please try again.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
                     }
-                    .addOnFailureListener {
-                        stopCircleLoading()
-                        Toast.makeText(
-                            this,
-                            "Twitter sign-in failed. Please try again.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                }
             }
             .addOnFailureListener{
                 Toast.makeText(

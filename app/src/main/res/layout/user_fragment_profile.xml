@@ -1,16 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".user.nav_fragment.ProfileFragment">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/card_profile"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profile"
-        android:textSize="32sp"
-        android:textStyle="bold"
+        android:layout_height="190dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:gravity="center"
-        android:textColor="@color/backgroundColor"/>
-</FrameLayout>
+        android:layout_marginTop="20dp">
+
+
+        <RelativeLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:gravity="center"
+            >
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/rippleColor"
+                app:cardCornerRadius="100dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/img_profile_pic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true">
+
+                    </ImageView>
+
+
+                </RelativeLayout>
+
+
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cameraProfile"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                app:cardBackgroundColor="@color/teal_200"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/ic_camera">
+
+                </ImageView>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+        </RelativeLayout>
+
+
+
+
+
+    </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_profile"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/card_view2"
+                android:layout_width="match_parent"
+                android:paddingBottom="10dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp">
+
+                <RelativeLayout
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:paddingBottom="20dp"
+                    android:focusable="true"
+                    android:background="@drawable/ripple">
+
+                    <LinearLayout
+                        android:id="@+id/lay4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginLeft="20dp"
+                            android:background="@drawable/usericon" />
+
+                        <TextView
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Name"
+                            android:layout_marginTop="23dp"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="15dp"
+                            android:textColor="#000000">
+                        </TextView>
+
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginLeft="-40dp"
+                            android:background="@drawable/ic_edit"
+                            android:backgroundTint="@color/com_facebook_blue"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/userNameTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="name"
+                        android:textColorHint="#A1A1A1"
+                        android:layout_marginTop="45dp"
+                        android:layout_marginLeft="60dp"
+                        android:textSize="15dp"
+                        android:backgroundTint="#557C7E"
+                        android:textColor="#000000"
+                        android:textStyle="bold">
+                    </TextView>
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/lay_e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/card_view2"
+                android:layout_marginTop="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="0dp">
+
+                    <LinearLayout
+                        android:id="@+id/lay5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginLeft="20dp"
+                            android:background="@drawable/ic_baseline_email_24" />
+
+                        <TextView
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="15dp"
+                            android:textColor="#000000">
+                        </TextView>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/emailTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="abc@gmail.com"
+                        android:textColorHint="#A1A1A1"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginLeft="60dp"
+                        android:textSize="15dp"
+                        android:backgroundTint="#557C7E"
+                        android:layout_marginBottom="20dp"
+                        android:textColor="#000000"
+                        android:textStyle="bold">
+                    </TextView>
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
