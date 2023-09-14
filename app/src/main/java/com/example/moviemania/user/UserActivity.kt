@@ -168,7 +168,7 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         header.setOnClickListener {
-            replaceFragment(com.example.moviemania.user.nav_fragment.ProfileFragment())
+            replaceFragment(ProfileFragment())
             navigationView.setCheckedItem(R.id.user_nav_profile)
             drawerLayout.closeDrawer(GravityCompat.START)
         }
