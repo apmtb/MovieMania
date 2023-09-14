@@ -167,6 +167,13 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
+
+        header.setOnClickListener {
+            replaceFragment(ProfileFragment())
+            navigationView.setCheckedItem(R.id.admin_nav_profile)
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
         /// Default Navigation bar Tab Selected
         replaceFragment(HomeFragment())
         navigationView.setCheckedItem(R.id.admin_nav_home)

@@ -165,6 +165,14 @@ class UserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
+
+
+        header.setOnClickListener {
+            replaceFragment(com.example.moviemania.user.nav_fragment.ProfileFragment())
+            navigationView.setCheckedItem(R.id.user_nav_profile)
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
         /// Default Navigation bar Tab Selected
         replaceFragment(HomeFragment())
         navigationView.setCheckedItem(R.id.user_nav_home)
