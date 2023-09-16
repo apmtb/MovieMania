@@ -160,14 +160,6 @@ class ProfileFragment : Fragment() {
                         val updateData = mutableMapOf<String, Any>()
                         updateData["profileImageUrl"] = it
                         userRef.update(updateData)
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Image Updated!", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(requireContext(), "Error Updating Image!", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
                     }
                 },100)
             }
